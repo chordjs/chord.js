@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/core",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/chord.js/chord.js.git"
   },
-  "author": "Agent0876",
+  "contributors": [
+    "Agent0876 <shinseungmin070920@gmail.com> (https://agent0876.xyz)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/chord.js/chord.js/issues"
