@@ -1,5 +1,5 @@
 {
-  "name": "chord.js",
+  "name": "@chordjs/core",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/portfolio.git"
+    "url": "git+https://github.com/chord.js/chord.js.git"
   },
   "author": "Agent0876",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Agent0876/portfolio/issues"
+    "url": "https://github.com/chord.js/chord.js/issues"
   },
-  "homepage": "https://github.com/Agent0876/portfolio#readme",
+  "homepage": "https://github.com/chord.js/chord.js#readme",
   "dependencies": {
     "tslib": "^1.0.0",
     "undici": "^5.14.0",
