@@ -15,6 +15,13 @@ updates:
       - "chordjs/developer"
 
   - package-ecosystem: "npm"
+    directory: "/packages/core"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "chordjs/developer"
+
+  - package-ecosystem: "npm"
     directory: "/packages/rest"
     schedule:
       interval: "daily"
