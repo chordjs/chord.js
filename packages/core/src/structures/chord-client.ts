@@ -10,12 +10,14 @@ import type { CacheManager } from "@chordjs/cache";
 import { PieceLoader } from "../loaders/piece-loader.js";
 import { User } from "./user.js";
 import type { ChordPlugin } from "./plugin.js";
+import type { Broker } from "@chordjs/broker";
 
 export interface ChordClientOptions {
   container?: Container;
   rest?: RestClient;
   gateway?: GatewayClient;
   cache?: CacheManager;
+  broker?: Broker;
 }
 
 export class ChordClient {
@@ -23,6 +25,7 @@ export class ChordClient {
   public rest?: RestClient;
   public gateway?: GatewayClient;
   public cache?: CacheManager;
+  public broker?: Broker;
   public readonly loader: PieceLoader;
   public readonly users: UserManager;
   public readonly guilds: GuildManager;
@@ -37,6 +40,7 @@ export class ChordClient {
     this.rest = options.rest;
     this.gateway = options.gateway;
     this.cache = options.cache;
+    this.broker = options.broker;
 
     this.users = new UserManager(this);
     this.guilds = new GuildManager(this);

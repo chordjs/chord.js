@@ -7,6 +7,6 @@
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
-    "@chordjs/framework": "^26.0.6"
+    "@chordjs/framework": "^26.5.0"
   }
 }
