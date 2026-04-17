@@ -29,12 +29,27 @@ export class Member extends BaseEntity {
   }
 
   /**
+   * Edits the member.
+   */
+  public async edit(options: Record<string, unknown>, reason?: string): Promise<Member> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    if (!this.user) throw new Error("Cannot edit a member with no user data.");
+    const data = await this.client.rest.patch(Routes.guildMember(this.guildId, this.user.id), {
+      body: JSON.stringify(options),
+      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
+    }) as APIGuildMember;
+    return new Member(this.client, this.guildId, data);
+  }
+
+  /**
    * Kicks the member from the guild.
    */
-  public async kick(): Promise<void> {
+  public async kick(reason?: string): Promise<void> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
     if (!this.user) throw new Error("Cannot kick a member with no user data.");
-    await this.client.rest.delete(Routes.guildMember(this.guildId, this.user.id));
+    await this.client.rest.delete(Routes.guildMember(this.guildId, this.user.id), {
+      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
+    });
   }
 
   /**
@@ -43,12 +58,22 @@ export class Member extends BaseEntity {
   public async ban(options: { deleteMessageSeconds?: number; reason?: string } = {}): Promise<void> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
     if (!this.user) throw new Error("Cannot ban a member with no user data.");
+    const body: Record<string, unknown> = {};
+    if (options.deleteMessageSeconds !== undefined) {
+      body.delete_message_seconds = options.deleteMessageSeconds;
+    }
     await this.client.rest.put(Routes.guildBan(this.guildId, this.user.id), {
-      body: JSON.stringify({
-        delete_message_seconds: options.deleteMessageSeconds,
-        reason: options.reason
-      })
+      body: JSON.stringify(body),
+      headers: options.reason ? { "X-Audit-Log-Reason": options.reason } : undefined
     });
+  }
+
+  /**
+   * Applies a timeout to the member.
+   */
+  public async timeout(until: Date | number | null, reason?: string): Promise<Member> {
+    const timestamp = until instanceof Date ? until.toISOString() : (typeof until === 'number' ? new Date(until).toISOString() : null);
+    return this.edit({ communication_disabled_until: timestamp }, reason);
   }
 
   public toJSON(): APIGuildMember {

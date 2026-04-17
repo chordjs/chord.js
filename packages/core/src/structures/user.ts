@@ -1,6 +1,10 @@
 import type { User as APIUser, Snowflake } from "@chordjs/types";
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
+import { Routes } from "@chordjs/utils";
+import { Channel } from "./channel.js";
+import { Message } from "./message.js";
+import type { Channel as APIChannel, Message as APIMessage } from "@chordjs/types";
 
 /**
  * Represents a Discord User.
@@ -31,25 +35,22 @@ export class User extends BaseEntity {
   }
 
   /**
-   * Creates a DM channel with this user. (Advanced feature placeholder)
+   * Creates a DM channel with this user.
    */
-  public async createDM(): Promise<unknown> {
+  public async createDM(): Promise<Channel> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
-    return this.client.rest.post("/users/@me/channels", {
+    const data = await this.client.rest.post(Routes.userChannels(), {
       body: JSON.stringify({ recipient_id: this.id })
-    });
+    }) as APIChannel;
+    return new Channel(this.client, data);
   }
 
   /**
    * Sends a message to this user.
    */
-  public async send(content: string | Record<string, unknown>): Promise<unknown> {
-    const dm = (await this.createDM()) as { id: string };
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const body = typeof content === "string" ? { content } : content;
-    return this.client.rest.post(`/channels/${dm.id}/messages`, {
-      body: JSON.stringify(body)
-    });
+  public async send(content: string | Record<string, unknown>): Promise<Message> {
+    const dm = await this.createDM();
+    return dm.send(content) as unknown as Promise<Message>; // Will fix Channel.send to return Message
   }
 
   public toJSON(): APIUser {
