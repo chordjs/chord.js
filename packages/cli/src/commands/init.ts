@@ -168,8 +168,8 @@ function buildPackageJson(
 
   if (language === 'typescript') {
     pkg.devDependencies = {
-      '@types/node': '^20.0.0',
-      typescript: '^5.9.0',
+      '@types/node': '25.6.0',
+      typescript: '6.0.3',
     };
   }
 

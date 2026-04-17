@@ -37,6 +37,6 @@
     "@chordjs/utils": "^26.0.2"
   },
   "devDependencies": {
-    "typescript": "^5.9.2"
+    "typescript": "6.0.3"
   }
 }
