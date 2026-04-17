@@ -22,3 +22,16 @@ export * as Types from '@chordjs/types';
 
 // Re-export Utilities directly
 export * from '@chordjs/utils';
+
+// Re-export common types and constants directly for convenience
+export { 
+  type GatewayIntentBits, 
+  GatewayIntent, 
+  GatewayOpcode,
+  ButtonStyle,
+  ComponentType,
+  ApplicationCommandType,
+  ApplicationCommandOptionType,
+  ChannelTypes,
+  InteractionTypes
+} from '@chordjs/types';
