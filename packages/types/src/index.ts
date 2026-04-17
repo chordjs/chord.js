@@ -67,6 +67,45 @@ export type {
   VoiceState
 } from "./discord-api.js";
 export { ChannelTypes, InteractionTypes } from "./discord-api.js";
+
+export const ButtonStyle = {
+  Primary: 1,
+  Secondary: 2,
+  Success: 3,
+  Danger: 4,
+  Link: 5
+} as const;
+
+export const ComponentType = {
+  ActionRow: 1,
+  Button: 2,
+  StringSelect: 3,
+  TextInput: 4,
+  UserSelect: 5,
+  RoleSelect: 6,
+  MentionableSelect: 7,
+  ChannelSelect: 8
+} as const;
+
+export const ApplicationCommandType = {
+  ChatInput: 1,
+  User: 2,
+  Message: 3
+} as const;
+
+export const ApplicationCommandOptionType = {
+  SubCommand: 1,
+  SubCommandGroup: 2,
+  String: 3,
+  Integer: 4,
+  Boolean: 5,
+  User: 6,
+  Channel: 7,
+  Role: 8,
+  Mentionable: 9,
+  Number: 10,
+  Attachment: 11
+} as const;
 import type { User, Message, Interaction, Guild, Channel, GuildMember, VoiceState, PresenceUpdate, Emoji, Role } from "./discord-api.js";
 
 export const GatewayOpcode = {

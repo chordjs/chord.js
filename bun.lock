@@ -27,9 +27,20 @@
         "@chordjs/framework": "^26.0.6",
       },
     },
+    "packages/builders": {
+      "name": "@chordjs/builders",
+      "version": "26.1.0",
+      "dependencies": {
+        "@chordjs/types": "^26.1.0",
+        "@chordjs/utils": "^26.1.0",
+      },
+      "devDependencies": {
+        "typescript": "6.0.3",
+      },
+    },
     "packages/cache": {
       "name": "@chordjs/cache",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
         "@chordjs/utils": "^26.0.2",
@@ -40,7 +51,7 @@
     },
     "packages/cli": {
       "name": "@chordjs/cli",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "bin": {
         "chord": "./dist/index.js",
       },
@@ -57,13 +68,20 @@
         "typescript": "6.0.3",
       },
     },
+    "packages/collection": {
+      "name": "@chordjs/collection",
+      "version": "26.1.0",
+      "devDependencies": {
+        "typescript": "6.0.3",
+      },
+    },
     "packages/config": {
       "name": "@chordjs/config",
-      "version": "26.0.9",
+      "version": "26.1.0",
     },
     "packages/core": {
       "name": "@chordjs/core",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
         "@chordjs/cache": "^26.0.2",
         "@chordjs/gateway": "^26.0.2",
@@ -77,15 +95,17 @@
     },
     "packages/framework": {
       "name": "@chordjs/framework",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
-        "@chordjs/cache": "^26.0.6",
-        "@chordjs/core": "^26.0.6",
-        "@chordjs/gateway": "^26.0.8",
-        "@chordjs/rest": "^26.0.8",
-        "@chordjs/types": "^26.0.6",
-        "@chordjs/utils": "^26.0.6",
-        "@chordjs/voice": "^26.0.8",
+        "@chordjs/builders": "^26.1.0",
+        "@chordjs/cache": "^26.1.0",
+        "@chordjs/collection": "^26.1.0",
+        "@chordjs/core": "^26.1.0",
+        "@chordjs/gateway": "^26.1.0",
+        "@chordjs/rest": "^26.1.0",
+        "@chordjs/types": "^26.1.0",
+        "@chordjs/utils": "^26.1.0",
+        "@chordjs/voice": "^26.1.0",
       },
       "devDependencies": {
         "@swc/cli": "^0.3.12",
@@ -95,7 +115,7 @@
     },
     "packages/gateway": {
       "name": "@chordjs/gateway",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
         "@chordjs/utils": "^26.0.8",
@@ -106,7 +126,7 @@
     },
     "packages/rest": {
       "name": "@chordjs/rest",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
         "@chordjs/utils": "^26.0.2",
       },
@@ -116,16 +136,17 @@
     },
     "packages/types": {
       "name": "@chordjs/types",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
     "packages/utils": {
       "name": "@chordjs/utils",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
-        "@chordjs/types": "^26.0.2",
+        "@chordjs/collection": "^26.1.0",
+        "@chordjs/types": "^26.1.0",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -133,7 +154,7 @@
     },
     "packages/voice": {
       "name": "@chordjs/voice",
-      "version": "26.0.9",
+      "version": "26.1.0",
       "dependencies": {
         "@chordjs/types": "^26.0.8",
         "@chordjs/utils": "^26.0.9",
@@ -182,9 +203,13 @@
 
     "@changesets/write": ["@changesets/write@0.4.0", "", { "dependencies": { "@changesets/types": "^6.1.0", "fs-extra": "^7.0.1", "human-id": "^4.1.1", "prettier": "^2.7.1" } }, "sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q=="],
 
+    "@chordjs/builders": ["@chordjs/builders@workspace:packages/builders"],
+
     "@chordjs/cache": ["@chordjs/cache@workspace:packages/cache"],
 
     "@chordjs/cli": ["@chordjs/cli@workspace:packages/cli"],
+
+    "@chordjs/collection": ["@chordjs/collection@workspace:packages/collection"],
 
     "@chordjs/config": ["@chordjs/config@workspace:packages/config"],
 

@@ -1,7 +1,7 @@
 {
-  "name": "@chordjs/types",
+  "name": "@chordjs/collection",
   "version": "26.2.0",
-  "description": "Discord API & Gateway types for Chord.js.",
+  "description": "Utility collection class for Chord.js",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -9,9 +9,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chordjs/chord.js.git",
-    "directory": "packages/types"
+    "directory": "packages/collection"
   },
-  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/types#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/collection#readme",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -32,7 +32,6 @@
     "dev": "bunx swc src -d dist --strip-leading-paths --watch --config-file ../../.swcrc",
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": {},
   "devDependencies": {
     "typescript": "6.0.3"
   }

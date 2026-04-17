@@ -247,6 +247,9 @@ export interface ApplicationCommand {
   description: string;
   type?: number;
   options?: ApplicationCommandOption[];
+  default_member_permissions?: string | null;
+  dm_permission?: boolean | null;
+  nsfw?: boolean;
   version: Snowflake;
 }
 

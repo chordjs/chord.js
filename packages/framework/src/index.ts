@@ -10,8 +10,12 @@ export * from '@chordjs/gateway';
 // Re-export Voice components
 export * from '@chordjs/voice';
 
-// Re-export Cache components as namespace to avoid GatewayEventEmitter conflict
+// Re-export Builders
+export * from '@chordjs/builders';
+
+// Re-export Cache & Collection components as namespace to avoid GatewayEventEmitter conflict
 export * as Cache from '@chordjs/cache';
+export * from '@chordjs/collection';
 
 // Re-export Typings as namespace to avoid structure class conflicts
 export * as Types from '@chordjs/types';

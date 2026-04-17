@@ -6,7 +6,7 @@ export function assertNever(value: never, message = "Unexpected value"): never {
   throw new Error(`${message}: ${String(value)}`);
 }
 
-export * from "./collection.js";
+export * from "@chordjs/collection";
 export * from "./embed-builder.js";
 export * from "./logger.js";
 export * from "./permissions-bitfield.js";
