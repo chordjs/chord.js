@@ -101,6 +101,10 @@ export class GatewayClient {
   public readonly reconnectDelayMs: number;
   public readonly resumeTimeoutMs: number;
 
+  get latency(): number | null {
+    return this.#latencyMs;
+  }
+
   readonly #emitter = new Emitter<GatewayEventMap>();
   readonly #dispatchHandlers = new Map<string, Set<(data: unknown) => void>>();
   #ws: WebSocket | null = null;

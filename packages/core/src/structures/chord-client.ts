@@ -8,6 +8,7 @@ import type { RestClient } from "@chordjs/rest";
 import type { GatewayClient } from "@chordjs/gateway";
 import type { CacheManager } from "@chordjs/cache";
 import { PieceLoader } from "../loaders/piece-loader.js";
+import { User } from "./user.js";
 
 export interface ChordClientOptions {
   container?: Container;
@@ -27,6 +28,7 @@ export class ChordClient {
   public readonly loader: PieceLoader;
 
   readonly #stores = new Map<string, Store<Piece>>();
+  #user: User | null = null;
 
   constructor(options: ChordClientOptions = {}) {
     this.container = options.container ?? new Container();
@@ -38,6 +40,27 @@ export class ChordClient {
     this.guilds = new GuildManager(this);
     this.channels = new ChannelManager(this);
     this.loader = new PieceLoader({ client: this });
+
+    // Listen for READY to set client user
+    if (this.gateway) {
+      this.gateway.onDispatch("READY", (data: any) => {
+        this.#user = new User(this, data.user);
+      });
+    }
+  }
+
+  /**
+   * The client user (self). Null if not ready.
+   */
+  get user(): User | null {
+    return this.#user;
+  }
+
+  /**
+   * Gateway latency in milliseconds.
+   */
+  get ping(): number {
+    return this.gateway?.latency ?? -1;
   }
 
   get stores(): ReadonlyMap<string, Store<Piece>> {
