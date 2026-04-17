@@ -307,6 +307,63 @@ export interface GuildRoleDeleteDispatchData {
   role_id: Snowflake;
 }
 
+// --- Thread events ---
+export type ThreadCreateDispatchData = any;
+export type ThreadUpdateDispatchData = any;
+export type ThreadDeleteDispatchData = any;
+export type ThreadListSyncDispatchData = any;
+export type ThreadMemberUpdateDispatchData = any;
+export type ThreadMembersUpdateDispatchData = any;
+
+// --- Other Channel events ---
+export type ChannelPinsUpdateDispatchData = any;
+
+// --- Other Guild events ---
+export type GuildBanAddDispatchData = any;
+export type GuildBanRemoveDispatchData = any;
+export type GuildEmojisUpdateDispatchData = any;
+export type GuildStickersUpdateDispatchData = any;
+export type GuildIntegrationsUpdateDispatchData = any;
+export type GuildAuditLogEntryCreateDispatchData = any;
+
+// --- Webhooks ---
+export type WebhooksUpdateDispatchData = any;
+
+// --- Invites ---
+export type InviteCreateDispatchData = any;
+export type InviteDeleteDispatchData = any;
+
+// --- More Reaction events ---
+export type MessageReactionRemoveAllDispatchData = any;
+export type MessageReactionRemoveEmojiDispatchData = any;
+
+// --- Stage Instances ---
+export type StageInstanceCreateDispatchData = any;
+export type StageInstanceUpdateDispatchData = any;
+export type StageInstanceDeleteDispatchData = any;
+
+// --- Scheduled Events ---
+export type GuildScheduledEventCreateDispatchData = any;
+export type GuildScheduledEventUpdateDispatchData = any;
+export type GuildScheduledEventDeleteDispatchData = any;
+export type GuildScheduledEventUserAddDispatchData = any;
+export type GuildScheduledEventUserRemoveDispatchData = any;
+
+// --- Auto Moderation ---
+export type AutoModerationRuleCreateDispatchData = any;
+export type AutoModerationRuleUpdateDispatchData = any;
+export type AutoModerationRuleDeleteDispatchData = any;
+export type AutoModerationActionExecutionDispatchData = any;
+
+// --- Entitlements ---
+export type EntitlementCreateDispatchData = any;
+export type EntitlementUpdateDispatchData = any;
+export type EntitlementDeleteDispatchData = any;
+
+// --- Message Polls ---
+export type MessagePollVoteAddDispatchData = any;
+export type MessagePollVoteRemoveDispatchData = any;
+
 // ===========================================
 // Dispatch Data Map
 // ===========================================
@@ -356,6 +413,61 @@ export interface GatewayDispatchDataMap {
   // Presence / Typing
   PRESENCE_UPDATE: PresenceUpdateDispatchData;
   TYPING_START: TypingStartDispatchData;
+
+  // Threads
+  THREAD_CREATE: ThreadCreateDispatchData;
+  THREAD_UPDATE: ThreadUpdateDispatchData;
+  THREAD_DELETE: ThreadDeleteDispatchData;
+  THREAD_LIST_SYNC: ThreadListSyncDispatchData;
+  THREAD_MEMBER_UPDATE: ThreadMemberUpdateDispatchData;
+  THREAD_MEMBERS_UPDATE: ThreadMembersUpdateDispatchData;
+
+  // Other Channel
+  CHANNEL_PINS_UPDATE: ChannelPinsUpdateDispatchData;
+
+  // Other Guild
+  GUILD_BAN_ADD: GuildBanAddDispatchData;
+  GUILD_BAN_REMOVE: GuildBanRemoveDispatchData;
+  GUILD_EMOJIS_UPDATE: GuildEmojisUpdateDispatchData;
+  GUILD_STICKERS_UPDATE: GuildStickersUpdateDispatchData;
+  GUILD_INTEGRATIONS_UPDATE: GuildIntegrationsUpdateDispatchData;
+  GUILD_AUDIT_LOG_ENTRY_CREATE: GuildAuditLogEntryCreateDispatchData;
+
+  // Webhooks & Invites
+  WEBHOOKS_UPDATE: WebhooksUpdateDispatchData;
+  INVITE_CREATE: InviteCreateDispatchData;
+  INVITE_DELETE: InviteDeleteDispatchData;
+
+  // Reactions
+  MESSAGE_REACTION_REMOVE_ALL: MessageReactionRemoveAllDispatchData;
+  MESSAGE_REACTION_REMOVE_EMOJI: MessageReactionRemoveEmojiDispatchData;
+
+  // Stage Instances
+  STAGE_INSTANCE_CREATE: StageInstanceCreateDispatchData;
+  STAGE_INSTANCE_UPDATE: StageInstanceUpdateDispatchData;
+  STAGE_INSTANCE_DELETE: StageInstanceDeleteDispatchData;
+
+  // Scheduled Events
+  GUILD_SCHEDULED_EVENT_CREATE: GuildScheduledEventCreateDispatchData;
+  GUILD_SCHEDULED_EVENT_UPDATE: GuildScheduledEventUpdateDispatchData;
+  GUILD_SCHEDULED_EVENT_DELETE: GuildScheduledEventDeleteDispatchData;
+  GUILD_SCHEDULED_EVENT_USER_ADD: GuildScheduledEventUserAddDispatchData;
+  GUILD_SCHEDULED_EVENT_USER_REMOVE: GuildScheduledEventUserRemoveDispatchData;
+
+  // Auto Moderation
+  AUTO_MODERATION_RULE_CREATE: AutoModerationRuleCreateDispatchData;
+  AUTO_MODERATION_RULE_UPDATE: AutoModerationRuleUpdateDispatchData;
+  AUTO_MODERATION_RULE_DELETE: AutoModerationRuleDeleteDispatchData;
+  AUTO_MODERATION_ACTION_EXECUTION: AutoModerationActionExecutionDispatchData;
+
+  // Entitlements
+  ENTITLEMENT_CREATE: EntitlementCreateDispatchData;
+  ENTITLEMENT_UPDATE: EntitlementUpdateDispatchData;
+  ENTITLEMENT_DELETE: EntitlementDeleteDispatchData;
+
+  // Message Polls
+  MESSAGE_POLL_VOTE_ADD: MessagePollVoteAddDispatchData;
+  MESSAGE_POLL_VOTE_REMOVE: MessagePollVoteRemoveDispatchData;
 }
 
 export type GatewayDispatchEvent = keyof GatewayDispatchDataMap;
