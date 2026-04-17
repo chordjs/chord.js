@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/voice",
-  "version": "26.3.0",
+  "version": "26.4.0",
   "description": "Discord Voice client for Chord.js",
   "license": "MIT",
   "publishConfig": {

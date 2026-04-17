@@ -90,6 +90,42 @@ export class EmbedBuilder {
     return this;
   }
 
+  /**
+   * Sets the color to Green (0x00ff00) and adds a success title prefix.
+   */
+  success(title?: string): this {
+    this.setColor(0x00ff00);
+    if (title) this.setTitle(`✅ ${title}`);
+    return this;
+  }
+
+  /**
+   * Sets the color to Red (0xff0000) and adds an error title prefix.
+   */
+  error(title?: string): this {
+    this.setColor(0xff0000);
+    if (title) this.setTitle(`❌ ${title}`);
+    return this;
+  }
+
+  /**
+   * Sets the color to Blue (0x0000ff) and adds an info title prefix.
+   */
+  info(title?: string): this {
+    this.setColor(0x3498db);
+    if (title) this.setTitle(`ℹ️ ${title}`);
+    return this;
+  }
+
+  /**
+   * Sets the color to Yellow (0xffff00) and adds a warning title prefix.
+   */
+  warn(title?: string): this {
+    this.setColor(0xf1c40f);
+    if (title) this.setTitle(`⚠️ ${title}`);
+    return this;
+  }
+
   toJSON(): APIEmbed {
     return { ...this.data } as APIEmbed;
   }

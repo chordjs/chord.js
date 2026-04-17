@@ -9,6 +9,7 @@ import type { GatewayClient } from "@chordjs/gateway";
 import type { CacheManager } from "@chordjs/cache";
 import { PieceLoader } from "../loaders/piece-loader.js";
 import { User } from "./user.js";
+import type { ChordPlugin } from "./plugin.js";
 
 export interface ChordClientOptions {
   container?: Container;
@@ -22,12 +23,13 @@ export class ChordClient {
   public rest?: RestClient;
   public gateway?: GatewayClient;
   public cache?: CacheManager;
+  public readonly loader: PieceLoader;
   public readonly users: UserManager;
   public readonly guilds: GuildManager;
   public readonly channels: ChannelManager;
-  public readonly loader: PieceLoader;
 
   readonly #stores = new Map<string, Store<Piece>>();
+  readonly #plugins = new Map<string, ChordPlugin>();
   #user: User | null = null;
 
   constructor(options: ChordClientOptions = {}) {
@@ -80,5 +82,20 @@ export class ChordClient {
     const store = this.#stores.get(name);
     if (!store) throw new Error(`Unknown store: ${name}`);
     return store as unknown as Store<TPiece>;
+  }
+
+  /**
+   * Registers a plugin into the client.
+   */
+  public async use(plugin: ChordPlugin): Promise<this> {
+    if (this.#plugins.has(plugin.name)) {
+      throw new Error(`Plugin already registered: ${plugin.name}`);
+    }
+
+    await plugin.internalLoad(this);
+    this.#plugins.set(plugin.name, plugin);
+    
+    this.container.get<any>("logger")?.info(`Plugin loaded: ${plugin.name} (v${plugin.version})`);
+    return this;
   }
 }

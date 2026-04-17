@@ -1,0 +1,21 @@
+{
+  "name": "@chordjs/data",
+  "version": "26.4.0",
+  "description": "Database and persistence utilities for Chord.js.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist"
+  },
+  "dependencies": {
+    "@chordjs/utils": "^26.4.0"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}
