@@ -261,7 +261,7 @@ export async function initCommand(projectName?: string) {
     await transformTemplateFiles(targetPath, language, moduleSystem);
 
     // 3. Generate package.json
-    const currentVersion = '26.0.3';
+    const currentVersion = '26.0.4';
     const pkgJson = buildPackageJson(targetName!, language, moduleSystem, currentVersion);
     await fs.writeJson(path.join(targetPath, 'package.json'), pkgJson, { spaces: 2 });
 
@@ -277,13 +277,6 @@ export async function initCommand(projectName?: string) {
     await fs.writeFile(
       path.join(targetPath, '.env.example'),
       '# Discord Bot Token (https://discord.com/developers/applications)\nDISCORD_TOKEN=your_bot_token_here\n',
-      'utf-8'
-    );
-
-    // 6. Generate .gitignore
-    await fs.writeFile(
-      path.join(targetPath, '.gitignore'),
-      'node_modules/\ndist/\n.env\n*.log\n',
       'utf-8'
     );
 

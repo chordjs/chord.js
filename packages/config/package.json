@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/config",
-  "version": "26.0.3",
+  "version": "26.0.4",
   "private": true,
   "type": "module",
   "files": [
