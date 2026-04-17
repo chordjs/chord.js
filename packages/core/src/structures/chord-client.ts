@@ -4,8 +4,8 @@ import type { Piece } from "./piece.js";
 import { UserManager } from "../managers/user-manager.js";
 import { GuildManager } from "../managers/guild-manager.js";
 import { ChannelManager } from "../managers/channel-manager.js";
-import type { RestClient } from "@chordjs/rest";
-import type { GatewayClient } from "@chordjs/gateway";
+import { RestClient } from "@chordjs/rest";
+import { GatewayClient } from "@chordjs/gateway";
 import type { CacheManager } from "@chordjs/cache";
 import { PieceLoader } from "../loaders/piece-loader.js";
 import { User } from "./user.js";
@@ -18,6 +18,8 @@ export interface ChordClientOptions {
   gateway?: GatewayClient;
   cache?: CacheManager;
   broker?: Broker;
+  token?: string;
+  intents?: number;
 }
 
 export class ChordClient {
@@ -37,8 +39,11 @@ export class ChordClient {
 
   constructor(options: ChordClientOptions = {}) {
     this.container = options.container ?? new Container();
-    this.rest = options.rest;
-    this.gateway = options.gateway;
+    this.rest = options.rest ?? (options.token ? new RestClient({ token: options.token }) : undefined);
+    this.gateway = options.gateway ?? (options.token ? new GatewayClient({ 
+      token: options.token, 
+      intents: options.intents ?? 0 
+    }) : undefined);
     this.cache = options.cache;
     this.broker = options.broker;
 
