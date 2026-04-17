@@ -163,8 +163,13 @@ function buildPackageJson(
     '@chordjs/framework': `^${currentVersion}`,
   };
 
+  pkg.devDependencies = {
+    '@chordjs/cli': `^${currentVersion}`,
+  };
+
   if (language === 'typescript') {
     pkg.devDependencies = {
+      ...pkg.devDependencies,
       '@types/node': '25.6.0',
       typescript: '6.0.3',
     };
