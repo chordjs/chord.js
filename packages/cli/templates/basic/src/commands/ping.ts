@@ -1,8 +1,8 @@
-import { Command, type PrefixReplyPayload } from "@chordjs/framework";
+import { Command, type PrefixReplyPayload, type PieceContext } from "@chordjs/framework";
 
 export default class PingCommand extends Command {
-  constructor() {
-    super({
+  constructor(context: PieceContext) {
+    super(context, {
       name: "ping",
       description: "봇의 응답 속도를 확인합니다.",
     });

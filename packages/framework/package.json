@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/framework",
-  "version": "26.5.4",
+  "version": "26.5.5",
   "description": "Umbrella framework package for Chord.js",
   "type": "module",
   "main": "dist/index.js",
@@ -15,15 +15,15 @@
     "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist"
   },
   "dependencies": {
-    "@chordjs/builders": "^26.5.4",
-    "@chordjs/cache": "^26.5.4",
-    "@chordjs/collection": "^26.5.4",
-    "@chordjs/core": "^26.5.4",
-    "@chordjs/gateway": "^26.5.4",
-    "@chordjs/voice": "^26.5.4",
-    "@chordjs/rest": "^26.5.4",
-    "@chordjs/types": "^26.5.4",
-    "@chordjs/utils": "^26.5.4"
+    "@chordjs/builders": "^26.5.5",
+    "@chordjs/cache": "^26.5.5",
+    "@chordjs/collection": "^26.5.5",
+    "@chordjs/core": "^26.5.5",
+    "@chordjs/gateway": "^26.5.5",
+    "@chordjs/voice": "^26.5.5",
+    "@chordjs/rest": "^26.5.5",
+    "@chordjs/types": "^26.5.5",
+    "@chordjs/utils": "^26.5.5"
   },
   "devDependencies": {
     "@swc/cli": "^0.3.12",

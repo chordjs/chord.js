@@ -1,8 +1,8 @@
-import { Listener } from "@chordjs/framework";
+import { Listener, type PieceContext } from "@chordjs/framework";
 
 export default class ReadyListener extends Listener<"READY"> {
-  constructor() {
-    super({ 
+  constructor(context: PieceContext) {
+    super(context, { 
       event: "READY" 
     });
   }

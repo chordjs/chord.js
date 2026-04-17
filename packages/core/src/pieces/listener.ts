@@ -1,7 +1,7 @@
-import { Piece, type PieceContext } from "../structures/piece.js";
+import { Piece, type PieceContext, type PieceOptions } from "../structures/piece.js";
 
-export interface ListenerContext extends PieceContext {
-  event: string;
+export interface ListenerOptions<T extends string = string> extends PieceOptions {
+  event: T;
   once?: boolean;
 }
 
@@ -9,10 +9,10 @@ export abstract class Listener<T extends string = string> extends Piece {
   public readonly event: T;
   public readonly once: boolean;
 
-  protected constructor(context: ListenerContext & { event: T }) {
-    super(context);
-    this.event = context.event;
-    this.once = context.once ?? false;
+  protected constructor(context: PieceContext, options: ListenerOptions<T>) {
+    super(context, options);
+    this.event = options.event;
+    this.once = options.once ?? false;
   }
 
   abstract run(...args: any[]): unknown | Promise<unknown>;

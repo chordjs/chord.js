@@ -1,4 +1,4 @@
-import { Piece, type PieceContext } from "../structures/piece.js";
+import { Piece, type PieceContext, type PieceOptions } from "../structures/piece.js";
 import type {
   APIAllowedMentions,
   APIEmbed,
@@ -24,7 +24,7 @@ export interface ApplicationCommandPayload {
   options?: ApplicationCommandOption[];
 }
 
-export interface InteractionCommandContext extends PieceContext {
+export interface InteractionCommandOptions extends PieceOptions {
   description?: string;
   type?: number;
   options?: ApplicationCommandOption[];
@@ -83,11 +83,11 @@ export abstract class InteractionCommand extends Piece {
   public readonly type?: number;
   public readonly options: ApplicationCommandOption[];
 
-  protected constructor(context: InteractionCommandContext) {
-    super(context);
-    this.description = context.description ?? "";
-    this.type = context.type;
-    this.options = context.options ?? [];
+  protected constructor(context: PieceContext, options: InteractionCommandOptions = {}) {
+    super(context, options);
+    this.description = options.description ?? "";
+    this.type = options.type;
+    this.options = options.options ?? [];
   }
 
   toApplicationCommand(): ApplicationCommandPayload {
