@@ -9,8 +9,10 @@ import { GatewayClient } from "@chordjs/gateway";
 import type { CacheManager } from "@chordjs/cache";
 import { PieceLoader } from "../loaders/piece-loader.js";
 import { User } from "./user.js";
+import { Message } from "./message.js";
 import type { ChordPlugin } from "./plugin.js";
 import type { Broker } from "@chordjs/broker";
+import { PrefixCommandRouter, type PrefixMessageLike } from "../commands/prefix-command-router.js";
 
 export interface ChordClientOptions {
   container?: Container;
@@ -20,6 +22,7 @@ export interface ChordClientOptions {
   broker?: Broker;
   token?: string;
   intents?: number;
+  prefix?: string | ((message: PrefixMessageLike) => string | null | undefined);
 }
 
 export class ChordClient {
@@ -62,6 +65,26 @@ export class ChordClient {
       this.gateway.onDispatch("READY", (data: any) => {
         this.#user = new User(this, data.user);
       });
+    }
+
+    // Auto setup PrefixCommandRouter if prefix is provided
+    if (options.prefix) {
+      const router = new PrefixCommandRouter({
+        client: this,
+        prefix: options.prefix,
+        reply: async (messagePayload, payload) => {
+          const message = new Message(this, messagePayload as any);
+          return message.reply(payload);
+        }
+      });
+      this.container.register(PrefixCommandRouter, router);
+
+      if (this.gateway) {
+        this.gateway.onDispatch("MESSAGE_CREATE", async (data: any) => {
+          if (data.author?.bot) return;
+          await router.handleMessage(data);
+        });
+      }
     }
   }
 
