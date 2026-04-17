@@ -1,6 +1,8 @@
 import { 
-  InteractionType, 
-  ComponentType,
+  InteractionTypes, 
+  ComponentTypes,
+  type InteractionType,
+  type ComponentType,
   type Interaction as APIInteraction, 
   type Snowflake, 
   type Message as APIMessage,
@@ -59,33 +61,33 @@ export class Interaction extends BaseEntity {
    */
   public static from(client: ChordClient, data: APIInteraction): Interaction {
     switch (data.type) {
-      case InteractionType.ApplicationCommand:
-        return new CommandInteraction(client, data);
-      case InteractionType.MessageComponent:
-        return new ComponentInteraction(client, data);
-      case InteractionType.ApplicationCommandAutocomplete:
-        return new AutocompleteInteraction(client, data);
-      case InteractionType.ModalSubmit:
-        return new ModalSubmitInteraction(client, data);
+      case InteractionTypes.ApplicationCommand:
+        return new CommandInteraction(client, data as any);
+      case InteractionTypes.MessageComponent:
+        return new ComponentInteraction(client, data as any);
+      case InteractionTypes.ApplicationCommandAutocomplete:
+        return new AutocompleteInteraction(client, data as any);
+      case InteractionTypes.ModalSubmit:
+        return new ModalSubmitInteraction(client, data as any);
       default:
         return new Interaction(client, data);
     }
   }
 
   public isCommand(): this is CommandInteraction {
-    return this.type === InteractionType.ApplicationCommand;
+    return this.type === InteractionTypes.ApplicationCommand;
   }
 
   public isComponent(): this is ComponentInteraction {
-    return this.type === InteractionType.MessageComponent;
+    return this.type === InteractionTypes.MessageComponent;
   }
 
   public isAutocomplete(): this is AutocompleteInteraction {
-    return this.type === InteractionType.ApplicationCommandAutocomplete;
+    return this.type === InteractionTypes.ApplicationCommandAutocomplete;
   }
 
   public isModalSubmit(): this is ModalSubmitInteraction {
-    return this.type === InteractionType.ModalSubmit;
+    return this.type === InteractionTypes.ModalSubmit;
   }
 
   /**

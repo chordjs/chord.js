@@ -1,6 +1,6 @@
 import { 
-  ApplicationCommandType, 
-  ApplicationCommandOptionType,
+  ApplicationCommandTypes, 
+  ApplicationCommandOptionTypes,
   type ApplicationCommandOption,
   type ApplicationCommand
 } from "@chordjs/types";
@@ -63,7 +63,7 @@ export class SlashCommandBuilder {
     return {
       name: this.name,
       description: this.description,
-      type: ApplicationCommandType.ChatInput,
+      type: ApplicationCommandTypes.ChatInput,
       options: this.options,
       default_member_permissions: this.default_member_permissions,
       dm_permission: this.dm_permission,
@@ -114,7 +114,7 @@ export class SlashCommandStringOption extends SlashCommandOptionBase {
 
   public toJSON(): ApplicationCommandOption {
     return {
-      type: ApplicationCommandOptionType.String,
+      type: ApplicationCommandOptionTypes.String,
       name: this.name,
       description: this.description,
       required: this.required,
@@ -140,7 +140,7 @@ export class SlashCommandIntegerOption extends SlashCommandOptionBase {
 
   public toJSON(): ApplicationCommandOption {
     return {
-      type: ApplicationCommandOptionType.Integer,
+      type: ApplicationCommandOptionTypes.Integer,
       name: this.name,
       description: this.description,
       required: this.required,
@@ -155,7 +155,7 @@ export class SlashCommandIntegerOption extends SlashCommandOptionBase {
 export class SlashCommandBooleanOption extends SlashCommandOptionBase {
   public toJSON(): ApplicationCommandOption {
     return {
-      type: ApplicationCommandOptionType.Boolean,
+      type: ApplicationCommandOptionTypes.Boolean,
       name: this.name,
       description: this.description,
       required: this.required
@@ -166,7 +166,7 @@ export class SlashCommandBooleanOption extends SlashCommandOptionBase {
 export class SlashCommandUserOption extends SlashCommandOptionBase {
   public toJSON(): ApplicationCommandOption {
     return {
-      type: ApplicationCommandOptionType.User,
+      type: ApplicationCommandOptionTypes.User,
       name: this.name,
       description: this.description,
       required: this.required
@@ -184,7 +184,7 @@ export class SlashCommandChannelOption extends SlashCommandOptionBase {
 
   public toJSON(): ApplicationCommandOption {
     return {
-      type: ApplicationCommandOptionType.Channel,
+      type: ApplicationCommandOptionTypes.Channel,
       name: this.name,
       description: this.description,
       required: this.required,
@@ -196,7 +196,7 @@ export class SlashCommandChannelOption extends SlashCommandOptionBase {
 export class SlashCommandRoleOption extends SlashCommandOptionBase {
   public toJSON(): ApplicationCommandOption {
     return {
-      type: ApplicationCommandOptionType.Role,
+      type: ApplicationCommandOptionTypes.Role,
       name: this.name,
       description: this.description,
       required: this.required

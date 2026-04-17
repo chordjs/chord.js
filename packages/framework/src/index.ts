@@ -27,10 +27,10 @@ export * from '@chordjs/utils';
 export { 
   GatewayIntentBits, 
   GatewayOpcode,
-  ButtonStyle,
-  ComponentType,
-  ApplicationCommandType,
-  ApplicationCommandOptionType,
+  ButtonStyles,
+  ComponentTypes,
+  ApplicationCommandTypes,
+  ApplicationCommandOptionTypes,
   ChannelTypes,
   InteractionTypes
 } from '@chordjs/types';

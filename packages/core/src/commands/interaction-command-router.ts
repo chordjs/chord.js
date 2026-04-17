@@ -1,4 +1,4 @@
-import { InteractionType, type GatewayDispatchDataMap } from "@chordjs/types";
+import { InteractionTypes, type InteractionType, type GatewayDispatchDataMap } from "@chordjs/types";
 import type { Store } from "../structures/store.js";
 import type { ChordClient } from "../structures/chord-client.js";
 import {
@@ -131,8 +131,8 @@ export class InteractionCommandRouter {
 
   async handleInteraction(interaction: GatewayDispatchDataMap["INTERACTION_CREATE"]): Promise<boolean> {
     if (
-      interaction.type !== InteractionType.ApplicationCommand &&
-      interaction.type !== InteractionType.ApplicationCommandAutocomplete
+      interaction.type !== InteractionTypes.ApplicationCommand &&
+      interaction.type !== InteractionTypes.ApplicationCommandAutocomplete
     ) {
       return false;
     }

@@ -1,6 +1,6 @@
 import { 
-  ButtonStyle, 
-  ComponentType,
+  ComponentTypes, 
+  ButtonStyles,
   type ButtonComponent,
   type SelectMenuComponent,
   type SelectMenuOption
@@ -8,7 +8,7 @@ import {
 
 export class ButtonBuilder {
   public data: Partial<ButtonComponent> = {
-    type: ComponentType.Button as 2
+    type: ComponentTypes.Button as 2
   };
 
   public setStyle(style: number): this {
@@ -48,7 +48,7 @@ export class ButtonBuilder {
 
 export class SelectMenuBuilder {
   public data: Partial<SelectMenuComponent> = {
-    type: ComponentType.StringSelect as 3,
+    type: ComponentTypes.StringSelect as 3,
     options: []
   };
 
