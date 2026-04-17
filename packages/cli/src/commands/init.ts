@@ -45,7 +45,7 @@ export async function initCommand(projectName?: string) {
       pkgJson.name = targetName;
       
       // Replace workspace:* with the actual version
-      const currentVersion = "0.1.0"; // This should ideally be read from cli's own version
+      const currentVersion = "26.0.0"; // This should ideally be read from cli's own version
       if (pkgJson.dependencies) {
         for (const [dep, version] of Object.entries(pkgJson.dependencies)) {
           if (version === 'workspace:*') {

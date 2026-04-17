@@ -1,6 +1,6 @@
 # @chordjs/core
 
-## 0.1.0
+## 26.0.0
 
 ### Minor Changes
 

@@ -10,10 +10,6 @@
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": true,
     "resolveJsonModule": true,
-    "types": ["node"],
-    "baseUrl": ".",
-    "paths": {
-      "@chordjs/*": ["../../packages/*/src/index.ts"]
-    }
+    "types": ["node"]
   }
 }
