@@ -47,8 +47,13 @@ export class ChordClient {
     this.channels = new ChannelManager(this);
     this.loader = new PieceLoader({ client: this });
 
-    // Listen for READY to set client user
+    // Gateway event wiring
     if (this.gateway) {
+      this.gateway.on("open", () => console.log("📡 Gateway connection established!"));
+      this.gateway.on("debug", (msg) => console.log(`[Gateway] ${msg}`));
+      this.gateway.on("error", (err) => console.error(`[Gateway Error]`, err));
+
+      // Set client user on READY
       this.gateway.onDispatch("READY", (data: any) => {
         this.#user = new User(this, data.user);
       });
