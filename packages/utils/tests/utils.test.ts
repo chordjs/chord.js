@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
-import { EmbedBuilder } from "../src/embed-builder.js";
-import { PermissionsBitField } from "../src/permissions-bitfield.js";
-import { Collection } from "../src/collection.js";
+import { EmbedBuilder } from "../src/index.js";
+import { PermissionsBitField } from "../src/index.js";
+import { Collection } from "../src/index.js";
 
 test("EmbedBuilder > fluently builds APIEmbed", () => {
   const embed = new EmbedBuilder()
