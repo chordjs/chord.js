@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/gateway",
-  "version": "26.0.4",
+  "version": "26.0.5",
   "description": "Discord Gateway client for Chord.js (implemented from scratch).",
   "license": "MIT",
   "publishConfig": {

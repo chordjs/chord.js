@@ -140,10 +140,8 @@ function buildPackageJson(
     version: '1.0.0',
   };
 
-  // Only set "type": "module" for ESM projects
-  if (moduleSystem === 'esm') {
-    pkg.type = 'module';
-  }
+  // Set "type" explicitly for both module systems
+  pkg.type = moduleSystem === 'esm' ? 'module' : 'commonjs';
 
   // Scripts vary by language
   if (language === 'typescript') {
@@ -261,7 +259,7 @@ export async function initCommand(projectName?: string) {
     await transformTemplateFiles(targetPath, language, moduleSystem);
 
     // 3. Generate package.json
-    const currentVersion = '26.0.4';
+    const currentVersion = '26.0.5';
     const pkgJson = buildPackageJson(targetName!, language, moduleSystem, currentVersion);
     await fs.writeJson(path.join(targetPath, 'package.json'), pkgJson, { spaces: 2 });
 
