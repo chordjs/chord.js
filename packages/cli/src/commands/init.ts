@@ -87,8 +87,8 @@ async function transformTemplateFiles(
       content = convertTsToJs(content);
     }
 
-    // Convert ESM -> CJS if needed
-    if (moduleSystem === 'commonjs') {
+    // Convert ESM -> CJS if needed (only for JS; TypeScript compiler handles this)
+    if (moduleSystem === 'commonjs' && language === 'javascript') {
       content = convertEsmToCjs(content);
     }
 
@@ -168,6 +168,7 @@ function buildPackageJson(
 
   if (language === 'typescript') {
     pkg.devDependencies = {
+      '@types/node': '^20.0.0',
       typescript: '^5.9.0',
     };
   }
@@ -189,6 +190,7 @@ function buildTsConfig(moduleSystem: ModuleSystem): Record<string, any> {
       esModuleInterop: true,
       outDir: './dist',
       rootDir: './src',
+      types: ['node'],
     },
     include: ['src'],
   };
