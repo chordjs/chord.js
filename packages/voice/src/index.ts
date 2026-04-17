@@ -11,13 +11,7 @@ import {
   type VoiceSpeaking
 } from "@chordjs/types";
 import dgram from "node:dgram";
-import { createRequire } from "node:module";
-
-type SodiumLike = {
-  ready: Promise<unknown>;
-  crypto_secretbox_easy(message: Uint8Array, nonce: Uint8Array, key: Uint8Array): Uint8Array;
-};
-const require = createRequire(import.meta.url);
+import crypto from "node:crypto";
 
 export interface VoiceGatewayConnectOptions {
   endpoint: string; // e.g. "us-east123.discord.media"
@@ -31,7 +25,7 @@ export interface VoiceGatewayClientOptions {
   /**
    * Prefered encryption mode. Discord will provide supported modes in READY.
    */
-  mode?: "xsalsa20_poly1305";
+  mode?: "aead_aes256_gcm_rtpsize";
   autoReconnect?: boolean;
   reconnectDelayMs?: number;
 }
@@ -39,7 +33,7 @@ export interface VoiceGatewayClientOptions {
 type VoiceState = "idle" | "ws_open" | "hello" | "ready" | "udp_ready" | "session" | "closed";
 
 export class VoiceGatewayClient {
-  public readonly mode: "xsalsa20_poly1305";
+  public readonly mode: "aead_aes256_gcm_rtpsize";
   public readonly autoReconnect: boolean;
   public readonly reconnectDelayMs: number;
 
@@ -57,14 +51,14 @@ export class VoiceGatewayClient {
   #udpIp: string | null = null;
   #udpPort: number | null = null;
   #secretKey: Uint8Array | null = null;
-  #sodium: SodiumLike | null = null;
 
   // RTP state
   #rtpSequence = 0;
   #rtpTimestamp = 0;
+  #nonce = 0;
 
   constructor(options: VoiceGatewayClientOptions = {}) {
-    this.mode = options.mode ?? "xsalsa20_poly1305";
+    this.mode = options.mode ?? "aead_aes256_gcm_rtpsize";
     this.autoReconnect = options.autoReconnect ?? true;
     this.reconnectDelayMs = options.reconnectDelayMs ?? 1000;
   }
@@ -80,10 +74,6 @@ export class VoiceGatewayClient {
   async connect(options: VoiceGatewayConnectOptions): Promise<void> {
     this.#connect = options;
     this.#endpoint = options.endpoint;
-    if (!this.#sodium) {
-      this.#sodium = require("libsodium-wrappers/dist/modules/libsodium-wrappers.js") as SodiumLike;
-    }
-    await this.#sodium.ready;
     this.#openWs();
   }
 
@@ -182,10 +172,7 @@ export class VoiceGatewayClient {
 
         // Prepare UDP and discovery
         const mode = ready.d.modes.includes(this.mode) ? this.mode : ready.d.modes[0];
-        if (mode !== "xsalsa20_poly1305") {
-          throw new Error(`VoiceGatewayClient: unsupported mode ${mode}`);
-        }
-
+        
         const { address, port } = await this.#udpDiscovery(ready.d.ip, ready.d.port, ready.d.ssrc);
         this.#udpIp = address;
         this.#udpPort = port;
@@ -281,7 +268,6 @@ export class VoiceGatewayClient {
   }
 
   #encryptRtp(opusFrame: Uint8Array, key: Uint8Array): Buffer {
-    if (!this.#sodium) throw new Error("VoiceGatewayClient: sodium is not initialized");
     // RTP header (12 bytes)
     const header = Buffer.alloc(12);
     header[0] = 0x80;
@@ -290,17 +276,27 @@ export class VoiceGatewayClient {
     header.writeUInt32BE(this.#rtpTimestamp >>> 0, 4);
     header.writeUInt32BE((this.#ssrc ?? 0) >>> 0, 8);
 
-    // nonce: 24 bytes, first 12 are RTP header
-    const nonce = new Uint8Array(24);
-    nonce.set(header, 0);
+    // Increment nonce
+    const nonceValue = this.#nonce++;
+    if (this.#nonce > 0xffffffff) this.#nonce = 0;
 
-    const cipher = this.#sodium.crypto_secretbox_easy(opusFrame, nonce, key);
+    const iv = Buffer.alloc(12);
+    iv.writeUInt32BE(nonceValue, 0); // AEAD AES-GCM uses 12-byte IV. First 4 bytes are our incrementing nonce.
+
+    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv, { authTagLength: 16 });
+    cipher.setAAD(header);
+
+    const ciphertext = Buffer.concat([cipher.update(opusFrame), cipher.final()]);
+    const authTag = cipher.getAuthTag();
+
+    const nonceBuffer = Buffer.alloc(4);
+    nonceBuffer.writeUInt32BE(nonceValue, 0);
 
     // update RTP counters (48kHz, 20ms frames -> 960 samples)
     this.#rtpSequence = (this.#rtpSequence + 1) & 0xffff;
     this.#rtpTimestamp = (this.#rtpTimestamp + 960) >>> 0;
 
-    return Buffer.concat([header, Buffer.from(cipher)]);
+    return Buffer.concat([header, ciphertext, authTag, nonceBuffer]);
   }
 }
 

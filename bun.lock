@@ -29,7 +29,7 @@
     },
     "packages/cache": {
       "name": "@chordjs/cache",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
         "@chordjs/utils": "^26.0.2",
@@ -40,7 +40,7 @@
     },
     "packages/cli": {
       "name": "@chordjs/cli",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "bin": {
         "chord": "./dist/index.js",
       },
@@ -59,11 +59,11 @@
     },
     "packages/config": {
       "name": "@chordjs/config",
-      "version": "26.0.8",
+      "version": "26.0.9",
     },
     "packages/core": {
       "name": "@chordjs/core",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/cache": "^26.0.2",
         "@chordjs/gateway": "^26.0.2",
@@ -77,7 +77,7 @@
     },
     "packages/framework": {
       "name": "@chordjs/framework",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/cache": "^26.0.6",
         "@chordjs/core": "^26.0.6",
@@ -95,7 +95,7 @@
     },
     "packages/gateway": {
       "name": "@chordjs/gateway",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
         "@chordjs/utils": "^26.0.8",
@@ -106,7 +106,7 @@
     },
     "packages/rest": {
       "name": "@chordjs/rest",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/utils": "^26.0.2",
       },
@@ -116,14 +116,14 @@
     },
     "packages/types": {
       "name": "@chordjs/types",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
     "packages/utils": {
       "name": "@chordjs/utils",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
       },
@@ -133,11 +133,10 @@
     },
     "packages/voice": {
       "name": "@chordjs/voice",
-      "version": "26.0.8",
+      "version": "26.0.9",
       "dependencies": {
         "@chordjs/types": "^26.0.8",
-        "@chordjs/utils": "^26.0.8",
-        "libsodium-wrappers": "^0.7.15",
+        "@chordjs/utils": "^26.0.9",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -554,10 +553,6 @@
     "keyv": ["keyv@4.5.4", "", { "dependencies": { "json-buffer": "3.0.1" } }, "sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw=="],
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
-
-    "libsodium": ["libsodium@0.7.16", "", {}, "sha512-3HrzSPuzm6Yt9aTYCDxYEG8x8/6C0+ag655Y7rhhWZM9PT4NpdnbqlzXhGZlDnkgR6MeSTnOt/VIyHLs9aSf+Q=="],
-
-    "libsodium-wrappers": ["libsodium-wrappers@0.7.16", "", { "dependencies": { "libsodium": "^0.7.16" } }, "sha512-Gtr/WBx4dKjvRL1pvfwZqu7gO6AfrQ0u9vFL+kXihtHf6NfkROR8pjYWn98MFDI3jN19Ii1ZUfPR9afGiPyfHg=="],
 
     "linkify-it": ["linkify-it@5.0.0", "", { "dependencies": { "uc.micro": "^2.0.0" } }, "sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ=="],
 

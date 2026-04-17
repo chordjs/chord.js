@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/framework",
-  "version": "26.0.9",
+  "version": "26.1.0",
   "description": "Umbrella framework package for Chord.js",
   "type": "module",
   "main": "dist/index.js",

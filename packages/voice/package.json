@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/voice",
-  "version": "26.0.9",
+  "version": "26.1.0",
   "description": "Discord Voice client for Chord.js",
   "license": "MIT",
   "publishConfig": {
@@ -34,8 +34,7 @@
   },
   "dependencies": {
     "@chordjs/types": "^26.0.8",
-    "@chordjs/utils": "^26.0.8",
-    "libsodium-wrappers": "^0.7.15"
+    "@chordjs/utils": "^26.0.9"
   },
   "devDependencies": {
     "typescript": "6.0.3"
