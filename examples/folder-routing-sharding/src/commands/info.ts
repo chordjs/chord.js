@@ -1,5 +1,4 @@
-import { Command, type PrefixCommandContext } from "@chordjs/framework";
-import { type APIEmbed } from "@chordjs/framework";
+import { Command, type PrefixCommandContext, EmbedBuilder } from "@chordjs/framework";
 
 export default class InfoCommand extends Command {
   constructor() {
@@ -10,19 +9,19 @@ export default class InfoCommand extends Command {
   }
 
   async run(context: PrefixCommandContext): Promise<void> {
-    const embed: APIEmbed = {
-      title: "Chord.js Bot Info",
-      description: "This is a basic information embed.",
-      color: 0x00ff00,
-      fields: [
+    const embed = new EmbedBuilder()
+      .setTitle("Chord.js Bot Info")
+      .setDescription("This is a premium information embed built with EmbedBuilder.")
+      .setColor(0x00ff00)
+      .addFields(
         { name: "Platform", value: process.platform, inline: true },
         { name: "Node Version", value: process.version, inline: true }
-      ]
-    };
+      )
+      .setTimestamp();
 
     await context.reply({
       content: "Here is the info you requested:",
-      embeds: [embed]
+      embeds: [embed.toJSON()]
     });
   }
 }
