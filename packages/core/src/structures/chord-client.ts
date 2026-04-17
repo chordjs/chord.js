@@ -74,10 +74,10 @@ export class ChordClient {
         prefix: options.prefix,
         reply: async (messagePayload, payload) => {
           const message = new Message(this, messagePayload as any);
-          return message.reply(payload);
+          return message.reply(payload as any);
         }
       });
-      this.container.register(PrefixCommandRouter, router);
+      this.container.register(Container.createToken<PrefixCommandRouter>("PrefixCommandRouter"), router);
 
       if (this.gateway) {
         this.gateway.onDispatch("MESSAGE_CREATE", async (data: any) => {
