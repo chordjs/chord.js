@@ -32,10 +32,11 @@ export async function generateCommand(type: string, name: string) {
                   normalizedType === 'listener' ? 'listeners' : 
                   normalizedType === 'interaction' ? 'interactions' : 
                   normalizedType === 'component' ? 'components' :
-                  normalizedType === 'modal' ? 'modals' : null;
+                  normalizedType === 'modal' ? 'modals' :
+                  normalizedType === 'plugin' ? 'plugins' : null;
 
   if (!dirName) {
-    console.error(chalk.red(`Error: Unknown type '${type}'. Valid types: command, listener, interaction, component, modal`));
+    console.error(chalk.red(`Error: Unknown type '${type}'. Valid types: command, listener, interaction, component, modal, plugin`));
     process.exit(1);
   }
 
@@ -67,11 +68,13 @@ export async function generateCommand(type: string, name: string) {
   // Imports
   if (isESM || isTS) {
     if (normalizedType === 'command') {
-      template += `import { Command, EmbedBuilder${isTS ? ', type PrefixCommandContext' : ''} } from '@chordjs/framework';\n\n`;
+      template += `import { Command, EmbedBuilder${isTS ? ', type PrefixCommandContext, type PieceContext' : ''} } from '@chordjs/framework';\n\n`;
     } else if (normalizedType === 'interaction') {
-      template += `import { Command, SlashCommandBuilder${isTS ? ', type InteractionCommandContext' : ''} } from '@chordjs/framework';\n\n`;
+      template += `import { InteractionCommand, SlashCommandBuilder${isTS ? ', type InteractionRunContext, type PieceContext' : ''} } from '@chordjs/framework';\n\n`;
     } else if (normalizedType === 'listener') {
-      template += `import { Listener } from '@chordjs/framework';\n\n`;
+      template += `import { Listener${isTS ? ', type PieceContext' : ''} } from '@chordjs/framework';\n\n`;
+    } else if (normalizedType === 'plugin') {
+      template += `import { ChordPlugin } from '@chordjs/framework';\nimport path from 'node:path';\n\n`;
     } else {
       template += `import { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } from '@chordjs/framework';\n\n`;
     }
@@ -79,86 +82,126 @@ export async function generateCommand(type: string, name: string) {
     if (normalizedType === 'command') {
       template += `const { Command, EmbedBuilder } = require('@chordjs/framework');\n\n`;
     } else if (normalizedType === 'interaction') {
-      template += `const { Command, SlashCommandBuilder } = require('@chordjs/framework');\n\n`;
+      template += `const { InteractionCommand, SlashCommandBuilder } = require('@chordjs/framework');\n\n`;
     } else if (normalizedType === 'listener') {
       template += `const { Listener } = require('@chordjs/framework');\n\n`;
+    } else if (normalizedType === 'plugin') {
+      template += `const { ChordPlugin } = require('@chordjs/framework');\nconst path = require('node:path');\n\n`;
     } else {
       template += `const { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } = require('@chordjs/framework');\n\n`;
     }
   }
 
-  // Export & Class definition
-  if (isESM || isTS) {
-    template += `export default class ${className} extends ${normalizedType === 'command' || normalizedType === 'interaction' ? 'Command' : normalizedType === 'listener' ? 'Listener' : normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} {\n`;
+  // Plugin has a special template
+  if (normalizedType === 'plugin') {
+    if (isESM || isTS) {
+      template += `export class ${className} extends ChordPlugin {\n`;
+    } else {
+      template += `class ${className} extends ChordPlugin {\n`;
+    }
+    template += `  name = '${name.toLowerCase()}';\n`;
+    template += `  version = '1.0.0';\n\n`;
+    if (isTS) {
+      template += `  async onLoad(): Promise<void> {\n`;
+    } else {
+      template += `  async onLoad() {\n`;
+    }
+    template += `    // Load plugin-specific commands and listeners\n`;
+    template += `    // await this.client.loader.loadCommandsFrom(path.join(import.meta.dirname, 'commands'));\n`;
+    template += `    // await this.client.loader.loadListenersFrom(path.join(import.meta.dirname, 'listeners'));\n`;
+    template += `    console.log('✅ ${className} loaded!');\n`;
+    template += `  }\n\n`;
+    if (isTS) {
+      template += `  onUnload(): void {\n`;
+    } else {
+      template += `  onUnload() {\n`;
+    }
+    template += `    console.log('👋 ${className} unloaded!');\n`;
+    template += `  }\n`;
+    template += `}\n`;
+    if (!isESM && !isTS) {
+      template += `\nmodule.exports = { ${className} };\n`;
+    }
   } else {
-    template += `class ${className} extends ${normalizedType === 'command' || normalizedType === 'interaction' ? 'Command' : normalizedType === 'listener' ? 'Listener' : normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} {\n`;
-  }
+    // Export & Class definition
+    const baseClass = normalizedType === 'command' ? 'Command' : 
+                      normalizedType === 'interaction' ? 'InteractionCommand' : 
+                      normalizedType === 'listener' ? 'Listener' : 
+                      normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1);
+    if (isESM || isTS) {
+      template += `export default class ${className} extends ${baseClass} {\n`;
+    } else {
+      template += `class ${className} extends ${baseClass} {\n`;
+    }
 
-  // Constructor
-  template += `  constructor() {\n`;
-  if (normalizedType === 'interaction') {
-    template += `    const builder = new SlashCommandBuilder()\n`;
-    template += `      .setName('${name.toLowerCase()}')\n`;
-    template += `      .setDescription('${name} interaction description');\n\n`;
-    template += `    super({\n`;
-    template += `      name: '${name.toLowerCase()}',\n`;
-    template += `      description: '${name} interaction description'\n`;
-    template += `    });\n`;
-    template += `    (this as any).slashBuilder = builder;\n`;
-  } else {
-    template += `    super({\n`;
-    if (normalizedType === 'command') {
+    // Constructor
+    if (isTS) {
+      template += `  constructor(context: PieceContext) {\n`;
+    } else {
+      template += `  constructor(context) {\n`;
+    }
+    if (normalizedType === 'interaction') {
+      template += `    super(context, {\n`;
+      template += `      name: '${name.toLowerCase()}',\n`;
+      template += `      description: '${name} interaction description'\n`;
+      template += `    });\n`;
+    } else if (normalizedType === 'command') {
+      template += `    super(context, {\n`;
       template += `      name: '${name.toLowerCase()}',\n`;
       template += `      description: '${name} command description'\n`;
+      template += `    });\n`;
     } else if (normalizedType === 'listener') {
-      template += `      event: 'ready' // Change to your desired event\n`;
+      template += `    super(context, {\n`;
+      template += `      event: 'MESSAGE_CREATE' // Change to your desired event\n`;
+      template += `    });\n`;
     } else {
+      template += `    super(context, {\n`;
       template += `      name: '${name.toLowerCase()}'\n`;
+      template += `    });\n`;
     }
-    template += `    });\n`;
-  }
-  template += `  }\n\n`;
+    template += `  }\n\n`;
 
-  // Run method
-  if (normalizedType === 'command') {
-    if (isTS) {
-      template += `  async run(context: PrefixCommandContext): Promise<void> {\n`;
-    } else {
-      template += `  async run(context) {\n`;
+    // Run method
+    if (normalizedType === 'command') {
+      if (isTS) {
+        template += `  async run(context: PrefixCommandContext): Promise<void> {\n`;
+      } else {
+        template += `  async run(context) {\n`;
+      }
+      template += `    const embed = new EmbedBuilder()\n`;
+      template += `      .setTitle('${name} Command')\n`;
+      template += `      .setDescription('Successfully executed the ${name} command!')\n`;
+      template += `      .setColor(0x5865F2)\n`;
+      template += `      .setTimestamp();\n\n`;
+      template += `    await context.reply({\n`;
+      template += `      embeds: [embed.toJSON()]\n`;
+      template += `    });\n`;
+      template += `  }\n`;
+    } else if (normalizedType === 'interaction') {
+      if (isTS) {
+        template += `  async run(context: InteractionRunContext): Promise<void> {\n`;
+      } else {
+        template += `  async run(context) {\n`;
+      }
+      template += `    await context.reply({\n`;
+      template += `      content: '${name} interaction executed successfully!'\n`;
+      template += `    });\n`;
+      template += `  }\n`;
+    } else if (normalizedType === 'listener') {
+      if (isTS) {
+        template += `  run(data: any): void {\n`;
+      } else {
+        template += `  run(data) {\n`;
+      }
+      template += `    console.log('${name} listener triggered!', data);\n`;
+      template += `  }\n`;
     }
-    template += `    const embed = new EmbedBuilder()\n`;
-    template += `      .setTitle('${name} Command')\n`;
-    template += `      .setDescription('Successfully executed the ${name} command!')\n`;
-    template += `      .setColor(0x5865F2)\n`;
-    template += `      .setTimestamp();\n\n`;
-    template += `    await context.reply({\n`;
-    template += `      embeds: [embed.toJSON()]\n`;
-    template += `    });\n`;
-    template += `  }\n`;
-  } else if (normalizedType === 'interaction') {
-    if (isTS) {
-      template += `  async run(context: InteractionCommandContext): Promise<void> {\n`;
-    } else {
-      template += `  async run(context) {\n`;
-    }
-    template += `    await context.reply({\n`;
-    template += `      content: '${name} interaction executed successfully!'\n`;
-    template += `    });\n`;
-    template += `  }\n`;
-  } else if (normalizedType === 'listener') {
-    if (isTS) {
-      template += `  run(...args: any[]): void {\n`;
-    } else {
-      template += `  run(...args) {\n`;
-    }
-    template += `    console.log('${name} listener executed!');\n`;
-    template += `  }\n`;
-  }
 
-  template += `}\n`;
+    template += `}\n`;
 
-  if (!isESM && !isTS) {
-    template += `\nmodule.exports = ${className};\n`;
+    if (!isESM && !isTS) {
+      template += `\nmodule.exports = ${className};\n`;
+    }
   }
 
   await fs.writeFile(targetPath, template);
