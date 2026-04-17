@@ -22,6 +22,41 @@ export class Member extends BaseEntity {
   }
 
   /**
+   * Voice state management for this member.
+   */
+  public get voice() {
+    return {
+      /**
+       * Mutes or unmutes the member.
+       */
+      setMute: async (mute: boolean, reason?: string) => {
+        if (!this.user) throw new Error("Cannot mute a member with no user data.");
+        await this.edit({ mute }, reason);
+      },
+      /**
+       * Deafens or undeafens the member.
+       */
+      setDeaf: async (deaf: boolean, reason?: string) => {
+        if (!this.user) throw new Error("Cannot deafen a member with no user data.");
+        await this.edit({ deaf }, reason);
+      },
+      /**
+       * Moves the member to a different voice channel.
+       */
+      setChannel: async (channelId: Snowflake | null, reason?: string) => {
+        if (!this.user) throw new Error("Cannot move a member with no user data.");
+        await this.edit({ channel_id: channelId }, reason);
+      },
+      /**
+       * Disconnects the member from voice.
+       */
+      disconnect: async (reason?: string) => {
+        await this.voice.setChannel(null, reason);
+      }
+    };
+  }
+
+  /**
    * The display name of the member.
    */
   public get displayName(): string {

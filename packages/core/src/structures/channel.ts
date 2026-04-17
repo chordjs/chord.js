@@ -4,7 +4,8 @@ import type { ChordClient } from "./chord-client.js";
 import { Routes } from "@chordjs/utils";
 import { awaitMessages, type CollectorOptions } from "../collectors/collector.js";
 import { Message } from "./message.js";
-import type { Message as APIMessage } from "@chordjs/types";
+import { Webhook } from "./webhook.js";
+import type { Message as APIMessage, Webhook as APIWebhook } from "@chordjs/types";
 
 /**
  * Represents a Discord Channel.
@@ -171,6 +172,28 @@ export class Channel extends BaseEntity {
   public async unpinMessage(messageId: Snowflake): Promise<void> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
     await this.client.rest.delete(`/channels/${this.id}/pins/${messageId}`);
+  }
+
+  /**
+   * Creates a webhook in this channel.
+   */
+  public async createWebhook(options: { name: string, avatar?: string | null, reason?: string }): Promise<Webhook> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const { reason, ...body } = options;
+    const data = await this.client.rest.post(`/channels/${this.id}/webhooks`, {
+      body: JSON.stringify(body),
+      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
+    }) as APIWebhook;
+    return new Webhook(this.client, data);
+  }
+
+  /**
+   * Fetches webhooks in this channel.
+   */
+  public async fetchWebhooks(): Promise<Webhook[]> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const data = await this.client.rest.get(`/channels/${this.id}/webhooks`) as APIWebhook[];
+    return data.map(w => new Webhook(this.client, w));
   }
 
   public toJSON(): APIChannel {

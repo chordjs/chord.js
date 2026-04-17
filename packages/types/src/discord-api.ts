@@ -462,6 +462,120 @@ export interface PollAnswerCount {
   me_voted: boolean;
 }
 
+// --- Stage Instance ---
+
+export interface StageInstance {
+  id: Snowflake;
+  guild_id: Snowflake;
+  channel_id: Snowflake;
+  topic: string;
+  privacy_level: number;
+  discoverable_disabled: boolean;
+  guild_scheduled_event_id: Snowflake | null;
+}
+
+// --- Scheduled Event ---
+
+export interface GuildScheduledEvent {
+  id: Snowflake;
+  guild_id: Snowflake;
+  channel_id: Snowflake | null;
+  creator_id?: Snowflake | null;
+  name: string;
+  description?: string | null;
+  scheduled_start_time: string;
+  scheduled_end_time: string | null;
+  privacy_level: number;
+  status: number;
+  entity_type: number;
+  entity_id: Snowflake | null;
+  entity_metadata: GuildScheduledEventEntityMetadata | null;
+  creator?: User;
+  user_count?: number;
+  image?: string | null;
+}
+
+export interface GuildScheduledEventEntityMetadata {
+  location?: string;
+}
+
+// --- Stickers ---
+
+export interface Sticker {
+  id: Snowflake;
+  pack_id?: Snowflake;
+  name: string;
+  description: string | null;
+  tags: string;
+  type: number;
+  format_type: number;
+  available?: boolean;
+  guild_id?: Snowflake;
+  user?: User;
+  sort_value?: number;
+}
+
+export interface StickerPack {
+  id: Snowflake;
+  stickers: Sticker[];
+  name: string;
+  sku_id: Snowflake;
+  cover_sticker_id?: Snowflake;
+  description: string;
+  banner_asset_id?: Snowflake;
+}
+
+// --- Monetization ---
+
+export interface SKU {
+  id: Snowflake;
+  type: number;
+  application_id: Snowflake;
+  name: string;
+  slug: string;
+  flags: number;
+}
+
+export interface Entitlement {
+  id: Snowflake;
+  sku_id: Snowflake;
+  application_id: Snowflake;
+  user_id?: Snowflake;
+  guild_id?: Snowflake;
+  type: number;
+  deleted: boolean;
+  starts_at?: string;
+  ends_at?: string;
+}
+
+// --- Webhooks ---
+
+export interface Webhook {
+  id: Snowflake;
+  type: number;
+  guild_id?: Snowflake | null;
+  channel_id: Snowflake | null;
+  user?: User;
+  name: string | null;
+  avatar: string | null;
+  token?: string;
+  application_id: Snowflake | null;
+  source_guild?: Partial<Guild>;
+  source_channel?: Partial<Channel>;
+  url?: string;
+}
+
+// --- Application Role Connections ---
+
+export interface ApplicationRoleConnectionMetadata {
+  type: number;
+  key: string;
+  name: string;
+  name_localizations?: Record<string, string>;
+  description: string;
+  description_localizations?: Record<string, string>;
+}
+
 // ============================================================
 // REST payload helpers used by the core framework
 // ============================================================

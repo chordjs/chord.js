@@ -18,6 +18,8 @@ export interface ApplicationCommandOption {
   autocomplete?: boolean;
   choices?: Array<{ name: string; value: string | number }>;
   options?: ApplicationCommandOption[];
+  nameLocalizations?: Record<string, string>;
+  descriptionLocalizations?: Record<string, string>;
 }
 
 export interface ApplicationCommandPayload {
@@ -25,12 +27,16 @@ export interface ApplicationCommandPayload {
   description?: string;
   type?: number;
   options?: ApplicationCommandOption[];
+  nameLocalizations?: Record<string, string>;
+  descriptionLocalizations?: Record<string, string>;
 }
 
 export interface InteractionCommandOptions extends PieceOptions {
   description?: string;
   type?: number;
   options?: ApplicationCommandOption[];
+  nameLocalizations?: Record<string, string>;
+  descriptionLocalizations?: Record<string, string>;
 }
 
 export interface InteractionRunContext {
@@ -85,12 +91,16 @@ export abstract class InteractionCommand extends Piece {
   public readonly description: string;
   public readonly type?: number;
   public readonly options: ApplicationCommandOption[];
+  public readonly nameLocalizations?: Record<string, string>;
+  public readonly descriptionLocalizations?: Record<string, string>;
 
   protected constructor(context: PieceContext, options: InteractionCommandOptions = {}) {
     super(context, options);
     this.description = options.description ?? "";
     this.type = options.type;
     this.options = options.options ?? [];
+    this.nameLocalizations = options.nameLocalizations;
+    this.descriptionLocalizations = options.descriptionLocalizations;
   }
 
   toApplicationCommand(): ApplicationCommandPayload {
@@ -102,6 +112,8 @@ export abstract class InteractionCommand extends Piece {
     }
     if (this.type) payload.type = this.type;
     if (this.options && this.options.length > 0) payload.options = this.options;
+    if (this.nameLocalizations) payload.nameLocalizations = this.nameLocalizations;
+    if (this.descriptionLocalizations) payload.descriptionLocalizations = this.descriptionLocalizations;
     return payload;
   }
 
