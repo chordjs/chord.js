@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/rest",
-  "version": "26.0.2",
+  "version": "26.0.3",
   "description": "Discord REST client for Chord.js (implemented from scratch).",
   "license": "MIT",
   "publishConfig": {
@@ -33,7 +33,7 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/utils": "workspace:*"
+    "@chordjs/utils": "^26.0.2"
   },
   "devDependencies": {
     "typescript": "^5.9.2"
