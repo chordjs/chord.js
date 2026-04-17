@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run src/main.ts",
+    "dev": "chord dev",
+    "build": "chord build",
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {

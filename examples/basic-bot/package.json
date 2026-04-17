@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/main.ts",
-    "start": "bun run src/main.ts",
-    "build": "bun build ./src/main.ts --outdir ./dist --target bun",
+    "dev": "chord dev",
+    "start": "node dist/main.js",
+    "build": "chord build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
