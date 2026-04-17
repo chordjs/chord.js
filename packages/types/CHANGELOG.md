@@ -1,4 +1,4 @@
-# @chord.js/types
+# @chordjs/types
 
 ## 0.1.0
 

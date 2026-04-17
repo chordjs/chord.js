@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@chord.js/*": ["../../packages/*/src/index.ts"]
+      "@chordjs/*": ["../../packages/*/src/index.ts"]
     }
   },
   "include": ["src/**/*"]

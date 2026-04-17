@@ -1,4 +1,4 @@
-import { sleep } from "@chord.js/utils";
+import { sleep } from "@chordjs/utils";
 import {
   VoiceOpcode,
   type Snowflake,
@@ -9,7 +9,7 @@ import {
   type VoiceSelectProtocol,
   type VoiceSessionDescription,
   type VoiceSpeaking
-} from "@chord.js/types";
+} from "@chordjs/types";
 import dgram from "node:dgram";
 import { createRequire } from "node:module";
 

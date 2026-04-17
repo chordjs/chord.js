@@ -1,7 +1,7 @@
 import { BaseManager } from "../structures/manager.js";
 import { User } from "../structures/user.js";
-import type { Snowflake, User as APIUser } from "@chord.js/types";
-import { Routes } from "@chord.js/utils";
+import type { Snowflake, User as APIUser } from "@chordjs/types";
+import { Routes } from "@chordjs/utils";
 
 /**
  * Manager for Users.

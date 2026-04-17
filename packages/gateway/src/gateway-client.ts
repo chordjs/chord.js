@@ -1,4 +1,4 @@
-import { sleep } from "@chord.js/utils";
+import { sleep } from "@chordjs/utils";
 import {
   resolveGatewayIntents,
   GatewayOpcode,
@@ -11,7 +11,7 @@ import {
   type GatewayInvalidSession,
   type GatewayPayload,
   type GatewayPresence
-} from "@chord.js/types";
+} from "@chordjs/types";
 import { inflateSync } from "node:zlib";
 
 export interface GatewayClientOptions {

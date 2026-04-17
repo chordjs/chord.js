@@ -16,34 +16,34 @@
       },
     },
     "examples/basic-bot": {
-      "name": "@chord.js/example-basic-bot",
+      "name": "@chordjs/example-basic-bot",
       "dependencies": {
-        "@chord.js/core": "workspace:*",
-        "@chord.js/gateway": "workspace:*",
-        "@chord.js/rest": "workspace:*",
+        "@chordjs/core": "workspace:*",
+        "@chordjs/gateway": "workspace:*",
+        "@chordjs/rest": "workspace:*",
       },
     },
     "examples/folder-routing-sharding": {
-      "name": "@chord.js/example-folder-routing-sharding",
+      "name": "@chordjs/example-folder-routing-sharding",
       "dependencies": {
-        "@chord.js/core": "workspace:*",
-        "@chord.js/gateway": "workspace:*",
-        "@chord.js/rest": "workspace:*",
+        "@chordjs/core": "workspace:*",
+        "@chordjs/gateway": "workspace:*",
+        "@chordjs/rest": "workspace:*",
       },
     },
     "packages/cache": {
-      "name": "@chord.js/cache",
+      "name": "@chordjs/cache",
       "version": "0.1.0",
       "dependencies": {
-        "@chord.js/types": "workspace:*",
-        "@chord.js/utils": "workspace:*",
+        "@chordjs/types": "workspace:*",
+        "@chordjs/utils": "workspace:*",
       },
       "devDependencies": {
         "typescript": "^5.9.2",
       },
     },
     "packages/cli": {
-      "name": "@chord.js/cli",
+      "name": "@chordjs/cli",
       "version": "0.1.0",
       "bin": {
         "chord": "./dist/index.js",
@@ -62,29 +62,29 @@
       },
     },
     "packages/config": {
-      "name": "@chord.js/config",
+      "name": "@chordjs/config",
       "version": "0.1.0",
     },
     "packages/core": {
-      "name": "@chord.js/core",
+      "name": "@chordjs/core",
       "version": "0.1.0",
       "dependencies": {
-        "@chord.js/cache": "workspace:*",
-        "@chord.js/gateway": "workspace:*",
-        "@chord.js/rest": "workspace:*",
-        "@chord.js/types": "workspace:*",
-        "@chord.js/utils": "workspace:*",
+        "@chordjs/cache": "workspace:*",
+        "@chordjs/gateway": "workspace:*",
+        "@chordjs/rest": "workspace:*",
+        "@chordjs/types": "workspace:*",
+        "@chordjs/utils": "workspace:*",
       },
       "devDependencies": {
         "typescript": "^5.9.2",
       },
     },
     "packages/gateway": {
-      "name": "@chord.js/gateway",
+      "name": "@chordjs/gateway",
       "version": "0.1.0",
       "dependencies": {
-        "@chord.js/types": "workspace:*",
-        "@chord.js/utils": "workspace:*",
+        "@chordjs/types": "workspace:*",
+        "@chordjs/utils": "workspace:*",
         "libsodium-wrappers": "^0.7.15",
       },
       "devDependencies": {
@@ -92,27 +92,27 @@
       },
     },
     "packages/rest": {
-      "name": "@chord.js/rest",
+      "name": "@chordjs/rest",
       "version": "0.1.0",
       "dependencies": {
-        "@chord.js/utils": "workspace:*",
+        "@chordjs/utils": "workspace:*",
       },
       "devDependencies": {
         "typescript": "^5.9.2",
       },
     },
     "packages/types": {
-      "name": "@chord.js/types",
+      "name": "@chordjs/types",
       "version": "0.1.0",
       "devDependencies": {
         "typescript": "^5.9.2",
       },
     },
     "packages/utils": {
-      "name": "@chord.js/utils",
+      "name": "@chordjs/utils",
       "version": "0.1.0",
       "dependencies": {
-        "@chord.js/types": "workspace:*",
+        "@chordjs/types": "workspace:*",
       },
       "devDependencies": {
         "typescript": "^5.9.2",
@@ -158,25 +158,25 @@
 
     "@changesets/write": ["@changesets/write@0.4.0", "", { "dependencies": { "@changesets/types": "^6.1.0", "fs-extra": "^7.0.1", "human-id": "^4.1.1", "prettier": "^2.7.1" } }, "sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q=="],
 
-    "@chord.js/cache": ["@chord.js/cache@workspace:packages/cache"],
+    "@chordjs/cache": ["@chordjs/cache@workspace:packages/cache"],
 
-    "@chord.js/cli": ["@chord.js/cli@workspace:packages/cli"],
+    "@chordjs/cli": ["@chordjs/cli@workspace:packages/cli"],
 
-    "@chord.js/config": ["@chord.js/config@workspace:packages/config"],
+    "@chordjs/config": ["@chordjs/config@workspace:packages/config"],
 
-    "@chord.js/core": ["@chord.js/core@workspace:packages/core"],
+    "@chordjs/core": ["@chordjs/core@workspace:packages/core"],
 
-    "@chord.js/example-basic-bot": ["@chord.js/example-basic-bot@workspace:examples/basic-bot"],
+    "@chordjs/example-basic-bot": ["@chordjs/example-basic-bot@workspace:examples/basic-bot"],
 
-    "@chord.js/example-folder-routing-sharding": ["@chord.js/example-folder-routing-sharding@workspace:examples/folder-routing-sharding"],
+    "@chordjs/example-folder-routing-sharding": ["@chordjs/example-folder-routing-sharding@workspace:examples/folder-routing-sharding"],
 
-    "@chord.js/gateway": ["@chord.js/gateway@workspace:packages/gateway"],
+    "@chordjs/gateway": ["@chordjs/gateway@workspace:packages/gateway"],
 
-    "@chord.js/rest": ["@chord.js/rest@workspace:packages/rest"],
+    "@chordjs/rest": ["@chordjs/rest@workspace:packages/rest"],
 
-    "@chord.js/types": ["@chord.js/types@workspace:packages/types"],
+    "@chordjs/types": ["@chordjs/types@workspace:packages/types"],
 
-    "@chord.js/utils": ["@chord.js/utils@workspace:packages/utils"],
+    "@chordjs/utils": ["@chordjs/utils@workspace:packages/utils"],
 
     "@inquirer/external-editor": ["@inquirer/external-editor@1.0.3", "", { "dependencies": { "chardet": "^2.1.1", "iconv-lite": "^0.7.0" }, "peerDependencies": { "@types/node": ">=18" }, "optionalPeers": ["@types/node"] }, "sha512-RWbSrDiYmO4LbejWY7ttpxczuwQyZLBUyygsA9Nsv95hpzUWwnNTVQmAq3xuh7vNwCp07UTmE5i11XAEExx4RA=="],
 

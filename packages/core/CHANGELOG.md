@@ -1,4 +1,4 @@
-# @chord.js/core
+# @chordjs/core
 
 ## 0.1.0
 

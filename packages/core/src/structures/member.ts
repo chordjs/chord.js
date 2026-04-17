@@ -1,7 +1,7 @@
-import type { GuildMember as APIGuildMember, Snowflake } from "@chord.js/types";
+import type { GuildMember as APIGuildMember, Snowflake } from "@chordjs/types";
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
-import { Routes } from "@chord.js/utils";
+import { Routes } from "@chordjs/utils";
 import { User } from "./user.js";
 
 /**

@@ -10,7 +10,7 @@ import {
   type PrefixCommandContext,
   type PrefixMessageLike,
   type PrefixReplyPayload
-} from "@chord.js/core";
+} from "@chordjs/core";
 import {
   ClusterManager,
   GatewayClient,
@@ -18,8 +18,8 @@ import {
   resolveShardCount,
   ShardManager,
   splitShardsIntoClusters
-} from "@chord.js/gateway";
-import { RestClient } from "@chord.js/rest";
+} from "@chordjs/gateway";
+import { RestClient } from "@chordjs/rest";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -234,7 +234,7 @@ async function main(): Promise<void> {
       clusters: clusterCount,
       shards: shardCount
     });
-    console.log("note: process mode uses worker bootstrap from @chord.js/gateway.");
+    console.log("note: process mode uses worker bootstrap from @chordjs/gateway.");
     return;
   }
 

@@ -1,4 +1,4 @@
-# @chord.js/gateway
+# @chordjs/gateway
 
 ## 0.1.0
 
@@ -13,5 +13,5 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @chord.js/types@0.1.0
-  - @chord.js/utils@0.1.0
+  - @chordjs/types@0.1.0
+  - @chordjs/utils@0.1.0

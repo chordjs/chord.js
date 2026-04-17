@@ -1,4 +1,4 @@
-import type { APIEmbed } from "@chord.js/types";
+import type { APIEmbed } from "@chordjs/types";
 
 export class EmbedBuilder {
   public data: Partial<APIEmbed>;

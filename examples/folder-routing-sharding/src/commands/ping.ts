@@ -1,4 +1,4 @@
-import { Command, type PrefixCommandContext } from "@chord.js/core";
+import { Command, type PrefixCommandContext } from "@chordjs/core";
 
 export default class PingCommand extends Command {
   constructor() {

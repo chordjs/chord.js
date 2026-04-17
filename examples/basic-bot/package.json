@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/example-basic-bot",
+  "name": "@chordjs/example-basic-bot",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,8 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chord.js/core": "workspace:*",
-    "@chord.js/gateway": "workspace:*",
-    "@chord.js/rest": "workspace:*"
+    "@chordjs/core": "workspace:*",
+    "@chordjs/gateway": "workspace:*",
+    "@chordjs/rest": "workspace:*"
   }
 }

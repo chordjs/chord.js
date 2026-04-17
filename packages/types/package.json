@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/types",
+  "name": "@chordjs/types",
   "version": "0.1.0",
   "description": "Discord API & Gateway types for Chord.js.",
   "license": "MIT",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/chord.js.git",
+    "url": "git+https://github.com/chordjs/chord.js.git",
     "directory": "packages/types"
   },
-  "homepage": "https://github.com/Agent0876/chord.js/tree/main/packages/types#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/types#readme",
   "type": "module",
   "sideEffects": false,
   "files": [

@@ -1,7 +1,7 @@
 import { BaseManager } from "../structures/manager.js";
 import { Guild } from "../structures/guild.js";
-import type { Snowflake, Guild as APIGuild } from "@chord.js/types";
-import { Routes } from "@chord.js/utils";
+import type { Snowflake, Guild as APIGuild } from "@chordjs/types";
+import { Routes } from "@chordjs/utils";
 
 /**
  * Manager for Guilds.

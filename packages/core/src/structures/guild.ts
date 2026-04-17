@@ -1,7 +1,7 @@
-import type { Guild as APIGuild, Snowflake } from "@chord.js/types";
+import type { Guild as APIGuild, Snowflake } from "@chordjs/types";
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
-import { Routes } from "@chord.js/utils";
+import { Routes } from "@chordjs/utils";
 
 /**
  * Represents a Discord Guild.

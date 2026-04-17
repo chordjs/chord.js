@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/rest",
+  "name": "@chordjs/rest",
   "version": "0.1.0",
   "description": "Discord REST client for Chord.js (implemented from scratch).",
   "license": "MIT",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/chord.js.git",
+    "url": "git+https://github.com/chordjs/chord.js.git",
     "directory": "packages/rest"
   },
-  "homepage": "https://github.com/Agent0876/chord.js/tree/main/packages/rest#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/rest#readme",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -33,7 +33,7 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chord.js/utils": "workspace:*"
+    "@chordjs/utils": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

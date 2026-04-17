@@ -1,4 +1,4 @@
-import { sleep } from "@chord.js/utils";
+import { sleep } from "@chordjs/utils";
 
 export interface RestClientOptions {
   token: string;

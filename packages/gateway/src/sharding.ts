@@ -1,4 +1,4 @@
-import { sleep } from "@chord.js/utils";
+import { sleep } from "@chordjs/utils";
 import { GatewayClient, type GatewayClientOptions, type GatewayMetrics } from "./gateway-client.js";
 
 export interface IdentifySchedulerOptions {

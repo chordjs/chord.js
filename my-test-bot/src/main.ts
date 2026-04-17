@@ -1,6 +1,6 @@
-import { ChordClient, PrefixCommandRouter, Command, type PrefixReplyPayload } from "@chord.js/core";
-import { GatewayClient } from "@chord.js/gateway";
-import { RestClient } from "@chord.js/rest";
+import { ChordClient, PrefixCommandRouter, Command, type PrefixReplyPayload } from "@chordjs/core";
+import { GatewayClient } from "@chordjs/gateway";
+import { RestClient } from "@chordjs/rest";
 
 class PingCommand extends Command {
   constructor() {

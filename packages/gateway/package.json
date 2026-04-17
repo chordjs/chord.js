@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/gateway",
+  "name": "@chordjs/gateway",
   "version": "0.1.0",
   "description": "Discord Gateway client for Chord.js (implemented from scratch).",
   "license": "MIT",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/chord.js.git",
+    "url": "git+https://github.com/chordjs/chord.js.git",
     "directory": "packages/gateway"
   },
-  "homepage": "https://github.com/Agent0876/chord.js/tree/main/packages/gateway#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/gateway#readme",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -33,8 +33,8 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chord.js/types": "workspace:*",
-    "@chord.js/utils": "workspace:*",
+    "@chordjs/types": "workspace:*",
+    "@chordjs/utils": "workspace:*",
     "libsodium-wrappers": "^0.7.15"
   },
   "devDependencies": {

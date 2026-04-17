@@ -1,4 +1,4 @@
-# @chord.js/utils
+# @chordjs/utils
 
 ## 0.1.0
 

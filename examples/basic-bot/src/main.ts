@@ -1,4 +1,4 @@
-import { ChordClient, GatewayClient, RestClient, GatewayIntentBits } from "@chord.js/core";
+import { ChordClient, GatewayClient, RestClient, GatewayIntentBits } from "@chordjs/core";
 import path from "node:path";
 
 /**

@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/cli",
+  "name": "@chordjs/cli",
   "version": "0.1.0",
   "description": "The official CLI for Chord.js framework.",
   "license": "MIT",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/chord.js.git",
+    "url": "git+https://github.com/chordjs/chord.js.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/Agent0876/chord.js/tree/main/packages/cli#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/cli#readme",
   "type": "module",
   "bin": {
     "chord": "./dist/index.js"

@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/example-folder-routing-sharding",
+  "name": "@chordjs/example-folder-routing-sharding",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,8 +7,8 @@
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
-    "@chord.js/core": "workspace:*",
-    "@chord.js/gateway": "workspace:*",
-    "@chord.js/rest": "workspace:*"
+    "@chordjs/core": "workspace:*",
+    "@chordjs/gateway": "workspace:*",
+    "@chordjs/rest": "workspace:*"
   }
 }

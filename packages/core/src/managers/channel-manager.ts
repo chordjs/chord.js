@@ -1,7 +1,7 @@
 import { BaseManager } from "../structures/manager.js";
 import { Channel } from "../structures/channel.js";
-import type { Snowflake, Channel as APIChannel } from "@chord.js/types";
-import { Routes } from "@chord.js/utils";
+import type { Snowflake, Channel as APIChannel } from "@chordjs/types";
+import { Routes } from "@chordjs/utils";
 
 /**
  * Manager for Channels.

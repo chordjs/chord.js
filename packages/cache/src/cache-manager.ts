@@ -1,5 +1,5 @@
 import { BaseCache } from "./base-cache.js";
-import type { User, Guild, Channel, GuildMember } from "@chord.js/types";
+import type { User, Guild, Channel, GuildMember } from "@chordjs/types";
 
 export interface CacheManagerOptions {
   users?: { maxSize?: number };

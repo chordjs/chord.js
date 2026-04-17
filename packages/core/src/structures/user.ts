@@ -1,4 +1,4 @@
-import type { User as APIUser, Snowflake } from "@chord.js/types";
+import type { User as APIUser, Snowflake } from "@chordjs/types";
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
 

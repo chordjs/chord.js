@@ -1,4 +1,4 @@
-import { Collection } from "@chord.js/utils";
+import { Collection } from "@chordjs/utils";
 
 export interface BaseCacheOptions {
   maxSize?: number;

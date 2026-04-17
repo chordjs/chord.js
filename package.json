@@ -23,12 +23,12 @@
   "author": "Agent0876 <Agent0876@users.noreply.github.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/chord.js.git"
+    "url": "git+https://github.com/chordjs/chord.js.git"
   },
   "bugs": {
-    "url": "https://github.com/Agent0876/chord.js/issues"
+    "url": "https://github.com/chordjs/chord.js/issues"
   },
-  "homepage": "https://github.com/Agent0876/chord.js#readme",
+  "homepage": "https://github.com/chordjs/chord.js#readme",
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
     "@swc/cli": "^0.7.8",

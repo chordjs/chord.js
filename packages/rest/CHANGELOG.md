@@ -1,4 +1,4 @@
-# @chord.js/rest
+# @chordjs/rest
 
 ## 0.1.0
 
@@ -13,4 +13,4 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @chord.js/utils@0.1.0
+  - @chordjs/utils@0.1.0

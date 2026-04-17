@@ -9,7 +9,7 @@
 - [x] 빌드 파이프라인 고속화 (`swc` + `tsc --emitDeclarationOnly`)
 - [x] 패키지 버전/릴리즈 전략 정리 (changesets 등)
 
-## 1) `@chord.js/types` (스키마/타입)
+## 1) `@chordjs/types` (스키마/타입)
 
 - [x] Gateway opcode / 기본 payload 타입
 - [x] Identify presence 타입 추가
@@ -17,7 +17,7 @@
 - [x] Gateway DISPATCH 이벤트 타입 최소셋 (READY, RESUMED, MESSAGE_CREATE, INTERACTION_CREATE)
 - [x] 타입 생성/동기화 전략 결정 (수기 vs 스키마 기반)
 
-## 2) `@chord.js/gateway` (Gateway 구현)
+## 2) `@chordjs/gateway` (Gateway 구현)
 
 - [x] HELLO → Heartbeat → Identify/Resume 상태머신
 - [x] zlib-stream 수신/inflate 처리
@@ -29,7 +29,7 @@
 - [x] Dispatch 라우팅 레이어 (이벤트별 핸들러 등록, 타입 안전)
 - [x] Voice gateway (선택)
 
-## 3) `@chord.js/rest` (REST 구현)
+## 3) `@chordjs/rest` (REST 구현)
 
 - [x] 버킷 기반 rate-limit 큐잉(최소)
 - [x] route 정규화(major parameter 일부 반영)
@@ -39,7 +39,7 @@
 - [x] 에러 바디 파싱/구조화 (Discord API error JSON)
 - [x] 파일 업로드(multipart) 지원
 
-## 4) `@chord.js/core` (프레임워크: Sapphire 스타일)
+## 4) `@chordjs/core` (프레임워크: Sapphire 스타일)
 
 - [x] Piece/Store/Container/Client 골격
 - [x] Loader (commands/listeners 폴더 자동 로드)
@@ -101,7 +101,7 @@
 
 ## 11) 테스트 보강 (최우선)
 
-- [ ] `@chord.js/rest` 단위 테스트 신설 (`packages/rest/tests/`)
+- [ ] `@chordjs/rest` 단위 테스트 신설 (`packages/rest/tests/`)
   - [ ] rate-limit 버킷 큐잉/동시성 테스트
   - [ ] 429 재시도 + global rate-limit 테스트
   - [ ] multipart 업로드 테스트
@@ -118,7 +118,7 @@
   - [ ] RTP 암호화 패킷 구조 검증
 - [ ] `PieceLoader` 단위 테스트 (폴더 로딩, factory/class/instance 등)
 
-## 12) `@chord.js/types` 확장
+## 12) `@chordjs/types` 확장
 
 - [ ] Gateway DISPATCH 이벤트 타입 확장
   - [ ] Guild 이벤트 (`GUILD_CREATE`, `GUILD_UPDATE`, `GUILD_DELETE`)
@@ -159,7 +159,7 @@
 - [ ] `EmbedBuilder` — 타입 안전 Embed 빌더 (discord.js 스타일)
 - [ ] `PermissionsBitField` — 권한 비트 유틸 (`has()`, `add()`, `remove()`, `toArray()`)
 - [ ] REST API Routes 헬퍼 (`Routes.channelMessages(id)` 등 타입 안전 경로)
-- [ ] 내장 Logger (`@chord.js/utils`) — 레벨/포맷/컬러 지원, `console.*` 대체
+- [ ] 내장 Logger (`@chordjs/utils`) — 레벨/포맷/컬러 지원, `console.*` 대체
 - [ ] `Collection` 클래스 (`Map` 확장, `filter()`, `find()`, `map()`, `sort()` 등)
 
 ## 15) 상호작용 확장
@@ -174,7 +174,7 @@
 
 ## 16) 캐시/상태 레이어
 
-- [x] Guild/Channel/User/Member 인메모리 캐시 (`@chord.js/cache`)
+- [x] Guild/Channel/User/Member 인메모리 캐시 (`@chordjs/cache`)
   - [x] Dispatch 이벤트 기반 자동 갱신 (GUILD_CREATE → cache upsert)
   - [x] 캐시 옵션 (maxSize, sweepInterval, TTL)
   - [x] 캐시 비활성화 모드 (zero-cache for stateless workers)

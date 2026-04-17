@@ -5,7 +5,7 @@ import type {
   APIAllowedMentions,
   MessageFlags,
   GatewayDispatchDataMap
-} from "@chord.js/types";
+} from "@chordjs/types";
 
 export interface ModalReplyPayload {
   content?: string;

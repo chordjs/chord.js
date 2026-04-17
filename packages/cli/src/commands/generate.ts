@@ -31,7 +31,7 @@ export async function generateCommand(type: string, name: string) {
 
   switch (normalizedType) {
     case 'command':
-      template = `import { Command, type PrefixReplyPayload } from '@chord.js/core';
+      template = `import { Command, type PrefixReplyPayload } from '@chordjs/core';
 
 export default class ${className} extends Command {
   constructor() {
@@ -48,7 +48,7 @@ export default class ${className} extends Command {
 `;
       break;
     case 'listener':
-      template = `import { Listener } from '@chord.js/core';
+      template = `import { Listener } from '@chordjs/core';
 
 export default class ${className} extends Listener {
   constructor() {
@@ -64,7 +64,7 @@ export default class ${className} extends Listener {
 `;
       break;
     default:
-      template = `import { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } from '@chord.js/core';
+      template = `import { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } from '@chordjs/core';
 
 export default class ${className} extends ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} {
   constructor() {

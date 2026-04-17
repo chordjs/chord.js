@@ -1,4 +1,4 @@
-import { Listener } from "@chord.js/core";
+import { Listener } from "@chordjs/core";
 
 export default class ReadyListener extends Listener<"READY"> {
   constructor() {

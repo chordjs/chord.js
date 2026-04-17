@@ -1,4 +1,4 @@
-import { InteractionTypes, type GatewayDispatchDataMap } from "@chord.js/types";
+import { InteractionTypes, type GatewayDispatchDataMap } from "@chordjs/types";
 import type { Store } from "../structures/store.js";
 import type { ChordClient } from "../structures/chord-client.js";
 import {

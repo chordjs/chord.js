@@ -5,7 +5,7 @@ import type {
   APIMessageReference,
   APIMessageTopLevelComponent,
   MessageFlags
-} from "@chord.js/types";
+} from "@chordjs/types";
 
 export interface ApplicationCommandOption {
   type: number;

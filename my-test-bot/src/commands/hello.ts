@@ -1,4 +1,4 @@
-import { Command, type PrefixReplyPayload } from '@chord.js/core';
+import { Command, type PrefixReplyPayload } from '@chordjs/core';
 
 export default class HelloCommand extends Command {
   constructor() {

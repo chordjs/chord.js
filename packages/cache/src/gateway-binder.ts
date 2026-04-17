@@ -1,4 +1,4 @@
-import type { GatewayDispatchDataMap } from "@chord.js/types";
+import type { GatewayDispatchDataMap } from "@chordjs/types";
 import type { CacheManager } from "./cache-manager.js";
 
 export interface GatewayEventEmitter {

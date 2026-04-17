@@ -2,8 +2,8 @@
 
 **A powerful, type-safe Discord bot framework for modern TypeScript & Bun.**
 
-[![npm version](https://img.shields.io/npm/v/@chord.js/core.svg?style=flat-square)](https://www.npmjs.com/package/@chord.js/core)
-[![license](https://img.shields.io/npm/l/@chord.js/core.svg?style=flat-square)](https://github.com/chord-js/chord.js/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@chordjs/core.svg?style=flat-square)](https://www.npmjs.com/package/@chordjs/core)
+[![license](https://img.shields.io/npm/l/@chordjs/core.svg?style=flat-square)](https://github.com/chord-js/chord.js/blob/main/LICENSE)
 [![ci](https://github.com/chord-js/chord.js/actions/workflows/ci.yml/badge.svg)](https://github.com/chord-js/chord.js/actions)
 
 Chord.js is a modular Discord framework inspired by **discord.js** and **Sapphire**, built from the ground up for performance with **Bun** and **TypeScript native** support.
@@ -18,12 +18,12 @@ Chord.js is a modular Discord framework inspired by **discord.js** and **Sapphir
 
 ## 📦 Packages
 
-- [`@chord.js/core`](./packages/core): The core framework, pieces, and routers.
-- [`@chord.js/gateway`](./packages/gateway): Gateway, Sharding, Clustering, and Voice support.
-- [`@chord.js/cache`](./packages/cache): High-performance in-memory caching layer.
-- [`@chord.js/rest`](./packages/rest): Robust Discord REST client with rate-limit management.
-- [`@chord.js/types`](./packages/types): Comprehensive Discord API and Gateway types.
-- [`@chord.js/utils`](./packages/utils): Common utilities and builders.
+- [`@chordjs/core`](./packages/core): The core framework, pieces, and routers.
+- [`@chordjs/gateway`](./packages/gateway): Gateway, Sharding, Clustering, and Voice support.
+- [`@chordjs/cache`](./packages/cache): High-performance in-memory caching layer.
+- [`@chordjs/rest`](./packages/rest): Robust Discord REST client with rate-limit management.
+- [`@chordjs/types`](./packages/types): Comprehensive Discord API and Gateway types.
+- [`@chordjs/utils`](./packages/utils): Common utilities and builders.
 
 ## 🛠️ Getting Started
 
@@ -31,7 +31,7 @@ The easiest way to start is using the official CLI:
 
 ```bash
 # Create a new project
-bunx @chord.js/cli init my-bot
+bunx @chordjs/cli init my-bot
 
 # Navigate to project
 cd my-bot
@@ -43,7 +43,7 @@ bun run dev
 ### 📦 Manual Installation
 
 ```bash
-bun install @chord.js/core @chord.js/gateway
+bun install @chordjs/core @chordjs/gateway
 ```
 
 ## 🛠️ CLI Usage

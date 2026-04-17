@@ -1,4 +1,4 @@
-import type { GatewayDispatchDataMap, InteractionTypes } from "@chord.js/types";
+import type { GatewayDispatchDataMap, InteractionTypes } from "@chordjs/types";
 
 export interface GatewayEventEmitter {
   onDispatch(event: string, handler: (data: any) => void | Promise<void>): unknown;

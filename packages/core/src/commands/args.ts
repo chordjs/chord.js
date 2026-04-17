@@ -1,4 +1,4 @@
-import type { Snowflake } from "@chord.js/types";
+import type { Snowflake } from "@chordjs/types";
 import type { ChordClient } from "../structures/chord-client.js";
 import type { User } from "../structures/user.js";
 

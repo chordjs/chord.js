@@ -2,10 +2,10 @@
 
 ## Packages
 
-- `@chord.js/types`: shared protocol/data types.
-- `@chord.js/rest`: Discord REST with route normalization + rate-limit handling.
-- `@chord.js/gateway`: main gateway + sharding + clustering + voice gateway.
-- `@chord.js/core`: framework layer (pieces/stores/loaders/routers/hooks).
+- `@chordjs/types`: shared protocol/data types.
+- `@chordjs/rest`: Discord REST with route normalization + rate-limit handling.
+- `@chordjs/gateway`: main gateway + sharding + clustering + voice gateway.
+- `@chordjs/core`: framework layer (pieces/stores/loaders/routers/hooks).
 
 ## Core model
 

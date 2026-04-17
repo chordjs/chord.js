@@ -1,5 +1,5 @@
 {
-  "name": "@chord.js/utils",
+  "name": "@chordjs/utils",
   "version": "0.1.0",
   "description": "Utilities for Chord.js.",
   "license": "MIT",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Agent0876/chord.js.git",
+    "url": "git+https://github.com/chordjs/chord.js.git",
     "directory": "packages/utils"
   },
-  "homepage": "https://github.com/Agent0876/chord.js/tree/main/packages/utils#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/utils#readme",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -33,7 +33,7 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chord.js/types": "workspace:*"
+    "@chordjs/types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

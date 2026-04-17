@@ -4,9 +4,9 @@ import type { Piece } from "./piece.js";
 import { UserManager } from "../managers/user-manager.js";
 import { GuildManager } from "../managers/guild-manager.js";
 import { ChannelManager } from "../managers/channel-manager.js";
-import type { RestClient } from "@chord.js/rest";
-import type { GatewayClient } from "@chord.js/gateway";
-import type { CacheManager } from "@chord.js/cache";
+import type { RestClient } from "@chordjs/rest";
+import type { GatewayClient } from "@chordjs/gateway";
+import type { CacheManager } from "@chordjs/cache";
 import { PieceLoader } from "../loaders/piece-loader.js";
 
 export interface ChordClientOptions {

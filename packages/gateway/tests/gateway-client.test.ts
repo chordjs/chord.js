@@ -1,7 +1,7 @@
 /// <reference types="bun-types" />
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { GatewayClient, type GatewayClientOptions } from "../src/gateway-client.js";
-import { GatewayOpcode } from "@chord.js/types";
+import { GatewayOpcode } from "@chordjs/types";
 
 // ---------------------------------------------------------------------------
 // Minimal WebSocket mock

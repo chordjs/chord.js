@@ -8,7 +8,7 @@ import type {
   MessageCreateDispatchData,
   MessageFlags,
   Snowflake
-} from "@chord.js/types";
+} from "@chordjs/types";
 import type { ChordClient } from "../structures/chord-client.js";
 import type { Store } from "../structures/store.js";
 import {

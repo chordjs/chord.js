@@ -1,5 +1,5 @@
-import { Command, type PrefixCommandContext } from "@chord.js/core";
-import { type APIEmbed } from "@chord.js/types";
+import { Command, type PrefixCommandContext } from "@chordjs/core";
+import { type APIEmbed } from "@chordjs/types";
 
 export default class InfoCommand extends Command {
   constructor() {

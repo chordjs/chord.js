@@ -42,7 +42,7 @@ Recommended order:
 Example:
 
 ```ts
-import { PrefixCommandRouter, guildOnly, ownerOnly, hasPermissions, cooldown } from "@chord.js/core";
+import { PrefixCommandRouter, guildOnly, ownerOnly, hasPermissions, cooldown } from "@chordjs/core";
 
 const router = new PrefixCommandRouter({
   client,
