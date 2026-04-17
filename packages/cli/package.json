@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/cli",
-  "version": "26.0.0",
+  "version": "26.0.1",
   "description": "The official CLI for Chord.js framework.",
   "license": "MIT",
   "publishConfig": {
@@ -17,11 +17,12 @@
     "chord": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "template"
   ],
   "scripts": {
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist && chmod +x dist/index.js",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo template",
+    "build": "rm -rf dist tsconfig.tsbuildinfo template && mkdir -p template && cp -r ../../examples/basic-bot/* template/ && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist && chmod +x dist/index.js",
     "dev": "bunx swc src -d dist --strip-leading-paths --watch --config-file ../../.swcrc",
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },

@@ -29,8 +29,8 @@ export async function initCommand(projectName?: string) {
   console.log(chalk.cyan(`\n🚀 Initializing Chord.js project: ${chalk.bold(targetName)}...`));
 
   // In a real scenario, we might download from a registry or github.
-  // For this monorepo context, we'll try to find the example template.
-  const templatePath = path.resolve(decodeURI(new URL('.', import.meta.url).pathname), '../../../../examples/basic-bot');
+  // For this monorepo context, we've bundled the template into the package.
+  const templatePath = path.resolve(decodeURI(new URL('.', import.meta.url).pathname), '../../template');
   
   try {
     if (fs.existsSync(templatePath)) {
@@ -45,7 +45,7 @@ export async function initCommand(projectName?: string) {
       pkgJson.name = targetName;
       
       // Replace workspace:* with the actual version
-      const currentVersion = "26.0.0"; // This should ideally be read from cli's own version
+      const currentVersion = "26.0.1"; // This should ideally be read from cli's own version
       if (pkgJson.dependencies) {
         for (const [dep, version] of Object.entries(pkgJson.dependencies)) {
           if (version === 'workspace:*') {
