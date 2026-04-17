@@ -48,22 +48,25 @@ export class Logger {
   }
 
   #format(level: LogLevel): string {
-    const time = new Date().toISOString().split("T")[1]?.slice(0, 8);
-    const prefixStr = this.prefix ? `[${this.prefix}] ` : "";
+    const time = new Date().toLocaleTimeString("en-GB", { hour12: false });
+    const prefixStr = this.prefix ? `\x1b[90m[\x1b[37m${this.prefix}\x1b[90m]\x1b[0m ` : "";
     
     if (!this.colors) {
-      return `[${time}] ${prefixStr}[${LogLevel[level]?.toUpperCase()}]`;
+      return `[${time}] ${this.prefix ? `[${this.prefix}] ` : ""}[${LogLevel[level]?.toUpperCase()}]`;
     }
 
-    // Basic ANSI colors
-    const colorCode = 
-      level === LogLevel.Debug ? "\\x1b[90m" : // Gray
-      level === LogLevel.Info ? "\\x1b[36m" : // Cyan
-      level === LogLevel.Warn ? "\\x1b[33m" : // Yellow
-      level === LogLevel.Error ? "\\x1b[31m" : // Red
-      "\\x1b[0m";
-    const reset = "\\x1b[0m";
+    const levelColors = {
+      [LogLevel.Debug]: "\x1b[90m", // Gray
+      [LogLevel.Info]: "\x1b[36m",  // Cyan
+      [LogLevel.Warn]: "\x1b[33m",  // Yellow
+      [LogLevel.Error]: "\x1b[31m", // Red
+      [LogLevel.None]: "\x1b[0m"
+    };
 
-    return `\\x1b[90m[${time}]\\x1b[0m ${prefixStr}${colorCode}[${LogLevel[level]?.toUpperCase()}]${reset}`;
+    const levelStr = LogLevel[level]?.toUpperCase().padEnd(5);
+    const color = levelColors[level] ?? "\x1b[0m";
+    const reset = "\x1b[0m";
+
+    return `\x1b[90m${time}\x1b[0m ${color}${levelStr}${reset} ${prefixStr}`;
   }
 }

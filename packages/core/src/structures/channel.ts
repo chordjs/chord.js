@@ -2,6 +2,7 @@ import type { Channel as APIChannel, Snowflake, ChannelType } from "@chordjs/typ
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
 import { Routes } from "@chordjs/utils";
+import { awaitMessages, type CollectorOptions } from "../collectors/collector.js";
 
 /**
  * Represents a Discord Channel.
@@ -37,6 +38,18 @@ export class Channel extends BaseEntity {
   public async delete(): Promise<void> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
     await this.client.rest.delete(Routes.channel(this.id));
+  }
+
+  /**
+   * Awaits messages in this channel.
+   */
+  public async awaitMessages(options: Omit<CollectorOptions<any>, "dispatcher">) {
+    if (!this.client.gateway) throw new Error("Gateway client is not initialized.");
+    return awaitMessages({
+      ...options,
+      dispatcher: this.client.gateway,
+      channelId: this.id
+    });
   }
 
   public toJSON(): APIChannel {

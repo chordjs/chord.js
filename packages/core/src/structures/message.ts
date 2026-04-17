@@ -4,6 +4,7 @@ import type { ChordClient } from "./chord-client.js";
 import { Routes } from "@chordjs/utils";
 import { User } from "./user.js";
 import { Member } from "./member.js";
+import { awaitComponents, awaitReactions, type CollectorOptions } from "../collectors/collector.js";
 
 /**
  * Represents a Discord Message.
@@ -67,6 +68,31 @@ export class Message extends BaseEntity {
   public async react(emoji: string): Promise<void> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
     await this.client.rest.put(Routes.channelMessageReactionUser(this.channelId, this.id, emoji, "@me"));
+  }
+
+  /**
+   * Awaits reactions on this message.
+   */
+  public async awaitReactions(options: Omit<CollectorOptions<any>, "dispatcher">) {
+    if (!this.client.gateway) throw new Error("Gateway client is not initialized.");
+    return awaitReactions({
+      ...options,
+      dispatcher: this.client.gateway,
+      messageId: this.id
+    });
+  }
+
+  /**
+   * Awaits components on this message.
+   */
+  public async awaitComponents(options: Omit<CollectorOptions<any>, "dispatcher">) {
+    if (!this.client.gateway) throw new Error("Gateway client is not initialized.");
+    return awaitComponents({
+      ...options,
+      dispatcher: this.client.gateway,
+      messageId: this.id,
+      channelId: this.channelId
+    });
   }
 
   public toJSON(): APIMessage {

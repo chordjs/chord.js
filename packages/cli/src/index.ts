@@ -5,13 +5,14 @@ import { initCommand } from './commands/init.js';
 import { generateCommand } from './commands/generate.js';
 import { devCommand } from './commands/dev.js';
 import { startCommand } from './commands/start.js';
+import { addCommand } from './commands/add.js';
 
 const program = new Command();
 
 program
   .name('chord')
   .description('Official CLI for Chord.js framework')
-  .version('26.2.2');
+  .version('26.3.0');
 
 program
   .command('init [name]')
@@ -23,6 +24,11 @@ program
   .alias('g')
   .description('Generate a new piece (command, listener, etc.)')
   .action((type, name) => generateCommand(type, name));
+
+program
+  .command('add <type> <name>')
+  .description('Add a new utility or precondition (precondition, service, middleware)')
+  .action((type, name) => addCommand(type, name));
 
 program
   .command('dev')

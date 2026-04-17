@@ -42,4 +42,17 @@ export class Container {
     this.#singletons.delete(token);
     this.#factories.delete(token);
   }
+
+  /**
+   * Tries to find a token by its description and resolve it.
+   */
+  get<T>(description: string): T | undefined {
+    for (const token of this.#singletons.keys()) {
+      if (token.description === description) return this.#singletons.get(token) as T;
+    }
+    for (const token of this.#factories.keys()) {
+      if (token.description === description) return this.resolve(token as ContainerToken<T>);
+    }
+    return undefined;
+  }
 }

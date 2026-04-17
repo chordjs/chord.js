@@ -28,6 +28,7 @@ export interface RestLikeClient {
 export interface InteractionCommandRouterOptions {
   client: ChordClient;
   rest?: RestLikeClient;
+  autoSync?: boolean;
   errorResponse?: {
     enabled?: boolean;
     message?: string | ((error: unknown, context: InteractionExecutionContext) => string);
@@ -52,6 +53,7 @@ export class InteractionCommandRouter {
   static readonly EPHEMERAL_FLAG = 1 << 6;
   public readonly client: ChordClient;
   public readonly rest?: RestLikeClient;
+  public readonly autoSync: boolean;
   public readonly errorResponse: Required<NonNullable<InteractionCommandRouterOptions["errorResponse"]>>;
   public readonly storeName: string;
   public readonly preconditions: Array<PreconditionCheck<InteractionExecutionContext>>;
@@ -61,6 +63,7 @@ export class InteractionCommandRouter {
   constructor(options: InteractionCommandRouterOptions) {
     this.client = options.client;
     this.rest = options.rest;
+    this.autoSync = options.autoSync ?? false;
     this.errorResponse = {
       enabled: options.errorResponse?.enabled ?? true,
       message: options.errorResponse?.message ?? "An unexpected error occurred while running this command.",
@@ -81,6 +84,21 @@ export class InteractionCommandRouter {
     };
 
     gateway.onDispatch("INTERACTION_CREATE", handler);
+    
+    // Auto-Sync logic
+    if (this.autoSync) {
+      this.client.gateway?.onDispatch("READY", async (data: any) => {
+        const rest = this.rest ?? (this.client.rest as any);
+        if (!rest) return;
+        try {
+          await this.registerGlobalCommands(rest, data.application.id);
+          this.client.container.get<any>("logger")?.info(`Successfully auto-synced ${this.store.size} interaction commands.`);
+        } catch (error) {
+          this.client.container.get<any>("logger")?.error("Failed to auto-sync interaction commands:", error);
+        }
+      });
+    }
+
     this.#unbind = () => {
       gateway.offDispatch?.("INTERACTION_CREATE", handler);
     };

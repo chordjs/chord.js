@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/builders",
-  "version": "26.2.2",
+  "version": "26.3.0",
   "description": "Discord API builders for Chord.js",
   "license": "MIT",
   "publishConfig": {

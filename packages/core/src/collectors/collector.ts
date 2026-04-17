@@ -127,3 +127,54 @@ export async function awaitComponents(
     }
   });
 }
+
+export async function awaitReactions(
+  options: CollectorOptions<GatewayDispatchDataMap["MESSAGE_REACTION_ADD"]> & { messageId: string, emoji?: string }
+): Promise<GatewayDispatchDataMap["MESSAGE_REACTION_ADD"][]> {
+  const { dispatcher, filter, time = 15000, max = 1, messageId, emoji } = options;
+  const collected: GatewayDispatchDataMap["MESSAGE_REACTION_ADD"][] = [];
+
+  return new Promise((resolve, reject) => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
+    const cleanup = () => {
+      if (timeout) clearTimeout(timeout);
+      if (dispatcher.offDispatch) {
+        dispatcher.offDispatch("MESSAGE_REACTION_ADD", handler);
+      }
+    };
+
+    const handler = async (reaction: GatewayDispatchDataMap["MESSAGE_REACTION_ADD"]) => {
+      if (reaction.message_id !== messageId) return;
+      if (emoji && reaction.emoji.name !== emoji) return;
+
+      if (filter) {
+        try {
+          const pass = await filter(reaction);
+          if (!pass) return;
+        } catch (e) {
+          return;
+        }
+      }
+
+      collected.push(reaction);
+      if (max && collected.length >= max) {
+        cleanup();
+        resolve(collected);
+      }
+    };
+
+    dispatcher.onDispatch("MESSAGE_REACTION_ADD", handler);
+
+    if (time > 0) {
+      timeout = setTimeout(() => {
+        cleanup();
+        if (collected.length > 0) {
+          resolve(collected);
+        } else {
+          reject(new CollectorError("Collector timed out without receiving any matching reactions."));
+        }
+      }, time);
+    }
+  });
+}
