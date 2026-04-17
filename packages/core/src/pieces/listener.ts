@@ -5,15 +5,15 @@ export interface ListenerContext extends PieceContext {
   once?: boolean;
 }
 
-export abstract class Listener extends Piece {
-  public readonly event: string;
+export abstract class Listener<T extends string = string> extends Piece {
+  public readonly event: T;
   public readonly once: boolean;
 
-  protected constructor(context: ListenerContext) {
+  protected constructor(context: ListenerContext & { event: T }) {
     super(context);
     this.event = context.event;
     this.once = context.once ?? false;
   }
 
-  abstract run(...args: unknown[]): unknown | Promise<unknown>;
+  abstract run(...args: any[]): unknown | Promise<unknown>;
 }
