@@ -9,6 +9,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chordjs/framework": "^26.5.5"
+    "@chordjs/framework": "^26.6.1"
   }
 }
