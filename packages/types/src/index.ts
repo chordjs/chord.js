@@ -1,7 +1,7 @@
 export type Snowflake = string;
 
 export type GatewayIntentBits = number;
-export const GatewayIntent = {
+export const GatewayIntentBits = {
   Guilds: 1 << 0,
   GuildMembers: 1 << 1,
   GuildModeration: 1 << 2,
@@ -25,13 +25,13 @@ export const GatewayIntent = {
   DirectMessagePolls: 1 << 25
 } as const;
 
-export type GatewayIntentName = keyof typeof GatewayIntent;
+export type GatewayIntentName = keyof typeof GatewayIntentBits;
 export type GatewayIntentResolvable = GatewayIntentBits | GatewayIntentName[] | ReadonlyArray<GatewayIntentName>;
 
 export function resolveGatewayIntents(input: GatewayIntentResolvable): GatewayIntentBits {
   if (typeof input === "number") return input;
   let bits = 0;
-  for (const name of input) bits |= GatewayIntent[name];
+  for (const name of input) bits |= GatewayIntentBits[name];
   return bits;
 }
 

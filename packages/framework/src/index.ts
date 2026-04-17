@@ -25,8 +25,7 @@ export * from '@chordjs/utils';
 
 // Re-export common types and constants directly for convenience
 export { 
-  type GatewayIntentBits, 
-  GatewayIntent, 
+  GatewayIntentBits, 
   GatewayOpcode,
   ButtonStyle,
   ComponentType,
