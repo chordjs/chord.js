@@ -133,6 +133,29 @@ export interface Channel {
   user_limit?: number;
   rate_limit_per_user?: number;
   last_message_id?: Snowflake | null;
+  thread_metadata?: ThreadMetadata;
+  message_count?: number;
+  member_count?: number;
+  available_tags?: ForumTag[];
+  applied_tags?: Snowflake[];
+  default_auto_archive_duration?: number;
+}
+
+export interface ThreadMetadata {
+  archived: boolean;
+  auto_archive_duration: number;
+  archive_timestamp: string;
+  locked: boolean;
+  invitable?: boolean;
+  create_timestamp?: string | null;
+}
+
+export interface ForumTag {
+  id: Snowflake;
+  name: string;
+  moderated: boolean;
+  emoji_id: Snowflake | null;
+  emoji_name: string | null;
 }
 
 export interface PermissionOverwrite {
@@ -165,6 +188,7 @@ export interface Message {
   referenced_message?: Message | null;
   components?: APIMessageTopLevelComponent[];
   sticker_items?: Array<{ id: Snowflake; name: string; format_type: number }>;
+  poll?: Poll;
 }
 
 export interface MessageReaction {
@@ -177,7 +201,7 @@ export interface MessageReaction {
 
 export type InteractionType = number;
 
-export const InteractionTypes = {
+export const InteractionType = {
   Ping: 1,
   ApplicationCommand: 2,
   MessageComponent: 3,
@@ -265,6 +289,19 @@ export interface ApplicationCommandOption {
 
 // --- Message Components ---
 
+export type ComponentType = number;
+
+export const ComponentType = {
+  ActionRow: 1,
+  Button: 2,
+  StringSelect: 3,
+  TextInput: 4,
+  UserSelect: 5,
+  RoleSelect: 6,
+  MentionableSelect: 7,
+  ChannelSelect: 8
+} as const;
+
 export interface ActionRowComponent {
   type: 1;
   components: MessageComponent[];
@@ -312,6 +349,119 @@ export interface TextInputComponent {
   placeholder?: string;
 }
 
+// --- Audit Log ---
+
+export interface AuditLog {
+  audit_log_entries: AuditLogEntry[];
+  users: User[];
+  integrations: any[];
+  webhooks: any[];
+  application_commands: ApplicationCommand[];
+  auto_moderation_rules: any[];
+  guild_scheduled_events: any[];
+  threads: Channel[];
+}
+
+export interface AuditLogEntry {
+  target_id: string | null;
+  changes?: AuditLogChange[];
+  user_id: Snowflake | null;
+  id: Snowflake;
+  action_type: number;
+  options?: any;
+  reason?: string;
+}
+
+export interface AuditLogChange {
+  new_value?: any;
+  old_value?: any;
+  key: string;
+}
+
+// --- Ban ---
+
+export interface Ban {
+  reason: string | null;
+  user: User;
+}
+
+// --- Invite ---
+
+export interface Invite {
+  code: string;
+  guild?: Partial<Guild>;
+  channel?: Partial<Channel> | null;
+  inviter?: User;
+  target_type?: number;
+  target_user?: User;
+  target_application?: any;
+  approximate_presence_count?: number;
+  approximate_member_count?: number;
+  expires_at?: string | null;
+  guild_scheduled_event?: any;
+}
+
+export interface InviteMetadata extends Invite {
+  uses: number;
+  max_uses: number;
+  max_age: number;
+  temporary: boolean;
+  created_at: string;
+}
+
+// --- Auto Moderation ---
+
+export interface AutoModerationRule {
+  id: Snowflake;
+  guild_id: Snowflake;
+  name: string;
+  creator_id: Snowflake;
+  event_type: number;
+  trigger_type: number;
+  trigger_metadata: any;
+  actions: AutoModerationAction[];
+  enabled: boolean;
+  exempt_roles: Snowflake[];
+  exempt_channels: Snowflake[];
+}
+
+export interface AutoModerationAction {
+  type: number;
+  metadata?: any;
+}
+
+// --- Polls ---
+
+export interface Poll {
+  question: PollMedia;
+  answers: PollAnswer[];
+  expiry?: string;
+  allow_multiselect: boolean;
+  layout_type: number;
+  results?: PollResults;
+}
+
+export interface PollMedia {
+  text?: string;
+  emoji?: Partial<Emoji>;
+}
+
+export interface PollAnswer {
+  answer_id: number;
+  poll_media: PollMedia;
+}
+
+export interface PollResults {
+  is_finalized: boolean;
+  answer_counts: PollAnswerCount[];
+}
+
+export interface PollAnswerCount {
+  id: number;
+  count: number;
+  me_voted: boolean;
+}
+
 // ============================================================
 // REST payload helpers used by the core framework
 // ============================================================
@@ -349,3 +499,19 @@ export interface APIMessageReference {
 }
 
 export type APIMessageTopLevelComponent = ActionRowComponent | Record<string, unknown>;
+
+export interface APIInteractionResponseCallbackData {
+  tts?: boolean;
+  content?: string;
+  embeds?: APIEmbed[];
+  allowed_mentions?: APIAllowedMentions;
+  flags?: MessageFlags;
+  components?: APIMessageTopLevelComponent[];
+  poll?: Poll;
+}
+
+export interface APIModalInteractionResponseCallbackData {
+  title: string;
+  custom_id: string;
+  components: ActionRowComponent[];
+}

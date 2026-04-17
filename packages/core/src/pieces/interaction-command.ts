@@ -8,7 +8,7 @@ import type {
 } from "@chordjs/types";
 import type { User } from "../structures/user.js";
 import type { Member } from "../structures/member.js";
-import type { Interaction } from "../structures/interaction.js";
+import type { Interaction, CommandInteraction, AutocompleteInteraction } from "../structures/interaction.js";
 
 export interface ApplicationCommandOption {
   type: number;
@@ -34,7 +34,7 @@ export interface InteractionCommandOptions extends PieceOptions {
 }
 
 export interface InteractionRunContext {
-  interaction: Interaction;
+  interaction: CommandInteraction;
   commandName: string;
   options: Record<string, unknown>;
   subcommand?: string;
@@ -52,7 +52,7 @@ export interface InteractionRunContext {
 }
 
 export interface InteractionAutocompleteContext {
-  interaction: any;
+  interaction: AutocompleteInteraction;
   commandName: string;
   options: Record<string, unknown>;
   subcommand?: string;

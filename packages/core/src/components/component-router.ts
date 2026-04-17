@@ -1,4 +1,4 @@
-import { InteractionTypes, type GatewayDispatchDataMap } from "@chordjs/types";
+import { InteractionType, type GatewayDispatchDataMap } from "@chordjs/types";
 import type { Store } from "../structures/store.js";
 import type { ChordClient } from "../structures/chord-client.js";
 import type { Component, ComponentContext } from "../pieces/component.js";
@@ -76,7 +76,7 @@ export class ComponentRouter {
   }
 
   async handleInteraction(interaction: GatewayDispatchDataMap["INTERACTION_CREATE"]): Promise<boolean> {
-    if (interaction.type !== InteractionTypes.MessageComponent) return false;
+    if (interaction.type !== InteractionType.MessageComponent) return false;
 
     const data = interaction.data as any;
     if (!data || !data.custom_id) return false;

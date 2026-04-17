@@ -1,4 +1,4 @@
-import type { Channel as APIChannel, Snowflake, ChannelType } from "@chordjs/types";
+import type { Channel as APIChannel, Snowflake, ChannelType, ThreadMetadata } from "@chordjs/types";
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
 import { Routes } from "@chordjs/utils";
@@ -14,6 +14,11 @@ export class Channel extends BaseEntity {
   public readonly type: ChannelType;
   public guildId?: Snowflake;
   public name?: string | null;
+  public topic?: string | null;
+  public parentId?: Snowflake | null;
+  public nsfw?: boolean;
+  public lastMessageId?: Snowflake | null;
+  public threadMetadata?: ThreadMetadata;
 
   public constructor(client: ChordClient, data: APIChannel) {
     super(client);
@@ -21,6 +26,11 @@ export class Channel extends BaseEntity {
     this.type = data.type as ChannelType;
     this.guildId = data.guild_id;
     this.name = data.name;
+    this.topic = data.topic;
+    this.parentId = data.parent_id;
+    this.nsfw = data.nsfw;
+    this.lastMessageId = data.last_message_id;
+    this.threadMetadata = data.thread_metadata;
   }
 
   /**
@@ -112,6 +122,55 @@ export class Channel extends BaseEntity {
       dispatcher: this.client.gateway,
       channelId: this.id
     });
+  }
+
+  /**
+   * Creates a thread in this channel.
+   */
+  public async createThread(options: { 
+    name: string, 
+    auto_archive_duration?: number, 
+    type?: number, 
+    invitable?: boolean,
+    reason?: string,
+    messageId?: Snowflake // If provided, starts thread from message
+  }): Promise<Channel> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const { reason, messageId, ...body } = options;
+    const path = messageId 
+      ? `/channels/${this.id}/messages/${messageId}/threads`
+      : `/channels/${this.id}/threads`;
+    
+    const data = await this.client.rest.post(path, {
+      body: JSON.stringify(body),
+      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
+    }) as APIChannel;
+    return new Channel(this.client, data);
+  }
+
+  /**
+   * Fetches pinned messages in this channel.
+   */
+  public async fetchPinnedMessages(): Promise<Message[]> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const data = await this.client.rest.get(`/channels/${this.id}/pins`) as APIMessage[];
+    return data.map(m => new Message(this.client, m));
+  }
+
+  /**
+   * Pins a message in this channel.
+   */
+  public async pinMessage(messageId: Snowflake): Promise<void> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    await this.client.rest.put(`/channels/${this.id}/pins/${messageId}`);
+  }
+
+  /**
+   * Unpins a message in this channel.
+   */
+  public async unpinMessage(messageId: Snowflake): Promise<void> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    await this.client.rest.delete(`/channels/${this.id}/pins/${messageId}`);
   }
 
   public toJSON(): APIChannel {

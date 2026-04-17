@@ -5,6 +5,7 @@ import { Routes } from "@chordjs/utils";
 import { User } from "./user.js";
 import { Member } from "./member.js";
 import { awaitComponents, awaitReactions, type CollectorOptions } from "../collectors/collector.js";
+import type { Poll } from "@chordjs/types";
 
 /**
  * Represents a Discord Message.
@@ -16,6 +17,7 @@ export class Message extends BaseEntity {
   public readonly content: string;
   public readonly author?: User;
   public readonly member?: Member;
+  public readonly poll?: Poll;
 
   public constructor(client: ChordClient, data: APIMessage) {
     super(client);
@@ -25,6 +27,23 @@ export class Message extends BaseEntity {
     this.content = data.content;
     this.author = data.author ? new User(client, data.author) : undefined;
     this.member = (data.member && data.guild_id) ? new Member(client, data.guild_id, data.member) : undefined;
+    this.poll = data.poll;
+  }
+
+  /**
+   * Pins this message.
+   */
+  public async pin(): Promise<void> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    await this.client.rest.put(Routes.channelPin(this.channelId, this.id));
+  }
+
+  /**
+   * Unpins this message.
+   */
+  public async unpin(): Promise<void> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    await this.client.rest.delete(Routes.channelPin(this.channelId, this.id));
   }
 
   /**

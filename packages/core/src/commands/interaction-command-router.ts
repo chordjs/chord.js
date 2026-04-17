@@ -1,4 +1,4 @@
-import { InteractionTypes, type GatewayDispatchDataMap } from "@chordjs/types";
+import { InteractionType, type GatewayDispatchDataMap } from "@chordjs/types";
 import type { Store } from "../structures/store.js";
 import type { ChordClient } from "../structures/chord-client.js";
 import {
@@ -15,7 +15,12 @@ import {
   runPreconditions,
   type RouterHooks
 } from "../hooks/precondition.js";
-import { Interaction } from "../structures/interaction.js";
+import {
+  Interaction,
+  CommandInteraction,
+  AutocompleteInteraction,
+  type InteractionReplyOptions
+} from "../structures/interaction.js";
 import { User } from "../structures/user.js";
 import { Member } from "../structures/member.js";
 
@@ -126,8 +131,8 @@ export class InteractionCommandRouter {
 
   async handleInteraction(interaction: GatewayDispatchDataMap["INTERACTION_CREATE"]): Promise<boolean> {
     if (
-      interaction.type !== InteractionTypes.ApplicationCommand &&
-      interaction.type !== InteractionTypes.ApplicationCommandAutocomplete
+      interaction.type !== InteractionType.ApplicationCommand &&
+      interaction.type !== InteractionType.ApplicationCommandAutocomplete
     ) {
       return false;
     }
@@ -141,10 +146,12 @@ export class InteractionCommandRouter {
     const parsedOptions = this.#interactionOptions(interaction);
     const standardized = this.#standardizeInteractionContext(interaction);
 
-    if (interaction.type === InteractionTypes.ApplicationCommandAutocomplete) {
+    const interactionWrapper = Interaction.from(this.client, interaction as any);
+
+    if (interactionWrapper.isAutocomplete()) {
       if (typeof command.autocomplete === "function") {
         const autocompleteContext: InteractionAutocompleteContext = {
-          interaction,
+          interaction: interactionWrapper,
           commandName,
           options: parsedOptions.values,
           subcommand: parsedOptions.subcommand,
@@ -155,13 +162,7 @@ export class InteractionCommandRouter {
           user: standardized.user,
           member: standardized.member,
           respond: async (choices) => {
-            if (!this.rest) throw new Error("InteractionCommandRouter: REST client is not configured");
-            return this.rest.request("POST", `/interactions/${interaction.id}/${interaction.token}/callback`, {
-              body: JSON.stringify({
-                type: 8, // APPLICATION_COMMAND_AUTOCOMPLETE_RESULT
-                data: { choices }
-              })
-            });
+            return interactionWrapper.respond(choices);
           }
         };
 
@@ -169,7 +170,6 @@ export class InteractionCommandRouter {
           await command.autocomplete(autocompleteContext);
           return true;
         } catch (error) {
-          // Autocomplete errors are generally silent or logged
           await this.hooks?.onError?.({ ...autocompleteContext, command } as any, error);
           return false;
         }
@@ -193,10 +193,10 @@ export class InteractionCommandRouter {
     try {
       await this.hooks?.beforeRun?.(context);
       
-      const interactionWrapper = new Interaction(this.client, interaction as any);
+      const cmdInteraction = interactionWrapper as CommandInteraction;
 
       await command.run({
-        interaction: interactionWrapper,
+        interaction: cmdInteraction,
         commandName: context.commandName,
         options: context.options,
         subcommand: context.subcommand,

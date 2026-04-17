@@ -41,8 +41,23 @@ export type {
   APIEmbed,
   APIMessageReference,
   APIMessageTopLevelComponent,
+  APIInteractionResponseCallbackData,
+  APIModalInteractionResponseCallbackData,
   ApplicationCommand,
   ApplicationCommandOption,
+  AuditLog,
+  AuditLogEntry,
+  AuditLogChange,
+  AutoModerationRule,
+  AutoModerationAction,
+  Ban,
+  Invite,
+  InviteMetadata,
+  Poll,
+  PollMedia,
+  PollAnswer,
+  PollResults,
+  PollAnswerCount,
   ButtonComponent,
   Channel,
   ChannelType,
@@ -50,7 +65,6 @@ export type {
   Guild,
   GuildMember,
   Interaction,
-  InteractionType,
   Message,
   MessageComponent,
   MessageFlags,
@@ -64,9 +78,11 @@ export type {
   Sticker,
   TextInputComponent,
   User,
-  VoiceState
+  VoiceState,
+  ThreadMetadata,
+  ForumTag
 } from "./discord-api.js";
-export { ChannelTypes, InteractionTypes } from "./discord-api.js";
+export { ChannelTypes, InteractionType, ComponentType } from "./discord-api.js";
 
 export const ButtonStyle = {
   Primary: 1,
@@ -74,17 +90,6 @@ export const ButtonStyle = {
   Success: 3,
   Danger: 4,
   Link: 5
-} as const;
-
-export const ComponentType = {
-  ActionRow: 1,
-  Button: 2,
-  StringSelect: 3,
-  TextInput: 4,
-  UserSelect: 5,
-  RoleSelect: 6,
-  MentionableSelect: 7,
-  ChannelSelect: 8
 } as const;
 
 export const ApplicationCommandType = {
