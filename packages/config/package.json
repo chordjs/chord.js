@@ -1,0 +1,11 @@
+{
+  "name": "@chord.js/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "tsconfig.base.json",
+    "tsconfig.package.json",
+    "biome.json"
+  ]
+}

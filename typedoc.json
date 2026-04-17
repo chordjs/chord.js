@@ -1,0 +1,16 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/rest/src/index.ts",
+    "packages/gateway/src/index.ts",
+    "packages/cache/src/index.ts",
+    "packages/utils/src/index.ts"
+  ],
+  "out": "docs/api",
+  "name": "Chord.js API Documentation",
+  "includeVersion": true,
+  "hideGenerator": true,
+  "readme": "README.md",
+  "tsconfig": "tsconfig.json"
+}

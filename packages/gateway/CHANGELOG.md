@@ -1,0 +1,17 @@
+# @chord.js/gateway
+
+## 0.1.0
+
+### Minor Changes
+
+- Initial public release of the Chord.js monorepo packages.
+
+  Includes core piece/store/router abstractions, gateway + sharding/clustering/voice,
+  REST client with rate-limit handling, generated protocol/resource types, docs,
+  examples, and integration tests.
+
+### Patch Changes
+
+- Updated dependencies
+  - @chord.js/types@0.1.0
+  - @chord.js/utils@0.1.0

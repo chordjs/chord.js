@@ -1,0 +1,14 @@
+{
+  "name": "@chord.js/example-folder-routing-sharding",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/main.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "dependencies": {
+    "@chord.js/core": "workspace:*",
+    "@chord.js/gateway": "workspace:*",
+    "@chord.js/rest": "workspace:*"
+  }
+}
