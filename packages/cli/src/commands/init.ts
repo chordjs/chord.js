@@ -273,9 +273,24 @@ export async function initCommand(projectName?: string) {
       await fs.remove(path.join(targetPath, 'tsconfig.json'));
     }
 
+    // 5. Generate .env.example
+    await fs.writeFile(
+      path.join(targetPath, '.env.example'),
+      '# Discord Bot Token (https://discord.com/developers/applications)\nDISCORD_TOKEN=your_bot_token_here\n',
+      'utf-8'
+    );
+
+    // 6. Generate .gitignore
+    await fs.writeFile(
+      path.join(targetPath, '.gitignore'),
+      'node_modules/\ndist/\n.env\n*.log\n',
+      'utf-8'
+    );
+
     console.log(chalk.green(`✅ Project created at ${targetPath}`));
     console.log(chalk.yellow('\nNext steps:'));
     console.log(chalk.white(`  cd ${targetName}`));
+    console.log(chalk.white(`  cp .env.example .env   ${chalk.dim('# Add your bot token')}`));
     console.log(chalk.white(`  bun install`));
     console.log(chalk.white(`  bun run dev`));
   } catch (err) {
