@@ -9,7 +9,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@chordjs/*": ["packages/*/src/index.ts"]
+    }
   },
   "include": ["packages/*/src/**/*.ts"],
   "exclude": ["node_modules", "dist", "examples"]
