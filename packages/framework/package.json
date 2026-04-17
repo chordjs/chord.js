@@ -1,0 +1,35 @@
+{
+  "name": "@chordjs/framework",
+  "version": "26.0.8",
+  "description": "Umbrella framework package for Chord.js",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist"
+  },
+  "dependencies": {
+    "@chordjs/cache": "^26.0.6",
+    "@chordjs/core": "^26.0.6",
+    "@chordjs/gateway": "^26.0.6",
+    "@chordjs/rest": "^26.0.6",
+    "@chordjs/types": "^26.0.6",
+    "@chordjs/utils": "^26.0.6"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.5.7",
+    "typescript": "6.0.3"
+  },
+  "author": "shinseungmin",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

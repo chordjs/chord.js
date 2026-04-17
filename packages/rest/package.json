@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/rest",
-  "version": "26.0.6",
+  "version": "26.0.8",
   "description": "Discord REST client for Chord.js (implemented from scratch).",
   "license": "MIT",
   "publishConfig": {

@@ -67,19 +67,19 @@ export async function generateCommand(type: string, name: string) {
   // Imports
   if (isESM || isTS) {
     if (normalizedType === 'command') {
-      template += `import { Command${isTS ? ', type PrefixReplyPayload' : ''} } from '@chordjs/core';\n\n`;
+      template += `import { Command, EmbedBuilder${isTS ? ', type PrefixReplyPayload' : ''} } from '@chordjs/framework';\n\n`;
     } else if (normalizedType === 'listener') {
-      template += `import { Listener } from '@chordjs/core';\n\n`;
+      template += `import { Listener } from '@chordjs/framework';\n\n`;
     } else {
-      template += `import { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } from '@chordjs/core';\n\n`;
+      template += `import { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } from '@chordjs/framework';\n\n`;
     }
   } else {
     if (normalizedType === 'command') {
-      template += `const { Command } = require('@chordjs/core');\n\n`;
+      template += `const { Command, EmbedBuilder } = require('@chordjs/framework');\n\n`;
     } else if (normalizedType === 'listener') {
-      template += `const { Listener } = require('@chordjs/core');\n\n`;
+      template += `const { Listener } = require('@chordjs/framework');\n\n`;
     } else {
-      template += `const { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } = require('@chordjs/core');\n\n`;
+      template += `const { ${normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1)} } = require('@chordjs/framework');\n\n`;
     }
   }
 
@@ -111,7 +111,14 @@ export async function generateCommand(type: string, name: string) {
     } else {
       template += `  async run(context) {\n`;
     }
-    template += `    await context.reply('Hello from ${name} command!');\n`;
+    template += `    const embed = new EmbedBuilder()\n`;
+    template += `      .setTitle('${name} Command')\n`;
+    template += `      .setDescription('Successfully executed the ${name} command!')\n`;
+    template += `      .setColor(0x5865F2)\n`;
+    template += `      .setTimestamp();\n\n`;
+    template += `    await context.reply({\n`;
+    template += `      embeds: [embed]\n`;
+    template += `    });\n`;
     template += `  }\n`;
   } else if (normalizedType === 'listener') {
     if (isTS) {

@@ -1,4 +1,4 @@
-import { Listener } from "@chordjs/core";
+import { Listener } from "@chordjs/framework";
 
 export default class ErrorListener extends Listener {
   constructor() {

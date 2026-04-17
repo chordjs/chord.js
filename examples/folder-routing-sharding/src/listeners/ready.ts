@@ -1,5 +1,5 @@
-import { Listener } from "@chordjs/core";
-import type { ReadyDispatchData } from "@chordjs/types";
+import { Listener } from "@chordjs/framework";
+import type { ReadyDispatchData } from "@chordjs/framework";
 
 export default class ReadyListener extends Listener {
   constructor() {

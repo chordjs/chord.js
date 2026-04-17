@@ -10,7 +10,7 @@ import {
   type PrefixCommandContext,
   type PrefixMessageLike,
   type PrefixReplyPayload
-} from "@chordjs/core";
+} from "@chordjs/framework";
 import {
   ClusterManager,
   GatewayClient,
@@ -18,8 +18,8 @@ import {
   resolveShardCount,
   ShardManager,
   splitShardsIntoClusters
-} from "@chordjs/gateway";
-import { RestClient } from "@chordjs/rest";
+} from "@chordjs/framework";
+import { RestClient } from "@chordjs/framework";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 

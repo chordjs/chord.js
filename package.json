@@ -6,7 +6,7 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "bun run --cwd packages/types build && bun run --cwd packages/utils build && bun run --cwd packages/rest build && bun run --cwd packages/gateway build && bun run --cwd packages/cache build && bun run --cwd packages/core build && bun run --cwd packages/cli build",
+    "build": "bun run --cwd packages/types build && bun run --cwd packages/utils build && bun run --cwd packages/rest build && bun run --cwd packages/gateway build && bun run --cwd packages/cache build && bun run --cwd packages/core build && bun run --cwd packages/framework build && bun run --cwd packages/cli build",
     "build:cli": "bun run --cwd packages/cli build",
     "docs:build": "typedoc",
     "dev": "bun run --cwd packages/core dev",
@@ -14,7 +14,7 @@
     "dev:scaling": "bun run --cwd examples/folder-routing-sharding dev",
     "test": "bun test packages/core/tests packages/gateway/tests packages/rest/tests packages/utils/tests packages/cache/tests",
     "typecheck": "bun run --workspaces typecheck",
-    "clean": "bun run --cwd packages/types clean && bun run --cwd packages/utils clean && bun run --cwd packages/rest clean && bun run --cwd packages/gateway clean && bun run --cwd packages/cache clean && bun run --cwd packages/core clean && bun run --cwd packages/cli clean",
+    "clean": "bun run --cwd packages/types clean && bun run --cwd packages/utils clean && bun run --cwd packages/rest clean && bun run --cwd packages/gateway clean && bun run --cwd packages/cache clean && bun run --cwd packages/core clean && bun run --cwd packages/framework clean && bun run --cwd packages/cli clean",
     "changeset": "bunx changeset",
     "version-packages": "bunx changeset version",
     "release": "bunx changeset publish"

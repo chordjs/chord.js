@@ -1,4 +1,4 @@
-import { Listener } from "@chordjs/core";
+import { Listener } from "@chordjs/framework";
 
 export default class ResumedListener extends Listener {
   constructor() {
