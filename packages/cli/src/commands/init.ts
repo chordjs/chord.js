@@ -146,15 +146,16 @@ function buildPackageJson(
   // Scripts vary by language
   if (language === 'typescript') {
     pkg.scripts = {
-      dev: `bun run --hot src/main.ts`,
-      start: `bun run src/main.ts`,
-      build: `bun build ./src/main.ts --outdir ./dist --target bun`,
+      dev: 'chord dev',
+      start: 'node dist/main.js',
+      build: 'chord build',
       typecheck: 'tsc --noEmit',
     };
   } else {
     pkg.scripts = {
-      dev: `node --watch src/main.${mainExt === 'cjs' ? 'cjs' : 'mjs'}`,
-      start: `node src/main.${mainExt === 'cjs' ? 'cjs' : 'mjs'}`,
+      dev: 'chord dev',
+      start: `node dist/main.${mainExt === 'cjs' ? 'cjs' : 'mjs'}`,
+      build: 'chord build',
     };
   }
 
