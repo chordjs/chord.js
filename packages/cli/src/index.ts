@@ -5,6 +5,7 @@ import { initCommand } from './commands/init.js';
 import { generateCommand } from './commands/generate.js';
 import { devCommand } from './commands/dev.js';
 import { startCommand } from './commands/start.js';
+import { buildCommand } from './commands/build.js';
 import { addCommand } from './commands/add.js';
 
 const program = new Command();
@@ -34,6 +35,11 @@ program
   .command('dev')
   .description('Run the bot in development mode with auto-reload')
   .action(() => devCommand());
+
+program
+  .command('build')
+  .description('Build the project for production')
+  .action(() => buildCommand());
 
 program
   .command('start')
