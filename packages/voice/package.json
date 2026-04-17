@@ -1,7 +1,7 @@
 {
-  "name": "@chordjs/rest",
+  "name": "@chordjs/voice",
   "version": "26.0.9",
-  "description": "Discord REST client for Chord.js (implemented from scratch).",
+  "description": "Discord Voice client for Chord.js",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -9,9 +9,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chordjs/chord.js.git",
-    "directory": "packages/rest"
+    "directory": "packages/voice"
   },
-  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/rest#readme",
+  "homepage": "https://github.com/chordjs/chord.js/tree/main/packages/voice#readme",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -33,7 +33,9 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/utils": "^26.0.2"
+    "@chordjs/types": "^26.0.8",
+    "@chordjs/utils": "^26.0.8",
+    "libsodium-wrappers": "^0.7.15"
   },
   "devDependencies": {
     "typescript": "6.0.3"

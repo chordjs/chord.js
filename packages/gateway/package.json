@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/gateway",
-  "version": "26.0.8",
+  "version": "26.0.9",
   "description": "Discord Gateway client for Chord.js (implemented from scratch).",
   "license": "MIT",
   "publishConfig": {
@@ -34,8 +34,7 @@
   },
   "dependencies": {
     "@chordjs/types": "^26.0.2",
-    "@chordjs/utils": "^26.0.2",
-    "libsodium-wrappers": "^0.7.15"
+    "@chordjs/utils": "^26.0.8"
   },
   "devDependencies": {
     "typescript": "6.0.3"

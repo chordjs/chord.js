@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/framework",
-  "version": "26.0.8",
+  "version": "26.0.9",
   "description": "Umbrella framework package for Chord.js",
   "type": "module",
   "main": "dist/index.js",
@@ -17,8 +17,9 @@
   "dependencies": {
     "@chordjs/cache": "^26.0.6",
     "@chordjs/core": "^26.0.6",
-    "@chordjs/gateway": "^26.0.6",
-    "@chordjs/rest": "^26.0.6",
+    "@chordjs/gateway": "^26.0.8",
+    "@chordjs/voice": "^26.0.8",
+    "@chordjs/rest": "^26.0.8",
     "@chordjs/types": "^26.0.6",
     "@chordjs/utils": "^26.0.6"
   },

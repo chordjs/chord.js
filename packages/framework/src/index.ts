@@ -7,6 +7,9 @@ export * from '@chordjs/rest';
 // Re-export Gateway components
 export * from '@chordjs/gateway';
 
+// Re-export Voice components
+export * from '@chordjs/voice';
+
 // Re-export Cache components as namespace to avoid GatewayEventEmitter conflict
 export * as Cache from '@chordjs/cache';
 

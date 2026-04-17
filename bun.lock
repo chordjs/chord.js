@@ -29,7 +29,7 @@
     },
     "packages/cache": {
       "name": "@chordjs/cache",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
         "@chordjs/utils": "^26.0.2",
@@ -40,7 +40,7 @@
     },
     "packages/cli": {
       "name": "@chordjs/cli",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "bin": {
         "chord": "./dist/index.js",
       },
@@ -59,11 +59,11 @@
     },
     "packages/config": {
       "name": "@chordjs/config",
-      "version": "26.0.6",
+      "version": "26.0.8",
     },
     "packages/core": {
       "name": "@chordjs/core",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "dependencies": {
         "@chordjs/cache": "^26.0.2",
         "@chordjs/gateway": "^26.0.2",
@@ -77,14 +77,15 @@
     },
     "packages/framework": {
       "name": "@chordjs/framework",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "dependencies": {
         "@chordjs/cache": "^26.0.6",
         "@chordjs/core": "^26.0.6",
-        "@chordjs/gateway": "^26.0.6",
-        "@chordjs/rest": "^26.0.6",
+        "@chordjs/gateway": "^26.0.8",
+        "@chordjs/rest": "^26.0.8",
         "@chordjs/types": "^26.0.6",
         "@chordjs/utils": "^26.0.6",
+        "@chordjs/voice": "^26.0.8",
       },
       "devDependencies": {
         "@swc/cli": "^0.3.12",
@@ -94,11 +95,10 @@
     },
     "packages/gateway": {
       "name": "@chordjs/gateway",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
-        "@chordjs/utils": "^26.0.2",
-        "libsodium-wrappers": "^0.7.15",
+        "@chordjs/utils": "^26.0.8",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -106,7 +106,7 @@
     },
     "packages/rest": {
       "name": "@chordjs/rest",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "dependencies": {
         "@chordjs/utils": "^26.0.2",
       },
@@ -116,16 +116,28 @@
     },
     "packages/types": {
       "name": "@chordjs/types",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
     "packages/utils": {
       "name": "@chordjs/utils",
-      "version": "26.0.6",
+      "version": "26.0.8",
       "dependencies": {
         "@chordjs/types": "^26.0.2",
+      },
+      "devDependencies": {
+        "typescript": "6.0.3",
+      },
+    },
+    "packages/voice": {
+      "name": "@chordjs/voice",
+      "version": "26.0.8",
+      "dependencies": {
+        "@chordjs/types": "^26.0.8",
+        "@chordjs/utils": "^26.0.8",
+        "libsodium-wrappers": "^0.7.15",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -192,6 +204,8 @@
     "@chordjs/types": ["@chordjs/types@workspace:packages/types"],
 
     "@chordjs/utils": ["@chordjs/utils@workspace:packages/utils"],
+
+    "@chordjs/voice": ["@chordjs/voice@workspace:packages/voice"],
 
     "@inquirer/external-editor": ["@inquirer/external-editor@1.0.3", "", { "dependencies": { "chardet": "^2.1.1", "iconv-lite": "^0.7.0" }, "peerDependencies": { "@types/node": ">=18" }, "optionalPeers": ["@types/node"] }, "sha512-RWbSrDiYmO4LbejWY7ttpxczuwQyZLBUyygsA9Nsv95hpzUWwnNTVQmAq3xuh7vNwCp07UTmE5i11XAEExx4RA=="],
 

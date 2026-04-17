@@ -257,7 +257,7 @@ export async function initCommand(projectName?: string) {
     await transformTemplateFiles(targetPath, language, moduleSystem);
 
     // 3. Generate package.json
-    const currentVersion = '26.0.8';
+    const currentVersion = '26.0.9';
     const pkgJson = buildPackageJson(targetName!, language, moduleSystem, currentVersion);
     await fs.writeJson(path.join(targetPath, 'package.json'), pkgJson, { spaces: 2 });
 
