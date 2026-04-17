@@ -41,7 +41,7 @@ describe("PieceLoader", () => {
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 export default class Greet extends Command {
-  constructor() { super({ name: "greet", description: "say hi" }); }
+  constructor(context: any) { super(context || {}, { name: "greet", description: "say hi" }); }
   run() { return "hi"; }
 }
 `,
@@ -66,7 +66,7 @@ export default class Greet extends Command {
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 class Hello extends Command {
-  constructor() { super({ name: "hello" }); }
+  constructor(context: any) { super(context || {}, { name: "hello" }); }
   run() {}
 }
 export default new Hello();
@@ -91,7 +91,7 @@ export default new Hello();
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 class FactoryCmd extends Command {
-  constructor(ctx: { name: string }) { super({ name: ctx.name }); }
+  constructor(ctx: { name: string }) { super(ctx as any, { name: ctx.name }); }
   run() {}
 }
 export default (ctx: { name: string }) => new FactoryCmd(ctx);
@@ -116,7 +116,7 @@ export default (ctx: { name: string }) => new FactoryCmd(ctx);
       `
 import { Listener } from "${join(process.cwd(), "packages/core/src/index.js")}";
 export default class OnReady extends Listener {
-  constructor() { super({ name: "on-ready", event: "READY" }); }
+  constructor(context: any) { super(context || {}, { name: "on-ready", event: "READY" }); }
   run() {}
 }
 `,
@@ -142,7 +142,7 @@ export default class OnReady extends Listener {
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 export default class Ping extends Command {
-  constructor() { super({ name: "ping" }); }
+  constructor(context: any) { super(context || {}, { name: "ping" }); }
   run() {}
 }
 `,
@@ -154,7 +154,7 @@ export default class Ping extends Command {
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 export default class Ban extends Command {
-  constructor() { super({ name: "ban" }); }
+  constructor(context: any) { super(context || {}, { name: "ban" }); }
   run() {}
 }
 `,
@@ -181,7 +181,7 @@ export default class Ban extends Command {
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 export default class Real extends Command {
-  constructor() { super({ name: "real" }); }
+  constructor(context: any) { super(context || {}, { name: "real" }); }
   run() {}
 }
 `,
@@ -214,7 +214,7 @@ export default class Real extends Command {
       `
 import { Command } from "${join(process.cwd(), "packages/core/src/index.js")}";
 export default class Stored extends Command {
-  constructor() { super({ name: "stored" }); }
+  constructor(context: any) { super(context || {}, { name: "stored" }); }
   run() {}
 }
 `,

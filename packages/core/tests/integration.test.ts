@@ -49,8 +49,8 @@ describe("core integration", () => {
 
     let called = false;
     class Ping extends Command {
-      constructor() {
-        super({ name: "ping" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "ping" });
       }
       run(): void {
         called = true;
@@ -78,8 +78,8 @@ describe("core integration", () => {
 
     let called = false;
     class Hello extends InteractionCommand {
-      constructor() {
-        super({ name: "hello", description: "hello command" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "hello", description: "hello command" });
       }
       async run(context: InteractionRunContext): Promise<void> {
         observedGuildId = context.guildId;
@@ -137,8 +137,8 @@ describe("core integration", () => {
     const replies: Array<string | PrefixReplyPayload> = [];
 
     class Ping extends Command {
-      constructor() {
-        super({ name: "ping" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "ping" });
       }
       async run(context: { reply(payload: string | PrefixReplyPayload): Promise<unknown> }): Promise<void> {
         await context.reply({
@@ -187,8 +187,8 @@ describe("core integration", () => {
     let called = false;
 
     class Ping extends Command {
-      constructor() {
-        super({ name: "ping", aliases: ["p", "pong"] });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "ping", aliases: ["p", "pong"] });
       }
 
       run(): void {
@@ -209,8 +209,8 @@ describe("core integration", () => {
     let called = false;
 
     class Ping extends Command {
-      constructor() {
-        super({ name: "ping" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "ping" });
       }
       run(): void {
         called = true;
@@ -235,8 +235,8 @@ describe("core integration", () => {
     let resolverCalls = 0;
 
     class Ping extends Command {
-      constructor() {
-        super({ name: "ping" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "ping" });
       }
       run(): void {}
     }
@@ -262,8 +262,8 @@ describe("core integration", () => {
     const rest = new MockRest();
 
     class Boom extends InteractionCommand {
-      constructor() {
-        super({ name: "boom", description: "throws error" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "boom", description: "throws error" });
       }
       async run(): Promise<void> {
         throw new Error("boom");
@@ -304,8 +304,8 @@ describe("core integration", () => {
     let observedQuery: unknown;
 
     class Search extends InteractionCommand {
-      constructor() {
-        super({ name: "search", description: "search command" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "search", description: "search command" });
       }
       async run(context: InteractionRunContext): Promise<void> {
         observedSubcommandGroup = context.subcommandGroup;
@@ -355,8 +355,8 @@ describe("core integration", () => {
     let ran = false;
 
     class Guarded extends Command {
-      constructor() {
-        super({ name: "guarded" });
+      constructor(context?: any) {
+        super(context || {} as any, { name: "guarded" });
       }
       run(): void {
         ran = true;
