@@ -43,6 +43,8 @@ export const Routes = {
   guildVanityUrl: (guildId: string) => `/guilds/${guildId}/vanity-url`,
   guildWelcomeScreen: (guildId: string) => `/guilds/${guildId}/welcome-screen`,
   guildVoiceState: (guildId: string, userId: string) => `/guilds/${guildId}/voice-states/${userId}`,
+  guildEmojis: (guildId: string) => `/guilds/${guildId}/emojis`,
+  guildEmoji: (guildId: string, emojiId: string) => `/guilds/${guildId}/emojis/${emojiId}`,
 
   // Users
   user: (userId: string = "@me") => `/users/${userId}`,

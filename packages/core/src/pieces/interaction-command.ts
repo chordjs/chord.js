@@ -6,6 +6,9 @@ import type {
   APIMessageTopLevelComponent,
   MessageFlags
 } from "@chordjs/types";
+import type { User } from "../structures/user.js";
+import type { Member } from "../structures/member.js";
+import type { Interaction } from "../structures/interaction.js";
 
 export interface ApplicationCommandOption {
   type: number;
@@ -31,7 +34,7 @@ export interface InteractionCommandOptions extends PieceOptions {
 }
 
 export interface InteractionRunContext {
-  interaction: unknown;
+  interaction: Interaction;
   commandName: string;
   options: Record<string, unknown>;
   subcommand?: string;
@@ -39,8 +42,8 @@ export interface InteractionRunContext {
   focusedOption?: { name: string; value: unknown };
   guildId?: string;
   channelId?: string;
-  user?: Record<string, unknown>;
-  member?: Record<string, unknown>;
+  user?: User;
+  member?: Member;
   resolved?: Record<string, unknown>;
   reply(payload: InteractionReplyPayload): Promise<unknown>;
   deferReply(options?: InteractionDeferOptions): Promise<unknown>;
@@ -49,7 +52,7 @@ export interface InteractionRunContext {
 }
 
 export interface InteractionAutocompleteContext {
-  interaction: unknown;
+  interaction: any;
   commandName: string;
   options: Record<string, unknown>;
   subcommand?: string;
@@ -57,8 +60,8 @@ export interface InteractionAutocompleteContext {
   focusedOption?: { name: string; value: string | number };
   guildId?: string;
   channelId?: string;
-  user?: Record<string, unknown>;
-  member?: Record<string, unknown>;
+  user?: User;
+  member?: Member;
   respond(choices: Array<{ name: string; value: string | number }>): Promise<unknown>;
 }
 

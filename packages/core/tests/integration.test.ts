@@ -38,7 +38,28 @@ class MockRest {
   async request<T = unknown>(method: string, path: string, init?: RequestInit): Promise<T> {
     this.lastRequest = { method, path, init };
     this.requests.push({ method, path, init });
-    return undefined as T;
+    // Return dummy data to satisfy constructors like new Message()
+    return {
+      id: "mock-id",
+      channel_id: "mock-channel-id",
+      content: "mock-content"
+    } as unknown as T;
+  }
+
+  async post<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+    return this.request("POST", path, init);
+  }
+
+  async patch<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+    return this.request("PATCH", path, init);
+  }
+
+  async put<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+    return this.request("PUT", path, init);
+  }
+
+  async delete<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+    return this.request("DELETE", path, init);
   }
 }
 
@@ -96,6 +117,7 @@ describe("core integration", () => {
 
     await store.set(new Hello());
     const router = new InteractionCommandRouter({ client, rest });
+    (client as any).rest = rest;
     router.bindGateway(gateway);
 
     await router.registerGlobalCommands(rest, "123");
@@ -272,6 +294,7 @@ describe("core integration", () => {
 
     await store.set(new Boom());
     const router = new InteractionCommandRouter({ client, rest });
+    (client as any).rest = rest;
     router.bindGateway(gateway);
 
     const handled = await router.handleInteraction({
@@ -317,6 +340,7 @@ describe("core integration", () => {
 
     await store.set(new Search());
     const router = new InteractionCommandRouter({ client, rest });
+    (client as any).rest = rest;
     router.bindGateway(gateway);
 
     await gateway.emitInteraction({

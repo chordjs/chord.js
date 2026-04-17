@@ -76,6 +76,28 @@ export class Member extends BaseEntity {
     return this.edit({ communication_disabled_until: timestamp }, reason);
   }
 
+  /**
+   * Adds a role to the member.
+   */
+  public async addRole(roleId: Snowflake, reason?: string): Promise<void> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    if (!this.user) throw new Error("Cannot add role to a member with no user data.");
+    await this.client.rest.put(Routes.guildMemberRole(this.guildId, this.user.id, roleId), {
+      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
+    });
+  }
+
+  /**
+   * Removes a role from the member.
+   */
+  public async removeRole(roleId: Snowflake, reason?: string): Promise<void> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    if (!this.user) throw new Error("Cannot remove role from a member with no user data.");
+    await this.client.rest.delete(Routes.guildMemberRole(this.guildId, this.user.id, roleId), {
+      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
+    });
+  }
+
   public toJSON(): APIGuildMember {
     return {
       user: this.user?.toJSON(),

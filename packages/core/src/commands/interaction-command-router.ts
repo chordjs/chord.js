@@ -15,6 +15,9 @@ import {
   runPreconditions,
   type RouterHooks
 } from "../hooks/precondition.js";
+import { Interaction } from "../structures/interaction.js";
+import { User } from "../structures/user.js";
+import { Member } from "../structures/member.js";
 
 export interface InteractionDispatchSource {
   onDispatch(event: "INTERACTION_CREATE", handler: (data: GatewayDispatchDataMap["INTERACTION_CREATE"]) => void | Promise<void>): unknown;
@@ -190,8 +193,10 @@ export class InteractionCommandRouter {
     try {
       await this.hooks?.beforeRun?.(context);
       
+      const interactionWrapper = new Interaction(this.client, interaction as any);
+
       await command.run({
-        interaction,
+        interaction: interactionWrapper,
         commandName: context.commandName,
         options: context.options,
         subcommand: context.subcommand,
@@ -199,20 +204,20 @@ export class InteractionCommandRouter {
         focusedOption: context.focusedOption,
         guildId: standardized.guildId,
         channelId: standardized.channelId,
-        user: standardized.user,
-        member: standardized.member,
+        user: standardized.user as User,
+        member: standardized.member as Member,
         resolved: standardized.resolved,
         reply: async (payload) => {
-          return this.#reply(interaction, payload);
+          return interactionWrapper.reply(payload as any);
         },
         deferReply: async (options) => {
-          return this.#deferReply(interaction, options);
+          return interactionWrapper.deferReply(options as any);
         },
         editReply: async (payload) => {
-          return this.#editReply(interaction, payload);
+          return interactionWrapper.editReply(payload as any);
         },
         followUp: async (payload) => {
-          return this.#followUp(interaction, payload);
+          return interactionWrapper.followUp(payload as any);
         }
       });
       await this.hooks?.afterRun?.(context);
@@ -295,40 +300,28 @@ export class InteractionCommandRouter {
   #standardizeInteractionContext(interaction: GatewayDispatchDataMap["INTERACTION_CREATE"]): {
     guildId?: string;
     channelId?: string;
-    user?: Record<string, unknown>;
-    member?: Record<string, unknown>;
+    user?: User;
+    member?: Member;
     resolved?: Record<string, unknown>;
   } {
     const raw = interaction as unknown as {
-      guild_id?: unknown;
-      channel_id?: unknown;
-      user?: unknown;
-      member?: unknown;
-      data?: { resolved?: unknown; options?: unknown };
+      guild_id?: string;
+      channel_id?: string;
+      user?: any;
+      member?: any;
+      data?: { resolved?: any };
     };
 
-    const member =
-      raw.member && typeof raw.member === "object"
-        ? (raw.member as Record<string, unknown>)
-        : undefined;
-    const memberUser =
-      member && member.user && typeof member.user === "object"
-        ? (member.user as Record<string, unknown>)
-        : undefined;
-    const user =
-      (raw.user && typeof raw.user === "object" ? (raw.user as Record<string, unknown>) : undefined)
-      ?? memberUser;
-    const resolved =
-      raw.data?.resolved && typeof raw.data.resolved === "object"
-        ? (raw.data.resolved as Record<string, unknown>)
-        : undefined;
+    const guildId = raw.guild_id;
+    const member = raw.member ? new Member(this.client, guildId!, raw.member) : undefined;
+    const user = raw.user ? new User(this.client, raw.user) : (member ? member.user : undefined);
 
     return {
-      guildId: typeof raw.guild_id === "string" ? raw.guild_id : undefined,
-      channelId: typeof raw.channel_id === "string" ? raw.channel_id : undefined,
+      guildId,
+      channelId: raw.channel_id,
       user,
       member,
-      resolved
+      resolved: raw.data?.resolved
     };
   }
 

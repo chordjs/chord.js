@@ -27,18 +27,18 @@ export interface ChordClientOptions {
 
 export class ChordClient {
   public readonly container: Container;
-  public rest?: RestClient;
-  public gateway?: GatewayClient;
-  public cache?: CacheManager;
-  public broker?: Broker;
   public readonly loader: PieceLoader;
   public readonly users: UserManager;
   public readonly guilds: GuildManager;
   public readonly channels: ChannelManager;
+  public cache?: CacheManager;
+  public broker?: Broker;
 
   readonly #stores = new Map<string, Store<Piece>>();
   readonly #plugins = new Map<string, ChordPlugin>();
   #user: User | null = null;
+  #rest?: RestClient;
+  #gateway?: GatewayClient;
 
   constructor(options: ChordClientOptions = {}) {
     this.container = options.container ?? new Container();
@@ -93,6 +93,22 @@ export class ChordClient {
    */
   get user(): User | null {
     return this.#user;
+  }
+
+  public get rest(): RestClient | undefined {
+    return this.#rest;
+  }
+
+  public set rest(value: RestClient | undefined) {
+    this.#rest = value;
+  }
+
+  public get gateway(): GatewayClient | undefined {
+    return this.#gateway;
+  }
+
+  public set gateway(value: GatewayClient | undefined) {
+    this.#gateway = value;
   }
 
   /**
