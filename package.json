@@ -1,20 +1,21 @@
 {
   "name": "chord.js",
   "private": true,
+  "packageManager": "bun@1.3.12",
   "workspaces": [
     "packages/*",
     "examples/*"
   ],
   "scripts": {
-    "build": "bun run --cwd packages/types build && bun run --cwd packages/collection build && bun run --cwd packages/utils build && bun run --cwd packages/builders build && bun run --cwd packages/rest build && bun run --cwd packages/gateway build && bun run --cwd packages/voice build && bun run --cwd packages/cache build && bun run --cwd packages/data build && bun run --cwd packages/broker build && bun run --cwd packages/core build && bun run --cwd packages/framework build && bun run --cwd packages/cli build",
+    "build": "turbo run build --filter=\"./packages/*\"",
     "build:cli": "bun run --cwd packages/cli build",
     "docs:build": "typedoc",
     "dev": "bun run --cwd packages/core dev",
     "dev:bot": "bun run --cwd examples/basic-bot dev",
     "dev:scaling": "bun run --cwd examples/folder-routing-sharding dev",
     "test": "bun test packages/core/tests packages/gateway/tests packages/rest/tests packages/utils/tests packages/cache/tests",
-    "typecheck": "bun run --workspaces typecheck",
-    "clean": "bun run --cwd packages/types clean && bun run --cwd packages/collection clean && bun run --cwd packages/utils clean && bun run --cwd packages/builders clean && bun run --cwd packages/rest clean && bun run --cwd packages/gateway clean && bun run --cwd packages/voice clean && bun run --cwd packages/cache clean && bun run --cwd packages/data clean && bun run --cwd packages/broker clean && bun run --cwd packages/core clean && bun run --cwd packages/framework clean && bun run --cwd packages/cli clean",
+    "typecheck": "turbo run typecheck --filter=\"./packages/*\"",
+    "clean": "turbo run clean --filter=\"./packages/*\"",
     "changeset": "bunx changeset",
     "version-packages": "bunx changeset version",
     "release": "bunx changeset publish"
@@ -31,6 +32,7 @@
   "homepage": "https://github.com/chordjs/chord.js#readme",
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
+    "turbo": "latest",
     "@swc/cli": "^0.7.8",
     "@swc/core": "^1.13.5",
     "@types/node": "25.6.0",

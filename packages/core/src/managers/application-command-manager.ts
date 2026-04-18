@@ -1,5 +1,5 @@
 import type { ChordClient } from "../structures/chord-client.js";
-import { InteractionCommand } from "../pieces/interaction-command.js";
+import { Routes } from "@chordjs/utils";
 import type { Snowflake } from "@chordjs/types";
 
 /**
@@ -13,33 +13,21 @@ export class ApplicationCommandManager {
   }
 
   /**
-   * Syncs all registered interaction commands with Discord.
+   * Syncs commands to Discord.
+   * @param commands The raw command payloads to sync.
    * @param guildId Optional guild ID to sync guild-specific commands.
    */
-  public async sync(guildId?: Snowflake): Promise<void> {
+  public async sync(commands: any[], guildId?: Snowflake): Promise<void> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
     
-    const store = this.client.store<InteractionCommand>("interaction-commands");
-    const localCommands = Array.from(store.values()).map(cmd => cmd.toApplicationCommand());
-    
-    // Map camelCase to snake_case for the API (if needed)
-    const body = localCommands.map(cmd => ({
-      name: cmd.name,
-      description: cmd.description,
-      type: cmd.type,
-      options: cmd.options,
-      name_localizations: cmd.nameLocalizations,
-      description_localizations: cmd.descriptionLocalizations
-    }));
-
     const path = guildId 
-      ? `/applications/${this.client.applicationId}/guilds/${guildId}/commands`
-      : `/applications/${this.client.applicationId}/commands`;
+      ? Routes.guildApplicationCommands(this.client.applicationId, guildId)
+      : Routes.applicationCommands(this.client.applicationId);
 
     await this.client.rest.put(path, {
-      body: JSON.stringify(body)
+      body: JSON.stringify(commands)
     });
 
-    console.log(`✅ Synced ${localCommands.length} commands ${guildId ? `to guild ${guildId}` : "globally"}.`);
+    console.log(`✅ Synced ${commands.length} commands ${guildId ? `to guild ${guildId}` : "globally"}.`);
   }
 }

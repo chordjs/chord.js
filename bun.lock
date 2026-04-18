@@ -11,6 +11,7 @@
         "@types/node": "25.6.0",
         "bun-types": "latest",
         "chokidar": "^5.0.0",
+        "turbo": "latest",
         "typedoc": "^0.26.0",
         "typedoc-plugin-markdown": "^4.1.0",
       },
@@ -21,6 +22,16 @@
         "@chordjs/framework": "^26.0.6",
       },
     },
+    "examples/enterprise-bot": {
+      "name": "enterprise-bot",
+      "version": "1.0.0",
+      "dependencies": {
+        "@chordjs/core": "workspace:*",
+        "@chordjs/framework": "workspace:*",
+        "@chordjs/types": "workspace:*",
+        "@chordjs/utils": "workspace:*",
+      },
+    },
     "examples/folder-routing-sharding": {
       "name": "@chordjs/example-folder-routing-sharding",
       "dependencies": {
@@ -29,7 +40,7 @@
     },
     "examples/music-bot": {
       "name": "example-music-bot",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
         "@chordjs/builders": "^26.5.0",
         "@chordjs/framework": "^26.5.0",
@@ -41,9 +52,9 @@
     },
     "packages/broker": {
       "name": "@chordjs/broker",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/utils": "^26.6.3",
         "ioredis": "^5.4.1",
       },
       "devDependencies": {
@@ -53,10 +64,10 @@
     },
     "packages/builders": {
       "name": "@chordjs/builders",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/types": "^26.5.0",
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -64,10 +75,10 @@
     },
     "packages/cache": {
       "name": "@chordjs/cache",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/types": "^26.5.0",
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -75,7 +86,7 @@
     },
     "packages/cli": {
       "name": "@chordjs/cli",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "bin": {
         "chord": "./dist/index.js",
       },
@@ -94,25 +105,25 @@
     },
     "packages/collection": {
       "name": "@chordjs/collection",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
     "packages/config": {
       "name": "@chordjs/config",
-      "version": "26.5.0",
+      "version": "26.6.3",
     },
     "packages/core": {
       "name": "@chordjs/core",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/broker": "^26.5.0",
-        "@chordjs/cache": "^26.5.0",
-        "@chordjs/gateway": "^26.5.0",
-        "@chordjs/rest": "^26.5.0",
-        "@chordjs/types": "^26.5.0",
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/broker": "^26.6.3",
+        "@chordjs/cache": "^26.6.3",
+        "@chordjs/gateway": "^26.6.3",
+        "@chordjs/rest": "^26.6.3",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -120,7 +131,7 @@
     },
     "packages/data": {
       "name": "@chordjs/data",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
         "@chordjs/utils": "^26.4.0",
       },
@@ -130,17 +141,21 @@
     },
     "packages/framework": {
       "name": "@chordjs/framework",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/builders": "^26.5.0",
-        "@chordjs/cache": "^26.5.0",
-        "@chordjs/collection": "^26.5.0",
-        "@chordjs/core": "^26.5.0",
-        "@chordjs/gateway": "^26.5.0",
-        "@chordjs/rest": "^26.5.0",
-        "@chordjs/types": "^26.5.0",
-        "@chordjs/utils": "^26.5.0",
-        "@chordjs/voice": "^26.5.0",
+        "@chordjs/builders": "^26.6.3",
+        "@chordjs/cache": "^26.6.3",
+        "@chordjs/collection": "^26.6.3",
+        "@chordjs/core": "^26.6.3",
+        "@chordjs/gateway": "^26.6.3",
+        "@chordjs/i18n": "^26.6.3",
+        "@chordjs/interactions": "^26.6.3",
+        "@chordjs/logger": "^26.6.3",
+        "@chordjs/metrics": "^26.6.3",
+        "@chordjs/rest": "^26.6.3",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
+        "@chordjs/voice": "^26.6.3",
       },
       "devDependencies": {
         "@swc/cli": "^0.3.12",
@@ -150,20 +165,61 @@
     },
     "packages/gateway": {
       "name": "@chordjs/gateway",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/types": "^26.5.0",
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
+    "packages/i18n": {
+      "name": "@chordjs/i18n",
+      "version": "26.6.3",
+      "devDependencies": {
+        "@swc/cli": "^0.3.12",
+        "@swc/core": "^1.5.7",
+        "typescript": "6.0.3",
+      },
+    },
+    "packages/interactions": {
+      "name": "@chordjs/interactions",
+      "version": "26.6.3",
+      "dependencies": {
+        "@chordjs/core": "^26.6.3",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
+      },
+      "devDependencies": {
+        "@swc/cli": "^0.3.12",
+        "@swc/core": "^1.5.7",
+        "typescript": "6.0.3",
+      },
+    },
+    "packages/logger": {
+      "name": "@chordjs/logger",
+      "version": "26.6.3",
+      "devDependencies": {
+        "@swc/cli": "^0.3.12",
+        "@swc/core": "^1.5.7",
+        "typescript": "6.0.3",
+      },
+    },
+    "packages/metrics": {
+      "name": "@chordjs/metrics",
+      "version": "26.6.3",
+      "devDependencies": {
+        "@swc/cli": "^0.3.12",
+        "@swc/core": "^1.5.7",
+        "typescript": "6.0.3",
+      },
+    },
     "packages/rest": {
       "name": "@chordjs/rest",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/utils": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -171,17 +227,17 @@
     },
     "packages/types": {
       "name": "@chordjs/types",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "devDependencies": {
         "typescript": "6.0.3",
       },
     },
     "packages/utils": {
       "name": "@chordjs/utils",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/collection": "^26.5.0",
-        "@chordjs/types": "^26.5.0",
+        "@chordjs/collection": "^26.6.3",
+        "@chordjs/types": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -189,10 +245,10 @@
     },
     "packages/voice": {
       "name": "@chordjs/voice",
-      "version": "26.5.0",
+      "version": "26.6.3",
       "dependencies": {
-        "@chordjs/types": "^26.5.0",
-        "@chordjs/utils": "^26.5.0",
+        "@chordjs/types": "^26.6.3",
+        "@chordjs/utils": "^26.6.3",
       },
       "devDependencies": {
         "typescript": "6.0.3",
@@ -261,6 +317,14 @@
     "@chordjs/framework": ["@chordjs/framework@workspace:packages/framework"],
 
     "@chordjs/gateway": ["@chordjs/gateway@workspace:packages/gateway"],
+
+    "@chordjs/i18n": ["@chordjs/i18n@workspace:packages/i18n"],
+
+    "@chordjs/interactions": ["@chordjs/interactions@workspace:packages/interactions"],
+
+    "@chordjs/logger": ["@chordjs/logger@workspace:packages/logger"],
+
+    "@chordjs/metrics": ["@chordjs/metrics@workspace:packages/metrics"],
 
     "@chordjs/rest": ["@chordjs/rest@workspace:packages/rest"],
 
@@ -375,6 +439,18 @@
     "@tokenizer/inflate": ["@tokenizer/inflate@0.2.7", "", { "dependencies": { "debug": "^4.4.0", "fflate": "^0.8.2", "token-types": "^6.0.0" } }, "sha512-MADQgmZT1eKjp06jpI2yozxaU9uVs4GzzgSL+uEq7bVcJ9V1ZXQkeGNql1fsSI0gMy1vhvNTNbUqrx+pZfJVmg=="],
 
     "@tokenizer/token": ["@tokenizer/token@0.3.0", "", {}, "sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A=="],
+
+    "@turbo/darwin-64": ["@turbo/darwin-64@2.9.6", "", { "os": "darwin", "cpu": "x64" }, "sha512-X/56SnVXIQZBLKwniGTwEQTGmtE5brSACnKMBWpY3YafuxVYefrC2acamfjgxP7BG5w3I+6jf0UrLoSzgPcSJg=="],
+
+    "@turbo/darwin-arm64": ["@turbo/darwin-arm64@2.9.6", "", { "os": "darwin", "cpu": "arm64" }, "sha512-aalBeSl4agT/QtYGDyf/XLajedWzUC9Vg/pm/YO6QQ93vkQ91Vz5uK1ta5RbVRDozQSz4njxUNqRNmOXDzW+qw=="],
+
+    "@turbo/linux-64": ["@turbo/linux-64@2.9.6", "", { "os": "linux", "cpu": "x64" }, "sha512-YKi05jnNHaD7vevgYwahpzGwbsNNTwzU2c7VZdmdFm7+cGDP4oREUWSsainiMfRqjRuolQxBwRn8wf1jmu+YZA=="],
+
+    "@turbo/linux-arm64": ["@turbo/linux-arm64@2.9.6", "", { "os": "linux", "cpu": "arm64" }, "sha512-02o/ZS69cOYEDczXvOB2xmyrtzjQ2hVFtWZK1iqxXUfzMmTjZK4UumrfNnjckSg+gqeBfnPRHa0NstA173Ik3g=="],
+
+    "@turbo/windows-64": ["@turbo/windows-64@2.9.6", "", { "os": "win32", "cpu": "x64" }, "sha512-wVdQjvnBI15wB6JrA+43CtUtagjIMmX6XYO758oZHAsCNSxqRlJtdyujih0D8OCnwCRWiGWGI63zAxR0hO6s9g=="],
+
+    "@turbo/windows-arm64": ["@turbo/windows-arm64@2.9.6", "", { "os": "win32", "cpu": "arm64" }, "sha512-1XUUyWW0W6FTSqGEhU8RHVqb2wP1SPkr7hIvBlMEwH9jr+sJQK5kqeosLJ/QaUv4ecSAd1ZhIrLoW7qslAzT4A=="],
 
     "@types/cacheable-request": ["@types/cacheable-request@6.0.3", "", { "dependencies": { "@types/http-cache-semantics": "*", "@types/keyv": "^3.1.4", "@types/node": "*", "@types/responselike": "^1.0.0" } }, "sha512-IQ3EbTzGxIigb1I3qPZc1rWJnH0BmSKv5QYTalEwweFvyBDLSAe24zP0le/hyi7ecGfZVlIVAg4BZqb8WBwKqw=="],
 
@@ -517,6 +593,8 @@
     "end-of-stream": ["end-of-stream@1.4.5", "", { "dependencies": { "once": "^1.4.0" } }, "sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg=="],
 
     "enquirer": ["enquirer@2.4.1", "", { "dependencies": { "ansi-colors": "^4.1.1", "strip-ansi": "^6.0.1" } }, "sha512-rRqJg/6gd538VHvR3PSrdRBb/1Vy2YfzHqzvbhGIQpDRKIa4FgV/54b5Q1xYSxOOwKvjXweS26E0Q+nAMwp2pQ=="],
+
+    "enterprise-bot": ["enterprise-bot@workspace:examples/enterprise-bot"],
 
     "entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
 
@@ -854,6 +932,8 @@
 
     "trim-repeated": ["trim-repeated@2.0.0", "", { "dependencies": { "escape-string-regexp": "^5.0.0" } }, "sha512-QUHBFTJGdOwmp0tbOG505xAgOp/YliZP/6UgafFXYZ26WT1bvQmSMJUvkeVSASuJJHbqsFbynTvkd5W8RBTipg=="],
 
+    "turbo": ["turbo@2.9.6", "", { "optionalDependencies": { "@turbo/darwin-64": "2.9.6", "@turbo/darwin-arm64": "2.9.6", "@turbo/linux-64": "2.9.6", "@turbo/linux-arm64": "2.9.6", "@turbo/windows-64": "2.9.6", "@turbo/windows-arm64": "2.9.6" }, "bin": { "turbo": "bin/turbo" } }, "sha512-+v2QJey7ZUeUiuigkU+uFfklvNUyPI2VO2vBpMYJA+a1hKFLFiKtUYlRHdb3P9CrAvMzi0upbjI4WT+zKtqkBg=="],
+
     "typedoc": ["typedoc@0.26.11", "", { "dependencies": { "lunr": "^2.3.9", "markdown-it": "^14.1.0", "minimatch": "^9.0.5", "shiki": "^1.16.2", "yaml": "^2.5.1" }, "peerDependencies": { "typescript": "4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x" }, "bin": { "typedoc": "bin/typedoc" } }, "sha512-sFEgRRtrcDl2FxVP58Ze++ZK2UQAEvtvvH8rRlig1Ja3o7dDaMHmaBfvJmdGnNEFaLTpQsN8dpvZaTqJSu/Ugw=="],
 
     "typedoc-plugin-markdown": ["typedoc-plugin-markdown@4.11.0", "", { "peerDependencies": { "typedoc": "0.28.x" } }, "sha512-2iunh2ALyfyh204OF7h2u0kuQ84xB3jFZtFyUr01nThJkLvR8oGGSSDlyt2gyO4kXhvUxDcVbO0y43+qX+wFbw=="],
@@ -909,6 +989,14 @@
     "@changesets/write/fs-extra": ["fs-extra@7.0.1", "", { "dependencies": { "graceful-fs": "^4.1.2", "jsonfile": "^4.0.0", "universalify": "^0.1.0" } }, "sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw=="],
 
     "@chordjs/framework/@swc/cli": ["@swc/cli@0.3.14", "", { "dependencies": { "@mole-inc/bin-wrapper": "^8.0.1", "@swc/counter": "^0.1.3", "commander": "^8.3.0", "fast-glob": "^3.2.5", "minimatch": "^9.0.3", "piscina": "^4.3.0", "semver": "^7.3.8", "slash": "3.0.0", "source-map": "^0.7.3" }, "peerDependencies": { "@swc/core": "^1.2.66", "chokidar": "^3.5.1" }, "optionalPeers": ["chokidar"], "bin": { "swc": "bin/swc.js", "swcx": "bin/swcx.js", "spack": "bin/spack.js" } }, "sha512-0vGqD6FSW67PaZUZABkA+ADKsX7OUY/PwNEz1SbQdCvVk/e4Z36Gwh7mFVBQH9RIsMonTyhV1RHkwkGnEfR3zQ=="],
+
+    "@chordjs/i18n/@swc/cli": ["@swc/cli@0.3.14", "", { "dependencies": { "@mole-inc/bin-wrapper": "^8.0.1", "@swc/counter": "^0.1.3", "commander": "^8.3.0", "fast-glob": "^3.2.5", "minimatch": "^9.0.3", "piscina": "^4.3.0", "semver": "^7.3.8", "slash": "3.0.0", "source-map": "^0.7.3" }, "peerDependencies": { "@swc/core": "^1.2.66", "chokidar": "^3.5.1" }, "optionalPeers": ["chokidar"], "bin": { "swc": "bin/swc.js", "swcx": "bin/swcx.js", "spack": "bin/spack.js" } }, "sha512-0vGqD6FSW67PaZUZABkA+ADKsX7OUY/PwNEz1SbQdCvVk/e4Z36Gwh7mFVBQH9RIsMonTyhV1RHkwkGnEfR3zQ=="],
+
+    "@chordjs/interactions/@swc/cli": ["@swc/cli@0.3.14", "", { "dependencies": { "@mole-inc/bin-wrapper": "^8.0.1", "@swc/counter": "^0.1.3", "commander": "^8.3.0", "fast-glob": "^3.2.5", "minimatch": "^9.0.3", "piscina": "^4.3.0", "semver": "^7.3.8", "slash": "3.0.0", "source-map": "^0.7.3" }, "peerDependencies": { "@swc/core": "^1.2.66", "chokidar": "^3.5.1" }, "optionalPeers": ["chokidar"], "bin": { "swc": "bin/swc.js", "swcx": "bin/swcx.js", "spack": "bin/spack.js" } }, "sha512-0vGqD6FSW67PaZUZABkA+ADKsX7OUY/PwNEz1SbQdCvVk/e4Z36Gwh7mFVBQH9RIsMonTyhV1RHkwkGnEfR3zQ=="],
+
+    "@chordjs/logger/@swc/cli": ["@swc/cli@0.3.14", "", { "dependencies": { "@mole-inc/bin-wrapper": "^8.0.1", "@swc/counter": "^0.1.3", "commander": "^8.3.0", "fast-glob": "^3.2.5", "minimatch": "^9.0.3", "piscina": "^4.3.0", "semver": "^7.3.8", "slash": "3.0.0", "source-map": "^0.7.3" }, "peerDependencies": { "@swc/core": "^1.2.66", "chokidar": "^3.5.1" }, "optionalPeers": ["chokidar"], "bin": { "swc": "bin/swc.js", "swcx": "bin/swcx.js", "spack": "bin/spack.js" } }, "sha512-0vGqD6FSW67PaZUZABkA+ADKsX7OUY/PwNEz1SbQdCvVk/e4Z36Gwh7mFVBQH9RIsMonTyhV1RHkwkGnEfR3zQ=="],
+
+    "@chordjs/metrics/@swc/cli": ["@swc/cli@0.3.14", "", { "dependencies": { "@mole-inc/bin-wrapper": "^8.0.1", "@swc/counter": "^0.1.3", "commander": "^8.3.0", "fast-glob": "^3.2.5", "minimatch": "^9.0.3", "piscina": "^4.3.0", "semver": "^7.3.8", "slash": "3.0.0", "source-map": "^0.7.3" }, "peerDependencies": { "@swc/core": "^1.2.66", "chokidar": "^3.5.1" }, "optionalPeers": ["chokidar"], "bin": { "swc": "bin/swc.js", "swcx": "bin/swcx.js", "spack": "bin/spack.js" } }, "sha512-0vGqD6FSW67PaZUZABkA+ADKsX7OUY/PwNEz1SbQdCvVk/e4Z36Gwh7mFVBQH9RIsMonTyhV1RHkwkGnEfR3zQ=="],
 
     "@manypkg/find-root/@types/node": ["@types/node@12.20.55", "", {}, "sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ=="],
 
@@ -1005,6 +1093,14 @@
     "@changesets/write/fs-extra/universalify": ["universalify@0.1.2", "", {}, "sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg=="],
 
     "@chordjs/framework/@swc/cli/commander": ["commander@8.3.0", "", {}, "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="],
+
+    "@chordjs/i18n/@swc/cli/commander": ["commander@8.3.0", "", {}, "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="],
+
+    "@chordjs/interactions/@swc/cli/commander": ["commander@8.3.0", "", {}, "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="],
+
+    "@chordjs/logger/@swc/cli/commander": ["commander@8.3.0", "", {}, "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="],
+
+    "@chordjs/metrics/@swc/cli/commander": ["commander@8.3.0", "", {}, "sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww=="],
 
     "@manypkg/find-root/fs-extra/jsonfile": ["jsonfile@4.0.0", "", { "optionalDependencies": { "graceful-fs": "^4.1.6" } }, "sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg=="],
 

@@ -14,6 +14,12 @@ import { Sticker } from "./sticker.js";
 import { Webhook } from "./webhook.js";
 import { SKU } from "./sku.js";
 import { Entitlement } from "./entitlement.js";
+import { GuildTemplate } from "./guild-template.js";
+import { GuildMemberManager } from "../managers/guild/member-manager.js";
+import { GuildChannelManager } from "../managers/guild/channel-manager.js";
+import { GuildRoleManager } from "../managers/guild/role-manager.js";
+import { GuildInviteManager } from "../managers/guild/invite-manager.js";
+import { AutoModerationManager } from "../managers/guild/auto-moderation-manager.js";
 import type { 
   GuildMember as APIGuildMember, 
   Channel as APIChannel,
@@ -27,7 +33,10 @@ import type {
   GuildScheduledEvent as APIGuildScheduledEvent,
   Sticker as APISticker,
   Webhook as APIWebhook,
-  Entitlement as APIEntitlement
+  Entitlement as APIEntitlement,
+  GuildTemplate as APIGuildTemplate,
+  GuildOnboarding as APIGuildOnboarding,
+  SoundboardSound as APISoundboardSound
 } from "@chordjs/types";
 
 /**
@@ -39,12 +48,24 @@ export class Guild extends BaseEntity {
   public ownerId?: Snowflake;
   public memberCount?: number;
 
+  public readonly members: GuildMemberManager;
+  public readonly channels: GuildChannelManager;
+  public readonly roles: GuildRoleManager;
+  public readonly invites: GuildInviteManager;
+  public readonly autoModeration: AutoModerationManager;
+
   public constructor(client: ChordClient, data: APIGuild) {
     super(client);
     this.id = data.id;
     this.name = data.name;
     this.ownerId = data.owner_id;
     this.memberCount = data.member_count;
+
+    this.members = new GuildMemberManager(client, this.id);
+    this.channels = new GuildChannelManager(client, this.id);
+    this.roles = new GuildRoleManager(client, this.id);
+    this.invites = new GuildInviteManager(client, this.id);
+    this.autoModeration = new AutoModerationManager(client, this.id);
   }
 
   /**
@@ -56,11 +77,12 @@ export class Guild extends BaseEntity {
   }
 
   /**
-   * Fetches the members of the guild. (Advanced placeholder)
+   * Fetches the members of the guild.
    */
-  public async fetchMembers(): Promise<unknown[]> {
+  public async fetchMembers(): Promise<Member[]> {
     if (!this.client.rest) throw new Error("REST client is not initialized.");
-    return this.client.rest.get(Routes.guildMembers(this.id)) as Promise<unknown[]>;
+    const data = await this.client.rest.get(Routes.guildMembers(this.id)) as APIGuildMember[];
+    return data.map(m => new Member(this.client, this.id, m));
   }
 
   /**
@@ -83,56 +105,38 @@ export class Guild extends BaseEntity {
   }
 
   /**
+   * Fetches a specific member from this guild.
+   */
+  public async fetchMember(userId: Snowflake): Promise<Member> {
+    return this.members.fetch(userId);
+  }
+
+  /**
    * Kicks a member from this guild.
    */
   public async kick(userId: Snowflake, reason?: string): Promise<void> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    await this.client.rest.delete(Routes.guildMember(this.id, userId), {
-      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
-    });
+    return this.members.kick(userId, reason);
   }
 
   /**
    * Bans a user from this guild.
    */
   public async ban(userId: Snowflake, options?: { delete_message_seconds?: number, reason?: string }): Promise<void> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const body: Record<string, unknown> = {};
-    if (options?.delete_message_seconds !== undefined) {
-      body.delete_message_seconds = options.delete_message_seconds;
-    }
-    await this.client.rest.put(Routes.guildBan(this.id, userId), {
-      body: JSON.stringify(body),
-      headers: options?.reason ? { "X-Audit-Log-Reason": options.reason } : undefined
-    });
+    return this.members.ban(userId, options);
   }
 
   /**
    * Unbans a user from this guild.
    */
   public async unban(userId: Snowflake, reason?: string): Promise<void> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    await this.client.rest.delete(Routes.guildBan(this.id, userId), {
-      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
-    });
-  }
-
-  /**
-   * Fetches a specific member from this guild.
-   */
-  public async fetchMember(userId: Snowflake): Promise<Member> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const data = await this.client.rest.get(Routes.guildMember(this.id, userId)) as APIGuildMember;
-    return new Member(this.client, this.id, data);
+    return this.members.unban(userId, reason);
   }
 
   /**
    * Fetches all channels in this guild.
    */
   public async fetchChannels(): Promise<Channel[]> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const data = await this.client.rest.get(Routes.guildChannels(this.id)) as APIChannel[];
-    return data.map(c => new Channel(this.client, c));
+    return this.channels.fetchAll();
   }
 
   /**
@@ -170,40 +174,28 @@ export class Guild extends BaseEntity {
    * Fetches invites for this guild.
    */
   public async fetchInvites(): Promise<Invite[]> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const data = await this.client.rest.get(`/guilds/${this.id}/invites`) as APIInviteMetadata[];
-    return data.map(i => new Invite(this.client, i));
+    return this.invites.fetchAll();
   }
 
   /**
    * Creates an invite for a channel in this guild.
    */
   public async createInvite(channelId: Snowflake, options?: { max_age?: number, max_uses?: number, temporary?: boolean, unique?: boolean, reason?: string }): Promise<Invite> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const { reason, ...body } = options ?? {};
-    const data = await this.client.rest.post(`/channels/${channelId}/invites`, {
-      body: JSON.stringify(body),
-      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
-    }) as APIInvite;
-    return new Invite(this.client, data);
+    return this.invites.create(channelId, options);
   }
 
   /**
    * Fetches all auto moderation rules for this guild.
    */
   public async fetchAutoModerationRules(): Promise<AutoModerationRule[]> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const data = await this.client.rest.get(`/guilds/${this.id}/auto-moderation/rules`) as APIAutoModerationRule[];
-    return data.map(r => new AutoModerationRule(this.client, r));
+    return this.autoModeration.fetchAll();
   }
 
   /**
    * Fetches a specific auto moderation rule.
    */
   public async fetchAutoModerationRule(ruleId: Snowflake): Promise<AutoModerationRule> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const data = await this.client.rest.get(`/guilds/${this.id}/auto-moderation/rules/${ruleId}`) as APIAutoModerationRule;
-    return new AutoModerationRule(this.client, data);
+    return this.autoModeration.fetch(ruleId);
   }
 
   /**
@@ -220,13 +212,7 @@ export class Guild extends BaseEntity {
     exempt_channels?: Snowflake[],
     reason?: string
   }): Promise<AutoModerationRule> {
-    if (!this.client.rest) throw new Error("REST client is not initialized.");
-    const { reason, ...body } = options;
-    const data = await this.client.rest.post(`/guilds/${this.id}/auto-moderation/rules`, {
-      body: JSON.stringify(body),
-      headers: reason ? { "X-Audit-Log-Reason": reason } : undefined
-    }) as APIAutoModerationRule;
-    return new AutoModerationRule(this.client, data);
+    return this.autoModeration.create(options);
   }
 
   /**
@@ -369,6 +355,97 @@ export class Guild extends BaseEntity {
     const path = `/applications/${this.client.applicationId}/entitlements?guild_id=${this.id}${query.toString() ? `&${query.toString()}` : ""}`;
     const data = await this.client.rest.get(path) as APIEntitlement[];
     return data.map(e => new Entitlement(this.client, e));
+  }
+
+  /**
+   * Fetches all templates for this guild.
+   */
+  public async fetchTemplates(): Promise<GuildTemplate[]> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const data = await this.client.rest.get(`/guilds/${this.id}/templates`) as APIGuildTemplate[];
+    return data.map(t => new GuildTemplate(this.client, t));
+  }
+
+  /**
+   * Creates a new template for this guild.
+   */
+  public async createTemplate(name: string, description?: string): Promise<GuildTemplate> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const data = await this.client.rest.post(`/guilds/${this.id}/templates`, {
+      body: JSON.stringify({ name, description })
+    }) as APIGuildTemplate;
+    return new GuildTemplate(this.client, data);
+  }
+
+  /**
+   * Fetches the onboarding settings for this guild.
+   */
+  public async fetchOnboarding(): Promise<APIGuildOnboarding> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.get(`/guilds/${this.id}/onboarding`) as APIGuildOnboarding;
+  }
+
+  /**
+   * Edits the onboarding settings for this guild.
+   */
+  public async editOnboarding(options: Partial<APIGuildOnboarding>): Promise<APIGuildOnboarding> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.put(`/guilds/${this.id}/onboarding`, {
+      body: JSON.stringify(options)
+    }) as APIGuildOnboarding;
+  }
+
+  /**
+   * Fetches the soundboard sounds for this guild.
+   */
+  public async fetchSoundboardSounds(): Promise<APISoundboardSound[]> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const data = await this.client.rest.get(`/guilds/${this.id}/soundboard-sounds`) as { items: APISoundboardSound[] };
+    return data.items;
+  }
+
+  /**
+   * Fetches the widget for this guild.
+   */
+  public async fetchWidget(): Promise<any> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.get(`/guilds/${this.id}/widget.json`);
+  }
+
+  /**
+   * Edits the widget for this guild.
+   */
+  public async editWidget(options: { enabled?: boolean, channel_id?: Snowflake | null }): Promise<any> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.patch(`/guilds/${this.id}/widget`, {
+      body: JSON.stringify(options)
+    });
+  }
+
+  /**
+   * Fetches the voice regions for this guild.
+   */
+  public async fetchVoiceRegions(): Promise<any[]> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.get(`/guilds/${this.id}/regions`) as any[];
+  }
+
+  /**
+   * Fetches the discovery metadata for this guild.
+   */
+  public async fetchDiscoveryMetadata(): Promise<any> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.get(`/guilds/${this.id}/discovery-metadata`);
+  }
+
+  /**
+   * Edits the discovery metadata for this guild.
+   */
+  public async editDiscoveryMetadata(options: { primary_category_id?: number, keywords?: string[], emoji_discoverable?: boolean }): Promise<any> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    return await this.client.rest.patch(`/guilds/${this.id}/discovery-metadata`, {
+      body: JSON.stringify(options)
+    });
   }
 
   public toJSON(): APIGuild {

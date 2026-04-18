@@ -1,4 +1,4 @@
-import type { AutoModerationRule as APIAutoModerationRule, AutoModerationAction, Snowflake } from "@chordjs/types";
+import type { AutoModerationRule as APIAutoModerationRule, AutoModerationAction, Snowflake, AutoModerationEventType, AutoModerationTriggerType } from "@chordjs/types";
 import { BaseEntity } from "./entity.js";
 import type { ChordClient } from "./chord-client.js";
 
@@ -10,8 +10,8 @@ export class AutoModerationRule extends BaseEntity {
   public readonly guildId: Snowflake;
   public name: string;
   public readonly creatorId: Snowflake;
-  public eventType: number;
-  public triggerType: number;
+  public eventType: AutoModerationEventType;
+  public triggerType: AutoModerationTriggerType;
   public triggerMetadata: any;
   public actions: AutoModerationAction[];
   public enabled: boolean;
@@ -24,8 +24,8 @@ export class AutoModerationRule extends BaseEntity {
     this.guildId = data.guild_id;
     this.name = data.name;
     this.creatorId = data.creator_id;
-    this.eventType = data.event_type;
-    this.triggerType = data.trigger_type;
+    this.eventType = data.event_type as AutoModerationEventType;
+    this.triggerType = data.trigger_type as AutoModerationTriggerType;
     this.triggerMetadata = data.trigger_metadata;
     this.actions = data.actions;
     this.enabled = data.enabled;

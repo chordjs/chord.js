@@ -1,10 +1,12 @@
 import type { ChordClient } from "./chord-client.js";
-import { Piece } from "./piece.js";
 
-export class Store<TPiece extends Piece> {
+/**
+ * A generic store for entities.
+ */
+export class Store<T> {
   public readonly name: string;
   public readonly client: ChordClient;
-  readonly #items = new Map<string, TPiece>();
+  readonly #items = new Map<string, T>();
 
   constructor(client: ChordClient, name: string) {
     this.client = client;
@@ -15,7 +17,7 @@ export class Store<TPiece extends Piece> {
     return this.#items.size;
   }
 
-  values(): IterableIterator<TPiece> {
+  values(): IterableIterator<T> {
     return this.#items.values();
   }
 
@@ -23,42 +25,31 @@ export class Store<TPiece extends Piece> {
     return this.#items.keys();
   }
 
-  entries(): IterableIterator<[string, TPiece]> {
+  entries(): IterableIterator<[string, T]> {
     return this.#items.entries();
   }
 
-  [Symbol.iterator](): IterableIterator<[string, TPiece]> {
+  [Symbol.iterator](): IterableIterator<[string, T]> {
     return this.#items[Symbol.iterator]();
   }
 
-  has(name: string): boolean {
-    return this.#items.has(name);
+  has(key: string): boolean {
+    return this.#items.has(key);
   }
 
-  get(name: string): TPiece | undefined {
-    return this.#items.get(name);
+  get(key: string): T | undefined {
+    return this.#items.get(key);
   }
 
-  async set(piece: TPiece): Promise<TPiece> {
-    piece.store = this as unknown as Store<Piece>;
-    this.#items.set(piece.name, piece);
-    await piece.onLoad?.();
-    return piece;
+  set(key: string, value: T): void {
+    this.#items.set(key, value);
   }
 
-  async delete(name: string): Promise<boolean> {
-    const piece = this.#items.get(name);
-    if (!piece) return false;
-    await piece.onUnload?.();
-    piece.store = null;
-    return this.#items.delete(name);
+  delete(key: string): boolean {
+    return this.#items.delete(key);
   }
 
-  async reload(name: string): Promise<boolean> {
-    const piece = this.#items.get(name);
-    if (!piece) return false;
-    await piece.onUnload?.();
-    await piece.onLoad?.();
-    return true;
+  clear(): void {
+    this.#items.clear();
   }
 }

@@ -82,6 +82,15 @@ export class Message extends BaseEntity {
   }
 
   /**
+   * Ends a poll on this message.
+   */
+  public async endPoll(): Promise<Message> {
+    if (!this.client.rest) throw new Error("REST client is not initialized.");
+    const data = await this.client.rest.post(`/channels/${this.channelId}/messages/${this.id}/poll/expire`) as APIMessage;
+    return new Message(this.client, data);
+  }
+
+  /**
    * Adds a reaction to this message.
    */
   public async react(emoji: string): Promise<void> {

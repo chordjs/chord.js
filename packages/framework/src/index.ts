@@ -1,36 +1,52 @@
-// Re-export core framework classes and utilities
-export * from '@chordjs/core';
+export * from "./structures/chord-client.js";
+export * from "./structures/plugin.js";
 
-// Re-export Rest components
-export * from '@chordjs/rest';
+export * from "./loaders/piece-loader.js";
+export * from "./bindings/listener-binder.js";
+export * from "./commands/prefix-command-router.js";
+export * from "./commands/args.js";
 
-// Re-export Gateway components
-export * from '@chordjs/gateway';
+export * from "./pieces/command.js";
+export * from "./pieces/listener.js";
 
-// Re-export Voice components
-export * from '@chordjs/voice';
+// Re-export ecosystem packages
+export * from "@chordjs/interactions";
+export * from "@chordjs/metrics";
+export * from "@chordjs/logger";
+export * from "@chordjs/i18n";
 
-// Re-export Builders
-export * from '@chordjs/builders';
-
-// Re-export Cache & Collection components as namespace to avoid GatewayEventEmitter conflict
-export * as Cache from '@chordjs/cache';
-export * from '@chordjs/collection';
-
-// Re-export Typings as namespace to avoid structure class conflicts
-export * as Types from '@chordjs/types';
-
-// Re-export Utilities directly
-export * from '@chordjs/utils';
-
-// Re-export common types and constants directly for convenience
-export { 
-  GatewayIntentBits, 
-  GatewayOpcode,
-  ButtonStyles,
-  ComponentTypes,
-  ApplicationCommandTypes,
-  ApplicationCommandOptionTypes,
-  ChannelTypes,
-  InteractionTypes
-} from '@chordjs/types';
+// Re-export core entities and managers, excluding conflicting names
+export {
+  BaseEntity,
+  User,
+  Guild,
+  Channel,
+  Member,
+  Message,
+  SKU,
+  Entitlement,
+  Application,
+  AuditLog,
+  AutoModerationRule,
+  Ban,
+  Invite,
+  ScheduledEvent,
+  StageInstance,
+  Sticker,
+  Webhook,
+  GuildTemplate,
+  Interaction,
+  CommandInteraction,
+  AutocompleteInteraction,
+  Store,
+  Container,
+  UserManager,
+  GuildManager,
+  ChannelManager,
+  ApplicationCommandManager,
+  awaitMessages,
+  awaitComponents,
+  awaitReactions,
+  GatewayIntentBits,
+  type Snowflake
+} from "@chordjs/core";

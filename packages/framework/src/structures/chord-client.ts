@@ -1,0 +1,61 @@
+import { ChordClient as BaseChordClient, type ChordClientOptions as BaseChordClientOptions, Message } from "@chordjs/core";
+import { Container } from "@chordjs/core";
+import { PieceLoader } from "../loaders/piece-loader.js";
+import { PrefixCommandRouter, type PrefixMessageLike } from "../commands/prefix-command-router.js";
+import { MetricsManager } from "@chordjs/metrics";
+import { createLogger, type Logger } from "@chordjs/logger";
+import { I18nManager } from "@chordjs/i18n";
+
+/**
+ * Extended ChordClient for the framework.
+ */
+export interface ChordClientOptions extends BaseChordClientOptions {
+  container?: Container;
+  prefix?: string | ((message: PrefixMessageLike) => string | null | undefined);
+}
+
+export class ChordClient extends BaseChordClient {
+  public readonly container: Container;
+  public readonly loader: PieceLoader;
+  public readonly metrics: MetricsManager;
+  public readonly logger: Logger;
+  public readonly i18n: I18nManager;
+
+  constructor(options: ChordClientOptions = {}) {
+    super(options);
+    this.container = options.container ?? new Container();
+    this.loader = new PieceLoader({ client: this as any });
+    this.metrics = new MetricsManager(this as any);
+    this.logger = createLogger({ scope: "chord" });
+    this.i18n = new I18nManager();
+    this.container.register(Container.createToken<Logger>("logger"), this.logger);
+    this.container.register(Container.createToken<I18nManager>("i18n"), this.i18n);
+
+    // Metrics wiring
+    if (this.gateway) {
+      this.gateway.onDispatch("*", () => {
+        this.metrics._recordGatewayEvent();
+      });
+    }
+
+    // Auto setup PrefixCommandRouter if prefix is provided
+    if (options.prefix) {
+      const router = new PrefixCommandRouter({
+        client: this as any,
+        prefix: options.prefix,
+        reply: async (messagePayload, payload) => {
+          const message = new Message(this as any, messagePayload as any);
+          return message.reply(payload as any);
+        }
+      });
+      this.container.register(Container.createToken<PrefixCommandRouter>("PrefixCommandRouter"), router);
+
+      if (this.gateway) {
+        this.gateway.onDispatch("MESSAGE_CREATE", async (data: any) => {
+          if (data.author?.bot) return;
+          await router.handleMessage(data);
+        });
+      }
+    }
+  }
+}

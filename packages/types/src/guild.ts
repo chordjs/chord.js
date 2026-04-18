@@ -1,6 +1,6 @@
-import type { Snowflake } from "./shared.js";
+import type { Snowflake, AuditLogEvent, AutoModerationEventType, AutoModerationTriggerType, AutoModerationActionType } from "./shared.js";
 import type { User } from "./user.js";
-import type { Channel } from "./channel.js";
+import type { Channel, GuildScheduledEvent } from "./channel.js";
 import type { ApplicationCommand } from "./interaction.js";
 
 export interface Role {
@@ -121,9 +121,16 @@ export interface AutoModerationRule {
   guild_id: Snowflake;
   name: string;
   creator_id: Snowflake;
-  event_type: number;
-  trigger_type: number;
-  trigger_metadata: any;
+  event_type: AutoModerationEventType;
+  trigger_type: AutoModerationTriggerType;
+  trigger_metadata: {
+    keyword_filter?: string[];
+    regex_patterns?: string[];
+    presets?: number[];
+    allow_list?: string[];
+    mention_total_limit?: number;
+    mention_raid_protection_enabled?: boolean;
+  };
   actions: AutoModerationAction[];
   enabled: boolean;
   exempt_roles: Snowflake[];
@@ -131,6 +138,62 @@ export interface AutoModerationRule {
 }
 
 export interface AutoModerationAction {
+  type: AutoModerationActionType;
+  metadata?: {
+    channel_id?: Snowflake;
+    duration_seconds?: number;
+    custom_message?: string;
+  };
+}
+
+export interface GuildTemplate {
+  code: string;
+  name: string;
+  description: string | null;
+  usage_count: number;
+  creator_id: Snowflake;
+  creator: User;
+  created_at: string;
+  updated_at: string;
+  source_guild_id: Snowflake;
+  serialized_source_guild: Partial<Guild>;
+  is_dirty: boolean | null;
+}
+
+export interface GuildOnboarding {
+  guild_id: Snowflake;
+  prompts: GuildOnboardingPrompt[];
+  default_channel_ids: Snowflake[];
+  enabled: boolean;
+  mode: number;
+}
+
+export interface GuildOnboardingPrompt {
+  id: Snowflake;
   type: number;
-  metadata?: any;
+  options: GuildOnboardingPromptOption[];
+  title: string;
+  single_select: boolean;
+  required: boolean;
+  in_onboarding: boolean;
+}
+
+export interface GuildOnboardingPromptOption {
+  id: Snowflake;
+  channel_ids: Snowflake[];
+  role_ids: Snowflake[];
+  emoji?: any;
+  title: string;
+  description: string | null;
+}
+
+export interface SoundboardSound {
+  name: string;
+  sound_id: Snowflake;
+  volume: number;
+  emoji_id: Snowflake | null;
+  emoji_name: string | null;
+  guild_id?: Snowflake;
+  available: boolean;
+  user?: User;
 }

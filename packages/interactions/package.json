@@ -1,0 +1,34 @@
+{
+  "name": "@chordjs/interactions",
+  "version": "26.7.1",
+  "description": "Interaction handling and routing for Chord.js",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist",
+    "typecheck": "bunx tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@chordjs/core": "^26.7.1",
+    "@chordjs/types": "^26.7.1",
+    "@chordjs/utils": "^26.7.1"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.5.7",
+    "typescript": "6.0.3"
+  },
+  "author": "shinseungmin",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
