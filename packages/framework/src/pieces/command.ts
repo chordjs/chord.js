@@ -55,13 +55,13 @@ export abstract class Command<TContext extends CommandContext = CommandContext> 
     }
 
     // Prefix Subcommand handling
-    if (!context.interaction && context.args && context.args.length > 0) {
+    if (!context.interaction && context.args && !context.args.finished) {
       const subcommands = _getSubcommands(this);
-      const subName = context.args[0];
+      const subName = context.args.peek();
       const found = subcommands.find((s: any) => s.name === subName);
       if (found && typeof (this as any)[found.propertyKey] === "function") {
-        // Shift args for the subcommand
-        context.args.shift();
+        // Shift args for the subcommand by advancing the index
+        context.args.next();
         return (this as any)[found.propertyKey](context);
       }
     }

@@ -53,9 +53,7 @@ export class ChordClient extends BaseChordClient {
     this.container.register(Container.createToken<InteractionCommandRouter>("InteractionCommandRouter"), interactionRouter);
 
     if (this.gateway) {
-      this.gateway.onDispatch("INTERACTION_CREATE", async (data: any) => {
-        await interactionRouter.handleInteraction(data);
-      });
+      interactionRouter.bindGateway(this.gateway as any);
     }
 
     // Auto setup PrefixCommandRouter if prefix is provided

@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/i18n",
-  "version": "26.8.11",
+  "version": "26.8.12",
   "description": "Internationalization and localization module for Chord.js",
   "type": "module",
   "main": "dist/index.js",
