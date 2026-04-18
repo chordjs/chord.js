@@ -1,4 +1,11 @@
-import { InteractionCommand, type InteractionCommandOptions, type InteractionRunContext, type PieceContext } from "@chordjs/interactions";
+import { 
+  InteractionCommand, 
+  type InteractionCommandOptions, 
+  type InteractionRunContext, 
+  type PieceContext,
+  runPreconditions,
+  Precondition
+} from "@chordjs/interactions";
 import type { ChordClient } from "../structures/chord-client.js";
 import { 
   getPreconditions, 
@@ -17,6 +24,7 @@ export interface CommandOptions extends InteractionCommandOptions {
 
 export abstract class Command<TContext extends CommandContext = CommandContext> extends InteractionCommand<TContext> {
   public readonly aliases: string[];
+  #resolvedPreconditionsCache = new Map<string | undefined, any[]>();
 
   protected constructor(context: TContext, options: CommandOptions = {}) {
     super(context, options);
@@ -58,8 +66,36 @@ export abstract class Command<TContext extends CommandContext = CommandContext> 
     if (!context.interaction && context.args && !context.args.finished) {
       const subcommands = _getSubcommands(this);
       const subName = context.args.peek();
-      const found = subcommands.find((s: any) => s.name === subName);
+      const lookup = context.caseInsensitive ? subName?.toLowerCase() : subName;
+      
+      const found = subcommands.find((s: any) => {
+        const name = context.caseInsensitive ? s.name.toLowerCase() : s.name;
+        return name === lookup;
+      });
+
       if (found && typeof (this as any)[found.propertyKey] === "function") {
+        // Run preconditions for the subcommand if they exist
+        const propertyKey = found.propertyKey as string;
+        let resolved = this.#resolvedPreconditionsCache.get(propertyKey);
+
+        if (!resolved && context.preconditionResolver) {
+          const metaPreconditions = this.getEffectivePreconditions(propertyKey);
+          if (metaPreconditions.length > 0) {
+            const client = context.client || (this as any).client;
+            resolved = metaPreconditions
+              .map(p => context.preconditionResolver!(p, client))
+              .filter(p => p !== null);
+            this.#resolvedPreconditionsCache.set(propertyKey, resolved);
+          }
+        }
+
+        if (resolved && resolved.length > 0) {
+          const result = await runPreconditions(resolved, context);
+          if (!result.ok) {
+            throw new Error(result.reason ?? "Precondition failed");
+          }
+        }
+
         // Shift args for the subcommand by advancing the index
         context.args.next();
         return (this as any)[found.propertyKey](context);

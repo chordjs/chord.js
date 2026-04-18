@@ -23,7 +23,9 @@ async function copyTemplates() {
   await fs.ensureDir(TEMPLATES_DIR);
 
   const mappings = [
-    { src: path.join(EXAMPLES_DIR, 'chord-bot'), dest: path.join(TEMPLATES_DIR, 'starter') }
+    { src: path.join(EXAMPLES_DIR, 'chord-bot'), dest: path.join(TEMPLATES_DIR, 'starter') },
+    { src: path.join(EXAMPLES_DIR, 'sharding'), dest: path.join(TEMPLATES_DIR, 'sharding') },
+    { src: path.join(EXAMPLES_DIR, 'shard-cluster'), dest: path.join(TEMPLATES_DIR, 'shard-cluster') }
   ];
 
   for (const { src, dest } of mappings) {

@@ -38,6 +38,8 @@ export interface PrefixCommandContext {
   raw: string;
   message: PrefixMessageLike;
   command?: Command;
+  caseInsensitive?: boolean;
+  preconditionResolver?: (meta: any, client: any) => any;
   reply(payload: string | PrefixReplyPayload): Promise<unknown>;
 }
 
@@ -149,7 +151,7 @@ export class PrefixCommandRouter {
           // ignore double fault
         }
       }
-      throw error;
+      return false;
     }
   }
 
@@ -184,6 +186,8 @@ export class PrefixCommandRouter {
       rawArgs: args,
       raw: withoutPrefix,
       message,
+      caseInsensitive: this.caseInsensitive,
+      preconditionResolver: this.preconditionResolver,
       reply: async (payload: string | PrefixReplyPayload) => {
         if (!this.reply) {
           throw new Error("PrefixCommandRouter: reply handler is not configured");

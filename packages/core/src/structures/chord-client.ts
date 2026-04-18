@@ -108,12 +108,6 @@ export class ChordClient {
     }
   }
 
-  /**
-   * Gateway latency in milliseconds.
-   */
-  get ping(): number {
-    return this.gateway?.latency ?? -1;
-  }
 
   createStore<T>(name: string): Store<T> {
     if (this.#stores.has(name)) {

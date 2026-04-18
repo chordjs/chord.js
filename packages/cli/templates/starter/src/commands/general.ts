@@ -30,7 +30,7 @@ export default class GeneralCommand extends Command {
   @Cooldown(3000) // 3 seconds cooldown
   async ping(context: InteractionRunContext | PrefixCommandContext) {
     const isInteraction = "interaction" in context;
-    const content = `🏓 Pong! Latency: \`${this.context.client.gateway?.ping ?? 0}ms\``;
+    const content = `🏓 Pong! Latency: \`${this.context.client.gateway?.latency ?? 0}ms\``;
 
     if (isInteraction) {
       await (context as InteractionRunContext).reply({ content });
@@ -45,7 +45,7 @@ export default class GeneralCommand extends Command {
       title: "🤖 Chord Bot Info",
       description: "This bot is built with Chord.js - the future of Discord frameworks.",
       fields: [
-        { name: "Framework", value: "Chord.js v26.8.12", inline: true },
+        { name: "Framework", value: "Chord.js v26.9.1", inline: true },
         { name: "Language", value: "TypeScript", inline: true }
       ],
       color: 0x5865F2

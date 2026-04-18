@@ -115,6 +115,7 @@ function buildPackageJson(
   name: string,
   language: Language,
   moduleSystem: ModuleSystem,
+  template: string,
   currentVersion: string
 ): Record<string, any> {
   const mainExt = language === 'typescript' ? 'ts' : (moduleSystem === 'commonjs' ? 'cjs' : 'mjs');
@@ -150,6 +151,10 @@ function buildPackageJson(
     "@chordjs/i18n": `^${currentVersion}`,
     "reflect-metadata": "^0.2.2"
   };
+
+  if (template === 'sharding' || template === 'shard-cluster') {
+    pkg.dependencies["@chordjs/gateway"] = `^${currentVersion}`;
+  }
 
   pkg.devDependencies = {
     "@chordjs/cli": `^${currentVersion}`,
@@ -225,6 +230,19 @@ export async function initCommand(projectName?: string) {
   });
   const moduleSystem: ModuleSystem = modResponse.moduleSystem;
 
+  // Template selection
+  const templateResponse = await (enquirer as any).prompt({
+    type: 'select',
+    name: 'template',
+    message: 'Which template would you like to use?',
+    choices: [
+      { name: 'starter', message: 'Starter (Single process, recommended for small bots)' },
+      { name: 'sharding', message: 'Sharding (Single process, multiple shards)' },
+      { name: 'shard-cluster', message: 'Shard Cluster (Multi-process, for large bots)' },
+    ],
+  });
+  const template: string = templateResponse.template;
+
   const targetPath = path.resolve(process.cwd(), targetName!);
 
   if (fs.existsSync(targetPath)) {
@@ -234,9 +252,10 @@ export async function initCommand(projectName?: string) {
 
   console.log(chalk.cyan(`\n🚀 Initializing Chord.js project: ${chalk.bold(targetName)}...`));
   console.log(chalk.dim(`   Language: ${language === 'typescript' ? 'TypeScript' : 'JavaScript'}`));
-  console.log(chalk.dim(`   Module:   ${moduleSystem === 'esm' ? 'ESM' : 'CommonJS'}\n`));
+  console.log(chalk.dim(`   Module:   ${moduleSystem === 'esm' ? 'ESM' : 'CommonJS'}`));
+  console.log(chalk.dim(`   Template: ${template === 'starter' ? 'Starter' : (template === 'sharding' ? 'Sharding' : 'Shard Cluster')}\n`));
 
-  const templatePath = path.resolve(decodeURI(new URL('.', import.meta.url).pathname), '../../templates/starter');
+  const templatePath = path.resolve(decodeURI(new URL('.', import.meta.url).pathname), `../../templates/${template}`);
 
   try {
     if (!fs.existsSync(templatePath)) {
@@ -253,8 +272,9 @@ export async function initCommand(projectName?: string) {
     await transformTemplateFiles(targetPath, language, moduleSystem);
 
     // 3. Generate package.json
-    const currentVersion = '26.8.12';
-    const pkgJson = buildPackageJson(targetName!, language, moduleSystem, currentVersion);
+    const currentVersion = '26.9.1';
+    const pkgJson = buildPackageJson(targetName!, language, moduleSystem, template, currentVersion);
+
     await fs.writeJson(path.join(targetPath, 'package.json'), pkgJson, { spaces: 2 });
 
     // 4. Generate or remove tsconfig.json
