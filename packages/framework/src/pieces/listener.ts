@@ -16,7 +16,7 @@ export abstract class Listener<T extends string = string> extends Piece {
   }
 
   public override async onLoad(): Promise<void> {
-    const gateway = this.store?.client.gateway;
+    const gateway = this.pieceStore?.client.gateway;
     if (!gateway) return;
 
     const handler = this.#runBound as (data: unknown) => void | Promise<void>;
@@ -30,7 +30,7 @@ export abstract class Listener<T extends string = string> extends Piece {
   }
 
   public override async onUnload(): Promise<void> {
-    const gateway = this.store?.client.gateway;
+    const gateway = this.pieceStore?.client.gateway;
     if (!gateway) return;
 
     const handler = this.#runBound as (data: unknown) => void | Promise<void>;
