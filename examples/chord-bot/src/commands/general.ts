@@ -45,7 +45,7 @@ export default class GeneralCommand extends Command {
       title: "🤖 Chord Bot Info",
       description: "This bot is built with Chord.js - the future of Discord frameworks.",
       fields: [
-        { name: "Framework", value: "Chord.js v26.8.10", inline: true },
+        { name: "Framework", value: "Chord.js v26.8.11", inline: true },
         { name: "Language", value: "TypeScript", inline: true }
       ],
       color: 0x5865F2

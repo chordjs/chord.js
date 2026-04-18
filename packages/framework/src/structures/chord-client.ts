@@ -2,6 +2,7 @@ import { ChordClient as BaseChordClient, type ChordClientOptions as BaseChordCli
 import { Container } from "@chordjs/core";
 import { PieceLoader } from "../loaders/piece-loader.js";
 import { PrefixCommandRouter, type PrefixMessageLike } from "../commands/prefix-command-router.js";
+import { InteractionCommandRouter } from "@chordjs/interactions";
 import { MetricsManager } from "@chordjs/metrics";
 import { createLogger, type Logger } from "@chordjs/logger";
 import { I18nManager } from "@chordjs/i18n";
@@ -14,6 +15,7 @@ export interface ChordClientOptions extends BaseChordClientOptions {
   container?: Container;
   prefix?: string | ((message: PrefixMessageLike) => string | null | undefined);
   ownerIds?: string[];
+  autoSyncCommands?: boolean;
 }
 
 export class ChordClient extends BaseChordClient {
@@ -39,6 +41,20 @@ export class ChordClient extends BaseChordClient {
     if (this.gateway) {
       this.gateway.onDispatch("*", () => {
         this.metrics._recordGatewayEvent();
+      });
+    }
+
+    // Setup InteractionCommandRouter
+    const interactionRouter = new InteractionCommandRouter({
+      client: this as any,
+      autoSync: options.autoSyncCommands ?? true,
+      preconditionResolver: (meta, client) => resolvePrecondition(meta, client)
+    });
+    this.container.register(Container.createToken<InteractionCommandRouter>("InteractionCommandRouter"), interactionRouter);
+
+    if (this.gateway) {
+      this.gateway.onDispatch("INTERACTION_CREATE", async (data: any) => {
+        await interactionRouter.handleInteraction(data);
       });
     }
 
