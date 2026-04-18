@@ -133,6 +133,11 @@ export async function resolveShardCount(
 }
 
 export interface ShardManagerCreateOptions extends Omit<ShardManagerOptions, "shardCount"> {
+  /**
+   * Optional token for auto shard count fetching. 
+   * If not provided, `gateway.token` will be used.
+   */
+  token?: string;
   shardCount: ShardCountResolvable;
   autoShardCount?: AutoShardCountOptions;
 }
@@ -148,7 +153,8 @@ export class ShardManager {
   readonly #metricListeners = new Set<(metrics: ShardMetrics) => void>();
 
   static async create(options: ShardManagerCreateOptions): Promise<ShardManager> {
-    const shardCount = await resolveShardCount(options.shardCount, options.autoShardCount);
+    const autoOptions = options.autoShardCount ?? { token: options.token ?? options.gateway.token };
+    const shardCount = await resolveShardCount(options.shardCount, autoOptions);
     return new ShardManager({
       shardCount,
       shardIds: options.shardIds,

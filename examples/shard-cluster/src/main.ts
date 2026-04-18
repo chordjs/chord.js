@@ -6,7 +6,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
   const manager = await ProcessClusterManager.create({
-    token: process.env.DISCORD_TOKEN!,
     shardCount: "auto",
     clusters: 2, // Number of processes to spawn
     workerPath: path.join(__dirname, `bot.${import.meta.url.endsWith('.ts') ? 'ts' : 'js'}`),
