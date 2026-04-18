@@ -74,14 +74,14 @@ export interface ProcessClusterManagerCreateOptions extends Omit<ProcessClusterM
   autoShardCount?: AutoShardCountOptions;
 }
 
-export interface ProcessClusterManagerEventMap {
-  ready: { clusterId: number };
-  log: { clusterId: number; level: "debug" | "info" | "warn" | "error"; message: string };
-  error: { clusterId: number; message: string };
-  pong: { clusterId: number; nonce: number };
-  exit: { clusterId: number; code: number | null; signal: NodeJS.Signals | null };
-  statusUpdate: { clusterId: number; status: GatewayConnectionStatus };
-}
+export type ProcessClusterManagerEventMap = {
+  ready: (data: { clusterId: number }) => void;
+  log: (data: { clusterId: number; level: "debug" | "info" | "warn" | "error"; message: string }) => void;
+  error: (data: { clusterId: number; message: string }) => void;
+  pong: (data: { clusterId: number; nonce: number }) => void;
+  exit: (data: { clusterId: number; code: number | null; signal: NodeJS.Signals | null }) => void;
+  statusUpdate: (data: { clusterId: number; status: GatewayConnectionStatus }) => void;
+};
 
 export interface ClusterRestartStats {
   clusterId: number;

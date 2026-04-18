@@ -109,7 +109,7 @@ export class ClusterManager {
     return GatewayConnectionStatus.Disconnected;
   }
 
-  cluster(id: number): ClusterProcess | Cluster {
+  cluster(id: number): Cluster {
     const c = this.#instances.get(id);
     if (!c) throw new Error(`Unknown cluster: ${id}`);
     return c;
