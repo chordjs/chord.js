@@ -1,5 +1,5 @@
 {
-  "name": "@chordjs/example-chord-bot",
+  "name": "@chordjs/example-sharding",
   "version": "26.9.1",
   "private": true,
   "type": "module",
