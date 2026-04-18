@@ -13,11 +13,9 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": ".",
-    "ignoreDeprecations": "5.0",
     "paths": {
       "@chordjs/*": [
-        "packages/*/src/index.ts"
+        "./packages/*/src/index.ts"
       ]
     },
     "experimentalDecorators": true,
