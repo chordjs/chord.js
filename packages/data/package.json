@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/data",
-  "version": "26.9.1",
+  "version": "26.9.2",
   "description": "Database and persistence utilities for Chord.js.",
   "license": "MIT",
   "publishConfig": {
@@ -13,7 +13,7 @@
     "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist"
   },
   "dependencies": {
-    "@chordjs/utils": "^26.9.1"
+    "@chordjs/utils": "^26.9.2"
   },
   "devDependencies": {
     "typescript": "6.0.3"
