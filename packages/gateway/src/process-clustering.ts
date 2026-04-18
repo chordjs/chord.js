@@ -1,8 +1,8 @@
 import { fork, type ChildProcess } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { splitShardsIntoClusters, type ClusterInfo } from "./clustering.js";
+import { splitShardsIntoClusters, type IClusterManager } from "./clustering.js";
 import { resolveShardCount, type AutoShardCountOptions, type ShardCountResolvable, type ShardManagerOptions } from "./sharding.js";
-import { GatewayConnectionStatus } from "@chordjs/types";
+import { GatewayConnectionStatus, type ClusterInfo, type ClusterManagerMetrics } from "@chordjs/types";
 import { Emitter } from "@chordjs/utils";
 
 export type ClusterWorkerInit = {
@@ -140,7 +140,7 @@ export class ClusterProcess {
   }
 }
 
-export class ProcessClusterManager {
+export class ProcessClusterManager implements IClusterManager {
   public readonly shardCount: number;
   public readonly clusters: number;
   public readonly clusterInfos: ClusterInfo[];
@@ -317,6 +317,29 @@ export class ProcessClusterManager {
     }
 
     await Promise.race([allExitPromise, new Promise<void>((resolve) => setTimeout(resolve, 2000))]);
+  }
+
+  aggregateMetrics(): ClusterManagerMetrics {
+    // Note: This requires an IPC mechanism to fetch real-time metrics from workers.
+    // For now, we return a simplified view based on process status.
+    const clusters = this.clusterInfos.map((info) => {
+      const proc = this.#processes.get(info.id);
+      return {
+        clusterId: info.id,
+        shardCount: info.shardIds.length,
+        avgLatencyMs: null, // Unknown without IPC metrics
+        totalResumeCount: 0 // Unknown without IPC metrics
+      };
+    });
+
+    return {
+      clusters,
+      overall: {
+        shardCount: this.shardCount,
+        avgLatencyMs: null,
+        totalResumeCount: 0
+      }
+    };
   }
 
   #wire(proc: ClusterProcess): void {

@@ -1,6 +1,6 @@
 import { sleep } from "@chordjs/utils";
-import { GatewayClient, type GatewayClientOptions, type GatewayMetrics } from "./gateway-client.js";
-import { GatewayConnectionStatus } from "@chordjs/types";
+import { GatewayClient, type GatewayClientOptions } from "./gateway-client.js";
+import { GatewayConnectionStatus, type ShardMetrics } from "@chordjs/types";
 
 export interface IdentifySchedulerOptions {
   /**
@@ -42,10 +42,6 @@ export interface ShardOptions {
   total: number;
   gateway: Omit<GatewayClientOptions, "shard">;
   identify?: IdentifyScheduler;
-}
-
-export interface ShardMetrics extends GatewayMetrics {
-  shardId: number;
 }
 
 export class Shard {

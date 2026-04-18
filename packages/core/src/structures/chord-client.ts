@@ -29,6 +29,13 @@ export interface ChordClientOptions {
   broker?: Broker;
   token?: string;
   intents?: GatewayIntentResolvable;
+  /**
+   * Shard information. 
+   * If [number, number], it's [shardId, totalShards].
+   * If number[], it's a list of shard IDs to manage (totalShards must be inferred or provided elsewhere).
+   * Note: Current GatewayClient expects [id, total]. Support for multiple IDs in one client is a future enhancement.
+   */
+  shard?: [number, number];
 }
 
 export class ChordClient {
@@ -50,7 +57,8 @@ export class ChordClient {
     this.rest = options.rest ?? (options.token ? new RestClient({ token: options.token }) : undefined);
     this.gateway = options.gateway ?? (options.token ? new GatewayClient({
       token: options.token,
-      intents: intents
+      intents: intents,
+      shard: options.shard
     }) : undefined);
     this.cache = options.cache;
     this.broker = options.broker;

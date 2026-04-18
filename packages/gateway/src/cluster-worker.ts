@@ -1,78 +1,80 @@
-import type { ClusterWorkerCommand, ClusterWorkerEvent, ClusterWorkerInit } from "./process-clustering.js";
-import { ShardManager } from "./sharding.js";
 import { GatewayConnectionStatus } from "@chordjs/types";
+import type { ClusterWorkerInit, ClusterWorkerCommand, ClusterWorkerEvent } from "./process-clustering.js";
 
-let shards: ShardManager | null = null;
-let initialized = false;
-let lastStatus: GatewayConnectionStatus | null = null;
-
-function send(event: ClusterWorkerEvent): void {
-  process.send?.(event);
-}
-
-type LogLevel = "debug" | "info" | "warn" | "error";
-
-function log(level: LogLevel, message: string): void {
-  send({ op: "log", level, message });
-}
-
-function checkStatus(): void {
-  if (!shards) return;
-  const currentStatus = shards.status;
-  if (currentStatus !== lastStatus) {
-    lastStatus = currentStatus;
-    send({ op: "statusUpdate", status: currentStatus });
+export abstract class ClusterWorker {
+  constructor() {
+    process.on("message", (msg: ClusterWorkerCommand) => {
+      void this.#handleCommand(msg);
+    });
   }
-}
 
-async function init(data: ClusterWorkerInit): Promise<void> {
-  if (initialized) return;
-  initialized = true;
+  /**
+   * Called when the manager sends initial configuration.
+   */
+  abstract onInit(data: ClusterWorkerInit): Promise<void>;
 
-  shards = new ShardManager({
-    shardCount: data.shardCount,
-    shardIds: data.cluster.shardIds,
-    gateway: data.gateway,
-    identify: data.identify,
-    spawnDelayMs: data.spawnDelayMs
-  });
+  /**
+   * Called when the manager requests all shards to connect.
+   */
+  abstract onConnectAll(): Promise<void>;
 
-  // Wire status updates
-  shards.onMetrics(() => checkStatus());
-  
-  // Send initial status
-  checkStatus();
+  /**
+   * Called when the manager requests all shards to close.
+   */
+  onCloseAll(_code?: number, _reason?: string): void {}
 
-  log("info", `cluster ${data.cluster.id} ready shards=${data.cluster.shardIds.join(",")}`);
-  send({ op: "ready" });
-}
+  /**
+   * Notifies the manager that this cluster is ready to connect shards.
+   */
+  protected sendReady(): void {
+    this.#send({ op: "ready" });
+  }
 
-process.on("message", async (msg: unknown) => {
-  const cmd = msg as Partial<ClusterWorkerCommand> | undefined;
-  if (!cmd || typeof cmd.op !== "string") return;
+  /**
+   * Sends a log message to the manager.
+   */
+  protected sendLog(level: "debug" | "info" | "warn" | "error", message: string): void {
+    this.#send({ op: "log", level, message });
+  }
 
-  try {
-    switch (cmd.op) {
-      case "init":
-        if (!cmd.d) throw new Error("init missing payload");
-        await init(cmd.d as ClusterWorkerInit);
-        return;
-      case "connectAll":
-        if (!shards) throw new Error("worker not initialized");
-        await shards.connectAll();
-        return;
-      case "closeAll":
-        shards?.closeAll(cmd.d?.code, cmd.d?.reason);
-        checkStatus();
-        return;
-      case "ping":
-        if (typeof cmd.nonce === "number") send({ op: "pong", nonce: cmd.nonce });
-        return;
-      default:
-        return;
+  /**
+   * Notifies the manager of a status update.
+   */
+  protected sendStatusUpdate(status: GatewayConnectionStatus): void {
+    this.#send({ op: "statusUpdate", status });
+  }
+
+  /**
+   * Notifies the manager of an error.
+   */
+  protected sendError(message: string): void {
+    this.#send({ op: "error", message });
+  }
+
+  #send(ev: ClusterWorkerEvent): void {
+    process.send?.(ev);
+  }
+
+  async #handleCommand(cmd: ClusterWorkerCommand): Promise<void> {
+    try {
+      switch (cmd.op) {
+        case "init":
+          await this.onInit(cmd.d);
+          this.sendReady();
+          break;
+        case "connectAll":
+          await this.onConnectAll();
+          break;
+        case "closeAll":
+          this.onCloseAll(cmd.d?.code, cmd.d?.reason);
+          break;
+        case "ping":
+          this.#send({ op: "pong", nonce: cmd.nonce });
+          break;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.sendError(`Failed to execute command ${cmd.op}: ${msg}`);
     }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    send({ op: "error", message });
   }
-});
+}

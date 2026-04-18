@@ -11,7 +11,8 @@ import {
   type GatewayIntentResolvable,
   type GatewayInvalidSession,
   type GatewayPayload,
-  type GatewayPresence
+  type GatewayPresence,
+  type GatewayMetrics
 } from "@chordjs/types";
 import { inflateSync } from "node:zlib";
 
@@ -44,13 +45,6 @@ export type GatewayEventMap = {
   error: (error: unknown) => void;
   reconnectAttempt: (attempt: number, delayMs: number) => void;
 };
-
-export interface GatewayMetrics {
-  latencyMs: number | null;
-  lastHeartbeatSentAt: number | null;
-  lastHeartbeatAckAt: number | null;
-  resumeCount: number;
-}
 
 export class GatewayClient {
   public readonly url: string;
@@ -191,9 +185,12 @@ export class GatewayClient {
 
   get metrics(): GatewayMetrics {
     return {
+      status: this.#status,
       latencyMs: this.#latencyMs,
+      heartbeatInterval: this.#heartbeatIntervalMs ?? 0,
       lastHeartbeatSentAt: this.#lastHeartbeatSentAt,
       lastHeartbeatAckAt: this.#lastHeartbeatAckAt,
+      reconnectAttempts: this.#reconnectAttempts,
       resumeCount: this.#resumeCount
     };
   }

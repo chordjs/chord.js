@@ -349,3 +349,41 @@ export type GatewayPayload =
   | GatewayReconnect
   | GatewayHeartbeatAck
   | GatewayEnvelope;
+
+export interface GatewayMetrics {
+  status: GatewayConnectionStatus;
+  latencyMs: number | null;
+  heartbeatInterval: number;
+  lastHeartbeatSentAt: number | null;
+  lastHeartbeatAckAt: number | null;
+  reconnectAttempts: number;
+  resumeCount: number;
+}
+
+export interface ShardMetrics extends GatewayMetrics {
+  shardId: number;
+}
+
+export interface ClusterInfo {
+  id: number;
+  shardIds: number[];
+}
+
+export interface ClusterMetrics {
+  clusterId: number;
+  shards: ShardMetrics[];
+}
+
+export interface ClusterManagerMetrics {
+  clusters: Array<{
+    clusterId: number;
+    shardCount: number;
+    avgLatencyMs: number | null;
+    totalResumeCount: number;
+  }>;
+  overall: {
+    shardCount: number;
+    avgLatencyMs: number | null;
+    totalResumeCount: number;
+  };
+}

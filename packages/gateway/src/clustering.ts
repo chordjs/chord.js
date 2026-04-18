@@ -3,14 +3,24 @@ import {
   ShardManager,
   type AutoShardCountOptions,
   type ShardCountResolvable,
-  type ShardMetrics,
   type ShardManagerOptions
 } from "./sharding.js";
-import { GatewayConnectionStatus } from "@chordjs/types";
+import {
+  GatewayConnectionStatus,
+  type ClusterInfo,
+  type ShardMetrics,
+  type ClusterManagerMetrics
+} from "@chordjs/types";
 
-export interface ClusterInfo {
-  id: number;
-  shardIds: number[];
+export interface IClusterManager {
+  readonly shardCount: number;
+  readonly clusters: number;
+  readonly clusterInfos: ClusterInfo[];
+  readonly status: GatewayConnectionStatus;
+
+  connectAll(): Promise<void>;
+  closeAll(code?: number, reason?: string): void;
+  aggregateMetrics(): ClusterManagerMetrics;
 }
 
 export interface ClusterOptions {
@@ -59,7 +69,7 @@ export interface ClusterManagerCreateOptions extends Omit<ClusterManagerOptions,
   autoShardCount?: AutoShardCountOptions;
 }
 
-export class ClusterManager {
+export class ClusterManager implements IClusterManager {
   public readonly shardCount: number;
   public readonly clusters: number;
   public readonly clusterInfos: ClusterInfo[];
@@ -132,19 +142,7 @@ export class ClusterManager {
     }));
   }
 
-  aggregateMetrics(): {
-    clusters: Array<{
-      clusterId: number;
-      shardCount: number;
-      avgLatencyMs: number | null;
-      totalResumeCount: number;
-    }>;
-    overall: {
-      shardCount: number;
-      avgLatencyMs: number | null;
-      totalResumeCount: number;
-    };
-  } {
+  aggregateMetrics(): ClusterManagerMetrics {
     const clusters = this.snapshotMetrics().map(({ clusterId, shards }) => {
       const latencies = shards.map((s) => s.latencyMs).filter((n): n is number => typeof n === "number");
       const avgLatencyMs = latencies.length === 0 ? null : latencies.reduce((a, b) => a + b, 0) / latencies.length;
