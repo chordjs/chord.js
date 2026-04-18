@@ -119,6 +119,42 @@ export class ChordClient {
   }
 
   /**
+   * Logs the client in, establishing a connection to Discord.
+   * @param token The bot token. If not provided, uses the token passed in constructor.
+   */
+  public async login(token?: string): Promise<void> {
+    const finalToken = token ?? this.rest?.token;
+    if (!finalToken) throw new Error("A token must be provided to login.");
+
+    // Update token in rest and gateway if provided
+    if (token) {
+      if (!this.#rest) {
+        this.#rest = new RestClient({ token });
+      } else {
+        this.#rest.token = token;
+      }
+
+      if (!this.#gateway) {
+        this.#gateway = new GatewayClient({ 
+          token, 
+          intents: 0 // Default to 0 if not set, though ideally should be set in constructor
+        });
+      }
+      // Note: GatewayClient usually doesn't allow changing token after creation easily,
+      // but here we are ensuring it exists.
+    }
+
+    if (!this.#gateway) {
+      throw new Error("Gateway client not initialized. Ensure intents are provided.");
+    }
+
+    this.#gateway.connect();
+    
+    // We could return a promise that resolves when READY is received,
+    // but usually login() returns immediately after initiating connection.
+  }
+
+  /**
    * The application ID of the client. Extracted from the token if not provided.
    */
   public get applicationId(): string {
