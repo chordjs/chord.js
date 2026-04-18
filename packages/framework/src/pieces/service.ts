@@ -3,6 +3,7 @@ import type { ChordClient } from "../structures/chord-client.js";
 
 export interface ServiceContext extends PieceContext {
   client: ChordClient;
+  [key: string]: any;
 }
 
 export interface ServiceOptions extends PieceOptions {}

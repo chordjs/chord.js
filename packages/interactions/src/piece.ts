@@ -92,14 +92,14 @@ export interface InteractionDeferOptions {
   flags?: MessageFlags;
 }
 
-export abstract class InteractionCommand extends Piece {
+export abstract class InteractionCommand<TContext extends PieceContext = PieceContext> extends Piece<TContext> {
   public readonly description: string;
   public readonly type?: number;
   public readonly options: ApplicationCommandOption[];
   public readonly nameLocalizations?: Record<string, string>;
   public readonly descriptionLocalizations?: Record<string, string>;
 
-  protected constructor(context: PieceContext, options: InteractionCommandOptions = {}) {
+  protected constructor(context: TContext, options: InteractionCommandOptions = {}) {
     super(context, options);
     this.description = options.description ?? "";
     this.type = options.type;

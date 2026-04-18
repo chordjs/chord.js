@@ -3,7 +3,6 @@ import { type Store } from "@chordjs/core";
 export interface PieceContext {
   name: string;
   enabled?: boolean;
-  [key: string]: any;
 }
 
 export interface PieceOptions {

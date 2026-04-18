@@ -1,18 +1,24 @@
 import { InteractionCommand, type InteractionCommandOptions, type InteractionRunContext, type PieceContext } from "@chordjs/interactions";
+import type { ChordClient } from "../structures/chord-client.js";
 import { 
   getPreconditions, 
   getSubcommands as _getSubcommands, 
   getComponentHandlers as _getComponentHandlers 
 } from "./decorators.js";
 
+export interface CommandContext extends PieceContext {
+  client: ChordClient;
+  [key: string]: any;
+}
+
 export interface CommandOptions extends InteractionCommandOptions {
   aliases?: string[];
 }
 
-export abstract class Command extends InteractionCommand {
+export abstract class Command<TContext extends CommandContext = CommandContext> extends InteractionCommand<TContext> {
   public readonly aliases: string[];
 
-  protected constructor(context: PieceContext, options: CommandOptions = {}) {
+  protected constructor(context: TContext, options: CommandOptions = {}) {
     super(context, options);
     this.aliases = options.aliases ?? [];
   }

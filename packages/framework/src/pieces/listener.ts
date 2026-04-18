@@ -1,15 +1,21 @@
 import { Piece, type PieceContext, type PieceOptions } from "@chordjs/interactions";
+import type { ChordClient } from "../structures/chord-client.js";
+
+export interface ListenerContext extends PieceContext {
+  client: ChordClient;
+  [key: string]: any;
+}
 
 export interface ListenerOptions<T extends string = string> extends PieceOptions {
   event: T;
   once?: boolean;
 }
 
-export abstract class Listener<T extends string = string> extends Piece {
+export abstract class Listener<T extends string = string, TContext extends ListenerContext = ListenerContext> extends Piece<TContext> {
   public readonly event: T;
   public readonly once: boolean;
 
-  protected constructor(context: PieceContext, options: ListenerOptions<T>) {
+  protected constructor(context: TContext, options: ListenerOptions<T>) {
     super(context, options);
     this.event = options.event;
     this.once = options.once ?? false;
