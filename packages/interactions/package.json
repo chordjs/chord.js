@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/interactions",
-  "version": "26.8.9",
+  "version": "26.8.10",
   "description": "Interaction handling and routing for Chord.js",
   "type": "module",
   "main": "dist/index.js",
@@ -17,9 +17,9 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/core": "^26.8.9",
-    "@chordjs/types": "^26.8.9",
-    "@chordjs/utils": "^26.8.9"
+    "@chordjs/core": "^26.8.10",
+    "@chordjs/types": "^26.8.10",
+    "@chordjs/utils": "^26.8.10"
   },
   "devDependencies": {
     "@swc/cli": "^0.3.12",

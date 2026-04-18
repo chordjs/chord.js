@@ -60,17 +60,26 @@ export class ChordClient {
     this.channels = new ChannelManager(this);
     this.commands = new ApplicationCommandManager(this);
 
-    // Gateway event wiring
-    if (this.gateway) {
-      this.gateway.on("open", () => console.log("📡 Gateway connection established!"));
-      this.gateway.on("debug", (msg) => console.log(`[Gateway] ${msg}`));
-      this.gateway.on("error", (err) => console.error(`[Gateway Error]`, err));
-
-      // Set client user on READY
-      this.gateway.onDispatch("READY", (data: any) => {
-        this.#user = new User(this, data.user);
-      });
+    if (this.#gateway) {
+      this.#setupGatewayListeners();
     }
+  }
+
+  #setupGatewayListeners(): void {
+    if (!this.#gateway) return;
+    
+    // Clear existing listeners if any to avoid duplicates
+    this.#gateway.removeAllListeners();
+
+    this.#gateway.on("open", () => console.log("📡 Gateway connection established!"));
+    this.#gateway.on("debug", (msg) => console.log(`[Gateway] ${msg}`));
+    this.#gateway.on("error", (err) => console.error(`[Gateway Error]`, err));
+
+    // Set client user on READY
+    this.#gateway.onDispatch("READY", (data: any) => {
+      this.#user = new User(this, data.user);
+      console.log(`✅ Logged in as ${this.#user.tag}!`);
+    });
   }
 
   /**
@@ -94,6 +103,9 @@ export class ChordClient {
 
   public set gateway(value: GatewayClient | undefined) {
     this.#gateway = value;
+    if (value) {
+      this.#setupGatewayListeners();
+    }
   }
 
   /**
@@ -135,7 +147,7 @@ export class ChordClient {
       }
 
       if (!this.#gateway) {
-        this.#gateway = new GatewayClient({ 
+        this.gateway = new GatewayClient({ 
           token, 
           intents: 0 // Default to 0 if not set, though ideally should be set in constructor
         });
