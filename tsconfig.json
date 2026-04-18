@@ -3,7 +3,10 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -11,12 +14,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
     "paths": {
-      "@chordjs/*": ["packages/*/src/index.ts"]
+      "@chordjs/*": [
+        "packages/*/src/index.ts"
+      ]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["packages/*/src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "examples"]
+  "include": [
+    "packages/*/src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "examples"
+  ]
 }

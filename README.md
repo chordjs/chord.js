@@ -57,8 +57,7 @@ Chord.js comes with a powerful CLI to speed up your development:
 
 ## 🌟 Examples
 
-- [Basic Bot](./examples/basic-bot): Minimal connection example (used as `init` template).
-- [Production Ready Bot](./examples/folder-routing-sharding): Folder routing, sharding, and clustering.
+- [Starter Bot](./examples/chord-bot): Modern hybrid bot using decorators, subcommands, and services.
 
 ## 📖 Documentation
 
