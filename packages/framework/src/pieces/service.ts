@@ -23,5 +23,5 @@ export abstract class Service<TContext extends ServiceContext = ServiceContext> 
   /**
    * Called when the service is stopped.
    */
-  public abstract stop(): Promise<void>;
+  public async stop(): Promise<void> {}
 }

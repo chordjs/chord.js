@@ -13,7 +13,7 @@ const program = new Command();
 program
   .name('chord')
   .description('Official CLI for Chord.js framework')
-  .version('26.8.7');
+  .version('26.8.8');
 
 program
   .command('init [name]')
