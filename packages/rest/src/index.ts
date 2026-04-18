@@ -55,16 +55,22 @@ export class RestError extends Error {
 class RatelimitBucket {
   remaining: number | null = null;
   resetAtMs: number | null = null;
-  queue: Promise<void> = Promise.resolve();
+  #queue: Promise<void> = Promise.resolve();
 
-  schedule<T>(fn: () => Promise<T>): Promise<T> {
-    const run = async () => fn();
-    const chained = this.queue.then(run, run);
-    this.queue = chained.then(
-      () => undefined,
-      () => undefined
-    );
-    return chained;
+  async schedule<T>(fn: () => Promise<T>): Promise<T> {
+    const ticket = this.#queue;
+    let resolveTicket!: () => void;
+    this.#queue = new Promise<void>((resolve) => {
+      resolveTicket = resolve;
+    });
+
+    await ticket;
+
+    try {
+      return await fn();
+    } finally {
+      resolveTicket();
+    }
   }
 
   async waitIfNeeded(): Promise<void> {
@@ -86,6 +92,10 @@ export class RestClient {
   readonly #bucketsById = new Map<string, RatelimitBucket>();
   readonly #bucketIdByRoute = new Map<string, string>();
   readonly #bucketsByRoute = new Map<string, RatelimitBucket>();
+
+  static create(options: RestClientOptions): RestClient {
+    return new RestClient(options);
+  }
 
   constructor(options: RestClientOptions) {
     this.token = options.token;

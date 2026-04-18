@@ -1,5 +1,6 @@
 import { sleep } from "@chordjs/utils";
 import { GatewayClient, type GatewayClientOptions, type GatewayMetrics } from "./gateway-client.js";
+import { GatewayConnectionStatus } from "@chordjs/types";
 
 export interface IdentifySchedulerOptions {
   /**
@@ -73,6 +74,10 @@ export class Shard {
 
   close(code?: number, reason?: string): void {
     this.client.close(code, reason);
+  }
+
+  get status(): GatewayConnectionStatus {
+    return this.client.status;
   }
 
   get metrics(): ShardMetrics {
@@ -185,6 +190,16 @@ export class ShardManager {
     this.shards = this.#shards;
   }
 
+  get status(): GatewayConnectionStatus {
+    const statuses = Array.from(this.#shards.values()).map((s) => s.status);
+    if (statuses.every((s) => s === GatewayConnectionStatus.Connected)) return GatewayConnectionStatus.Connected;
+    if (statuses.every((s) => s === GatewayConnectionStatus.Disconnected)) return GatewayConnectionStatus.Disconnected;
+    if (statuses.some((s) => s === GatewayConnectionStatus.Connecting || s === GatewayConnectionStatus.Reconnecting || s === GatewayConnectionStatus.Resuming)) {
+      return GatewayConnectionStatus.Connecting;
+    }
+    return GatewayConnectionStatus.Disconnected;
+  }
+
   shard(id: number): Shard {
     const s = this.#shards.get(id);
     if (!s) throw new Error(`Unknown shard: ${id}`);
@@ -241,4 +256,3 @@ export class ShardManager {
     shard.client.on("raw", emit);
   }
 }
-

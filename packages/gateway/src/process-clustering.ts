@@ -2,6 +2,8 @@ import { fork, type ChildProcess } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { splitShardsIntoClusters, type ClusterInfo } from "./clustering.js";
 import { resolveShardCount, type AutoShardCountOptions, type ShardCountResolvable, type ShardManagerOptions } from "./sharding.js";
+import { GatewayConnectionStatus } from "@chordjs/types";
+import { Emitter } from "@chordjs/utils";
 
 export type ClusterWorkerInit = {
   shardCount: number;
@@ -21,7 +23,8 @@ export type ClusterWorkerEvent =
   | { op: "ready" }
   | { op: "log"; level: "debug" | "info" | "warn" | "error"; message: string }
   | { op: "pong"; nonce: number }
-  | { op: "error"; message: string };
+  | { op: "error"; message: string }
+  | { op: "statusUpdate"; status: GatewayConnectionStatus };
 
 export interface ProcessClusterManagerOptions {
   shardCount: number;
@@ -77,6 +80,7 @@ export interface ProcessClusterManagerEventMap {
   error: { clusterId: number; message: string };
   pong: { clusterId: number; nonce: number };
   exit: { clusterId: number; code: number | null; signal: NodeJS.Signals | null };
+  statusUpdate: { clusterId: number; status: GatewayConnectionStatus };
 }
 
 export interface ClusterRestartStats {
@@ -89,6 +93,10 @@ export interface ClusterRestartStats {
 export class ClusterProcess {
   public readonly info: ClusterInfo;
   public child: ChildProcess;
+  public status: GatewayConnectionStatus = GatewayConnectionStatus.Disconnected;
+  public restartCount = 0;
+  public lastRestartAt: number | null = null;
+  public restartTimer: ReturnType<typeof setTimeout> | null = null;
 
   #ready = false;
   #readyPromise: Promise<void>;
@@ -139,16 +147,13 @@ export class ProcessClusterManager {
   public readonly processes: ReadonlyMap<number, ClusterProcess>;
 
   readonly #processes = new Map<number, ClusterProcess>();
-  readonly #listeners = new Map<keyof ProcessClusterManagerEventMap, Set<(payload: any) => void>>();
+  readonly #emitter = new Emitter<ProcessClusterManagerEventMap>();
   readonly #workerPath: string;
-  readonly #opts: Omit<ProcessClusterManagerOptions, "clusters" | "shardCount" | "workerPath">;
+  readonly #options: Omit<ProcessClusterManagerOptions, "clusters" | "shardCount" | "workerPath">;
   readonly #restartOnExit: boolean;
   readonly #maxRestarts: number;
   readonly #restartBaseDelayMs: number;
   readonly #restartMaxDelayMs: number;
-  readonly #restartCounts = new Map<number, number>();
-  readonly #lastRestartAt = new Map<number, number>();
-  readonly #restartTimers = new Map<number, ReturnType<typeof setTimeout>>();
   readonly #shutdownTimeoutMs: number;
   readonly #spawnChildOverride: (() => ChildProcess) | null;
   #shuttingDown = false;
@@ -174,7 +179,7 @@ export class ProcessClusterManager {
     this.clusters = options.clusters;
     this.clusterInfos = splitShardsIntoClusters(options.shardCount, options.clusters);
     this.#workerPath = options.workerPath ?? defaultWorkerPath();
-    this.#opts = {
+    this.#options = {
       gateway: options.gateway,
       identify: options.identify,
       spawnDelayMs: options.spawnDelayMs,
@@ -197,6 +202,16 @@ export class ProcessClusterManager {
     this.processes = this.#processes;
   }
 
+  get status(): GatewayConnectionStatus {
+    const statuses = Array.from(this.#processes.values()).map((p) => p.status);
+    if (statuses.every((s) => s === GatewayConnectionStatus.Connected)) return GatewayConnectionStatus.Connected;
+    if (statuses.every((s) => s === GatewayConnectionStatus.Disconnected)) return GatewayConnectionStatus.Disconnected;
+    if (statuses.some((s) => s === GatewayConnectionStatus.Connecting || s === GatewayConnectionStatus.Reconnecting || s === GatewayConnectionStatus.Resuming)) {
+      return GatewayConnectionStatus.Connecting;
+    }
+    return GatewayConnectionStatus.Disconnected;
+  }
+
   cluster(id: number): ClusterProcess {
     const p = this.#processes.get(id);
     if (!p) throw new Error(`Unknown cluster: ${id}`);
@@ -205,19 +220,16 @@ export class ProcessClusterManager {
 
   on<TEvent extends keyof ProcessClusterManagerEventMap>(
     event: TEvent,
-    listener: (payload: ProcessClusterManagerEventMap[TEvent]) => void
-  ): () => void {
-    const set = this.#listeners.get(event) ?? new Set<(payload: ProcessClusterManagerEventMap[TEvent]) => void>();
-    set.add(listener);
-    this.#listeners.set(event, set as Set<(payload: any) => void>);
-    return () => this.off(event, listener);
+    listener: ProcessClusterManagerEventMap[TEvent]
+  ): void {
+    this.#emitter.on(event, listener);
   }
 
   off<TEvent extends keyof ProcessClusterManagerEventMap>(
     event: TEvent,
-    listener: (payload: ProcessClusterManagerEventMap[TEvent]) => void
+    listener: ProcessClusterManagerEventMap[TEvent]
   ): void {
-    this.#listeners.get(event)?.delete(listener as (payload: any) => void);
+    this.#emitter.off(event, listener);
   }
 
   getRestartStats(clusterId?: number): ClusterRestartStats | ClusterRestartStats[] {
@@ -235,9 +247,9 @@ export class ProcessClusterManager {
         d: {
           shardCount: this.shardCount,
           cluster: proc.info,
-          gateway: this.#opts.gateway,
-          identify: this.#opts.identify,
-          spawnDelayMs: this.#opts.spawnDelayMs
+          gateway: this.#options.gateway,
+          identify: this.#options.identify,
+          spawnDelayMs: this.#options.spawnDelayMs
         }
       });
     }
@@ -252,9 +264,11 @@ export class ProcessClusterManager {
 
   closeAll(code?: number, reason?: string): void {
     this.#shuttingDown = true;
-    for (const timer of this.#restartTimers.values()) clearTimeout(timer);
-    this.#restartTimers.clear();
     for (const proc of this.#processes.values()) {
+      if (proc.restartTimer) {
+        clearTimeout(proc.restartTimer);
+        proc.restartTimer = null;
+      }
       proc.send({ op: "closeAll", d: { code, reason } });
     }
   }
@@ -311,12 +325,12 @@ export class ProcessClusterManager {
       if (!ev || typeof ev.op !== "string") return;
       if (ev.op === "ready") {
         proc._markReady();
-        this.#emit("ready", { clusterId: proc.info.id });
+        this.#emitter.emit("ready", { clusterId: proc.info.id });
         if (this.#connectRequested) proc.send({ op: "connectAll" });
         return;
       }
       if (ev.op === "log") {
-        this.#emit("log", {
+        this.#emitter.emit("log", {
           clusterId: proc.info.id,
           level: ev.level ?? "info",
           message: ev.message ?? ""
@@ -324,67 +338,63 @@ export class ProcessClusterManager {
         return;
       }
       if (ev.op === "pong" && typeof ev.nonce === "number") {
-        this.#emit("pong", { clusterId: proc.info.id, nonce: ev.nonce });
+        this.#emitter.emit("pong", { clusterId: proc.info.id, nonce: ev.nonce });
         return;
       }
       if (ev.op === "error") {
         const message = ev.message ?? "Cluster worker error";
         proc._markFailed(message);
-        this.#emit("error", { clusterId: proc.info.id, message });
+        this.#emitter.emit("error", { clusterId: proc.info.id, message });
+      }
+      if (ev.op === "statusUpdate" && ev.status) {
+        proc.status = ev.status;
+        this.#emitter.emit("statusUpdate", { clusterId: proc.info.id, status: ev.status });
       }
     });
 
     proc.child.on("exit", (code, signal) => {
       proc._markFailed(`Cluster worker exited code=${code} signal=${signal}`);
-      this.#emit("exit", { clusterId: proc.info.id, code, signal });
+      proc.status = GatewayConnectionStatus.Disconnected;
+      this.#emitter.emit("exit", { clusterId: proc.info.id, code, signal });
+      this.#emitter.emit("statusUpdate", { clusterId: proc.info.id, status: GatewayConnectionStatus.Disconnected });
       this.#scheduleRestart(proc.info.id);
     });
-  }
-
-  #emit<TEvent extends keyof ProcessClusterManagerEventMap>(
-    event: TEvent,
-    payload: ProcessClusterManagerEventMap[TEvent]
-  ): void {
-    for (const listener of this.#listeners.get(event) ?? []) {
-      listener(payload);
-    }
   }
 
   #spawnChild(): ChildProcess {
     if (this.#spawnChildOverride) return this.#spawnChildOverride();
     return fork(this.#workerPath, [], {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
-      execArgv: this.#opts.execArgv
+      execArgv: this.#options.execArgv
     });
   }
 
   #scheduleRestart(clusterId: number): void {
-    if (this.#shuttingDown || !this.#restartOnExit) return;
-    if (this.#restartTimers.has(clusterId)) return;
+    const proc = this.#processes.get(clusterId);
+    if (!proc || this.#shuttingDown || !this.#restartOnExit) return;
+    if (proc.restartTimer) return;
 
-    const restarts = this.#restartCounts.get(clusterId) ?? 0;
-    if (restarts >= this.#maxRestarts) {
-      this.#emit("error", {
+    if (proc.restartCount >= this.#maxRestarts) {
+      this.#emitter.emit("error", {
         clusterId,
         message: `Cluster ${clusterId} exceeded max restarts (${this.#maxRestarts})`
       });
       return;
     }
 
-    const delay = Math.min(this.#restartBaseDelayMs * 2 ** restarts, this.#restartMaxDelayMs);
-    const timer = setTimeout(() => {
-      this.#restartTimers.delete(clusterId);
+    const delay = Math.min(this.#restartBaseDelayMs * 2 ** proc.restartCount, this.#restartMaxDelayMs);
+    proc.restartTimer = setTimeout(() => {
+      proc.restartTimer = null;
       this.#restartWorker(clusterId);
     }, delay);
-    this.#restartTimers.set(clusterId, timer);
   }
 
   #restartWorker(clusterId: number): void {
     const proc = this.#processes.get(clusterId);
     if (!proc || this.#shuttingDown) return;
 
-    this.#restartCounts.set(clusterId, (this.#restartCounts.get(clusterId) ?? 0) + 1);
-    this.#lastRestartAt.set(clusterId, Date.now());
+    proc.restartCount++;
+    proc.lastRestartAt = Date.now();
     const child = this.#spawnChild();
     proc._replaceChild(child);
     this.#wire(proc);
@@ -395,20 +405,22 @@ export class ProcessClusterManager {
         d: {
           shardCount: this.shardCount,
           cluster: proc.info,
-          gateway: this.#opts.gateway,
-          identify: this.#opts.identify,
-          spawnDelayMs: this.#opts.spawnDelayMs
+          gateway: this.#options.gateway,
+          identify: this.#options.identify,
+          spawnDelayMs: this.#options.spawnDelayMs
         }
       });
     }
   }
 
   #restartStatsFor(clusterId: number): ClusterRestartStats {
+    const proc = this.#processes.get(clusterId);
+    if (!proc) throw new Error(`Unknown cluster: ${clusterId}`);
     return {
       clusterId,
-      restartCount: this.#restartCounts.get(clusterId) ?? 0,
-      lastRestartAt: this.#lastRestartAt.get(clusterId) ?? null,
-      hasPendingRestart: this.#restartTimers.has(clusterId)
+      restartCount: proc.restartCount,
+      lastRestartAt: proc.lastRestartAt,
+      hasPendingRestart: proc.restartTimer !== null
     };
   }
 }
@@ -420,4 +432,3 @@ function defaultWorkerPath(): string {
   const dir = new URL(".", here);
   return fileURLToPath(new URL("./cluster-worker.js", dir));
 }
-

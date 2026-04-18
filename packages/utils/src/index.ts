@@ -8,6 +8,7 @@ export function assertNever(value: never, message = "Unexpected value"): never {
 
 export * from "@chordjs/collection";
 export * from "./attachment-builder.js";
+export * from "./emitter.js";
 export * from "./embed-builder.js";
 export * from "./i18n.js";
 export * from "./logger.js";

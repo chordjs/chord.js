@@ -6,6 +6,7 @@ import {
   type ShardMetrics,
   type ShardManagerOptions
 } from "./sharding.js";
+import { GatewayConnectionStatus } from "@chordjs/types";
 
 export interface ClusterInfo {
   id: number;
@@ -26,6 +27,10 @@ export class Cluster {
     this.id = options.info.id;
     this.shardIds = options.info.shardIds;
     this.shards = options.shardManager;
+  }
+
+  get status(): GatewayConnectionStatus {
+    return this.shards.status;
   }
 
   connectAll(): Promise<void> {
@@ -94,7 +99,17 @@ export class ClusterManager {
     this.instances = this.#instances;
   }
 
-  cluster(id: number): Cluster {
+  get status(): GatewayConnectionStatus {
+    const statuses = Array.from(this.#instances.values()).map((c) => c.status);
+    if (statuses.every((s) => s === GatewayConnectionStatus.Connected)) return GatewayConnectionStatus.Connected;
+    if (statuses.every((s) => s === GatewayConnectionStatus.Disconnected)) return GatewayConnectionStatus.Disconnected;
+    if (statuses.some((s) => s === GatewayConnectionStatus.Connecting || s === GatewayConnectionStatus.Reconnecting || s === GatewayConnectionStatus.Resuming)) {
+      return GatewayConnectionStatus.Connecting;
+    }
+    return GatewayConnectionStatus.Disconnected;
+  }
+
+  cluster(id: number): ClusterProcess | Cluster {
     const c = this.#instances.get(id);
     if (!c) throw new Error(`Unknown cluster: ${id}`);
     return c;
@@ -171,4 +186,3 @@ export function splitShardsIntoClusters(shardCount: number, clusterCount: number
 
   return out;
 }
-

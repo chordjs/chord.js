@@ -71,6 +71,15 @@ export type GatewayHello = GatewayEnvelope<typeof GatewayOpcode.Hello, GatewayHe
 
 export type GatewayHeartbeat = GatewayEnvelope<typeof GatewayOpcode.Heartbeat, number | null>;
 
+export enum GatewayConnectionStatus {
+  Disconnected = "Disconnected",
+  Connecting = "Connecting",
+  Connected = "Connected",
+  Reconnecting = "Reconnecting",
+  Resuming = "Resuming",
+  Closing = "Closing"
+}
+
 export type GatewayStatus = "online" | "dnd" | "idle" | "invisible" | "offline";
 
 export type GatewayActivityType = 0 | 1 | 2 | 3 | 4 | 5;

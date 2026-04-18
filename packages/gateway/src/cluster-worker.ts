@@ -1,8 +1,10 @@
 import type { ClusterWorkerCommand, ClusterWorkerEvent, ClusterWorkerInit } from "./process-clustering.js";
 import { ShardManager } from "./sharding.js";
+import { GatewayConnectionStatus } from "@chordjs/types";
 
 let shards: ShardManager | null = null;
 let initialized = false;
+let lastStatus: GatewayConnectionStatus | null = null;
 
 function send(event: ClusterWorkerEvent): void {
   process.send?.(event);
@@ -12,6 +14,15 @@ type LogLevel = "debug" | "info" | "warn" | "error";
 
 function log(level: LogLevel, message: string): void {
   send({ op: "log", level, message });
+}
+
+function checkStatus(): void {
+  if (!shards) return;
+  const currentStatus = shards.status;
+  if (currentStatus !== lastStatus) {
+    lastStatus = currentStatus;
+    send({ op: "statusUpdate", status: currentStatus });
+  }
 }
 
 async function init(data: ClusterWorkerInit): Promise<void> {
@@ -25,6 +36,12 @@ async function init(data: ClusterWorkerInit): Promise<void> {
     identify: data.identify,
     spawnDelayMs: data.spawnDelayMs
   });
+
+  // Wire status updates
+  shards.onMetrics(() => checkStatus());
+  
+  // Send initial status
+  checkStatus();
 
   log("info", `cluster ${data.cluster.id} ready shards=${data.cluster.shardIds.join(",")}`);
   send({ op: "ready" });
@@ -46,6 +63,7 @@ process.on("message", async (msg: unknown) => {
         return;
       case "closeAll":
         shards?.closeAll(cmd.d?.code, cmd.d?.reason);
+        checkStatus();
         return;
       case "ping":
         if (typeof cmd.nonce === "number") send({ op: "pong", nonce: cmd.nonce });
@@ -58,4 +76,3 @@ process.on("message", async (msg: unknown) => {
     send({ op: "error", message });
   }
 });
-

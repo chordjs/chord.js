@@ -1,7 +1,8 @@
-import { sleep } from "@chordjs/utils";
+import { sleep, Emitter } from "@chordjs/utils";
 import {
   resolveGatewayIntents,
   GatewayOpcode,
+  GatewayConnectionStatus,
   type GatewayDispatchDataMap,
   type GatewayDispatchEvent,
   type GatewayDispatch,
@@ -41,6 +42,7 @@ export type GatewayEventMap = {
   };
   debug: (message: string) => void;
   error: (error: unknown) => void;
+  reconnectAttempt: (attempt: number, delayMs: number) => void;
 };
 
 export interface GatewayMetrics {
@@ -48,45 +50,6 @@ export interface GatewayMetrics {
   lastHeartbeatSentAt: number | null;
   lastHeartbeatAckAt: number | null;
   resumeCount: number;
-}
-
-class Emitter<TEvents extends Record<string, (...args: any[]) => any>> {
-  readonly #listeners = new Map<keyof TEvents, Set<Function>>();
-
-  on<K extends keyof TEvents>(event: K, listener: TEvents[K]): void {
-    const set = this.#listeners.get(event) ?? new Set();
-    set.add(listener as unknown as Function);
-    this.#listeners.set(event, set);
-  }
-
-  off<K extends keyof TEvents>(event: K, listener: TEvents[K]): void {
-    const set = this.#listeners.get(event);
-    if (!set) return;
-    set.delete(listener as unknown as Function);
-    if (set.size === 0) this.#listeners.delete(event);
-  }
-
-  once<K extends keyof TEvents>(event: K, listener: TEvents[K]): void {
-    const wrapped = ((...args: any[]) => {
-      this.off(event, wrapped as unknown as TEvents[K]);
-      (listener as any)(...args);
-    }) as unknown as TEvents[K];
-    this.on(event, wrapped);
-  }
-
-  removeAllListeners<K extends keyof TEvents>(event?: K): void {
-    if (event) {
-      this.#listeners.delete(event);
-    } else {
-      this.#listeners.clear();
-    }
-  }
-
-  emit<K extends keyof TEvents>(event: K, ...args: Parameters<TEvents[K]>): void {
-    const set = this.#listeners.get(event);
-    if (!set) return;
-    for (const fn of set) (fn as any)(...args);
-  }
 }
 
 export class GatewayClient {
@@ -101,6 +64,9 @@ export class GatewayClient {
   public readonly reconnectDelayMs: number;
   public readonly resumeTimeoutMs: number;
 
+  #status = GatewayConnectionStatus.Disconnected;
+  #reconnectAttempts = 0;
+
   get latency(): number | null {
     return this.#latencyMs;
   }
@@ -111,6 +77,10 @@ export class GatewayClient {
 
   get shardCount(): number | null {
     return this.shard?.[1] ?? null;
+  }
+
+  get status(): GatewayConnectionStatus {
+    return this.#status;
   }
 
   readonly #emitter = new Emitter<GatewayEventMap>();
@@ -231,6 +201,7 @@ export class GatewayClient {
   connect(): void {
     if (this.#ws) throw new Error("GatewayClient: already connected");
     this.#closing = false;
+    this.#status = GatewayConnectionStatus.Connecting;
     const ws = new WebSocket(this.#gatewayUrl());
     this.#ws = ws;
 
@@ -245,6 +216,9 @@ export class GatewayClient {
       this.#ws = null;
       this.#zlibBuffer = null;
       this.#emitter.emit("close", ev.code, ev.reason);
+      if (this.#closing) {
+        this.#status = GatewayConnectionStatus.Disconnected;
+      }
       void this.#maybeReconnect(ev.code);
     });
     ws.addEventListener("error", (ev: Event) => this.#emitter.emit("error", ev));
@@ -260,6 +234,7 @@ export class GatewayClient {
 
   close(code = 1000, reason = "Normal Closure"): void {
     this.#closing = true;
+    this.#status = GatewayConnectionStatus.Closing;
     this.#stopHeartbeat();
     this.#clearResumeTimer();
     this.#ws?.close(code, reason);
@@ -273,6 +248,7 @@ export class GatewayClient {
     const policy = this.#reconnectPolicy(code);
     if (policy.action === "stop") {
       this.#emitter.emit("debug", `reconnect stopped for close code=${code}`);
+      this.#status = GatewayConnectionStatus.Disconnected;
       return;
     }
 
@@ -284,8 +260,13 @@ export class GatewayClient {
       this.#clearResumeTimer();
     }
 
-    const delayMs = policy.delayMs ?? this.reconnectDelayMs;
-    this.#emitter.emit("debug", `reconnect scheduled in ${delayMs}ms (code=${code})`);
+    this.#status = GatewayConnectionStatus.Reconnecting;
+    this.#reconnectAttempts++;
+    const delayMs = policy.delayMs ?? Math.min(this.reconnectDelayMs * 2 ** (this.#reconnectAttempts - 1), 30_000);
+    
+    this.#emitter.emit("debug", `reconnect scheduled in ${delayMs}ms (code=${code}, attempt=${this.#reconnectAttempts})`);
+    this.#emitter.emit("reconnectAttempt", this.#reconnectAttempts, delayMs);
+
     await sleep(delayMs);
     if (this.#ws || this.#closing) return;
     this.connect();
@@ -436,12 +417,16 @@ export class GatewayClient {
           // READY means we're fully connected even if we tried resuming
           this.#clearResumeTimer();
           this.#resuming = false;
+          this.#status = GatewayConnectionStatus.Connected;
+          this.#reconnectAttempts = 0;
         }
         if (dispatch.t === "RESUMED") {
           this.#emitter.emit("debug", "session resumed");
           this.#resumeCount++;
           this.#clearResumeTimer();
           this.#resuming = false;
+          this.#status = GatewayConnectionStatus.Connected;
+          this.#reconnectAttempts = 0;
         }
         this.#emitter.emit("dispatch", dispatch.t, dispatch.d);
         await this.#emitDispatchHandlers(dispatch.t, dispatch.d);
@@ -508,6 +493,7 @@ export class GatewayClient {
     if (this.#sessionId && typeof this.#seq === "number") {
       this.#emitter.emit("debug", "sending RESUME");
       this.#resuming = true;
+      this.#status = GatewayConnectionStatus.Resuming;
       this.#startResumeTimer();
       this.send({
         op: GatewayOpcode.Resume,
@@ -517,6 +503,7 @@ export class GatewayClient {
     }
 
     this.#emitter.emit("debug", "sending IDENTIFY");
+    this.#status = GatewayConnectionStatus.Connecting;
     const identifyData: GatewayIdentifyData = {
       token: this.token,
       intents: this.intents,
@@ -546,4 +533,3 @@ export class GatewayClient {
     }
   }
 }
-
