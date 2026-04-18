@@ -33,12 +33,12 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/broker": "^26.8.8",
-    "@chordjs/cache": "^26.8.8",
-    "@chordjs/gateway": "^26.8.8",
-    "@chordjs/rest": "^26.8.8",
-    "@chordjs/types": "^26.8.8",
-    "@chordjs/utils": "^26.8.8"
+    "@chordjs/broker": "^26.8.9",
+    "@chordjs/cache": "^26.8.9",
+    "@chordjs/gateway": "^26.8.9",
+    "@chordjs/rest": "^26.8.9",
+    "@chordjs/types": "^26.8.9",
+    "@chordjs/utils": "^26.8.9"
   },
   "devDependencies": {
     "typescript": "6.0.3"

@@ -17,9 +17,9 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/core": "^26.8.8",
-    "@chordjs/types": "^26.8.8",
-    "@chordjs/utils": "^26.8.8"
+    "@chordjs/core": "^26.8.9",
+    "@chordjs/types": "^26.8.9",
+    "@chordjs/utils": "^26.8.9"
   },
   "devDependencies": {
     "@swc/cli": "^0.3.12",
