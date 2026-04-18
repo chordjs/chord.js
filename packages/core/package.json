@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/core",
-  "version": "26.8.3",
+  "version": "26.8.4",
   "description": "Chord.js core (discord.js + sapphire-inspired) framework primitives.",
   "license": "MIT",
   "publishConfig": {
@@ -33,12 +33,12 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/broker": "^26.8.2",
-    "@chordjs/cache": "^26.8.2",
-    "@chordjs/gateway": "^26.8.2",
-    "@chordjs/rest": "^26.8.2",
-    "@chordjs/types": "^26.8.2",
-    "@chordjs/utils": "^26.8.2"
+    "@chordjs/broker": "^26.8.4",
+    "@chordjs/cache": "^26.8.4",
+    "@chordjs/gateway": "^26.8.4",
+    "@chordjs/rest": "^26.8.4",
+    "@chordjs/types": "^26.8.4",
+    "@chordjs/utils": "^26.8.4"
   },
   "devDependencies": {
     "typescript": "6.0.3"

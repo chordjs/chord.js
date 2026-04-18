@@ -12,12 +12,14 @@ import { SKU } from "./sku.js";
 import { Entitlement } from "./entitlement.js";
 import { Application } from "./application.js";
 import type { Broker } from "@chordjs/broker";
-import type { 
-  SKU as APISKU, 
-  Entitlement as APIEntitlement, 
-  Snowflake, 
-  ApplicationRoleConnectionMetadata,
-  Application as APIApplication
+import { 
+  type SKU as APISKU, 
+  type Entitlement as APIEntitlement, 
+  type Snowflake, 
+  type ApplicationRoleConnectionMetadata,
+  type Application as APIApplication,
+  type GatewayIntentResolvable,
+  resolveGatewayIntents
 } from "@chordjs/types";
 
 export interface ChordClientOptions {
@@ -26,7 +28,7 @@ export interface ChordClientOptions {
   cache?: CacheManager;
   broker?: Broker;
   token?: string;
-  intents?: number;
+  intents?: GatewayIntentResolvable;
 }
 
 export class ChordClient {
@@ -43,10 +45,12 @@ export class ChordClient {
   #gateway?: GatewayClient;
 
   constructor(options: ChordClientOptions = {}) {
+    const intents = options.intents !== undefined ? resolveGatewayIntents(options.intents) : 0;
+    
     this.rest = options.rest ?? (options.token ? new RestClient({ token: options.token }) : undefined);
     this.gateway = options.gateway ?? (options.token ? new GatewayClient({
       token: options.token,
-      intents: options.intents ?? 0
+      intents: intents
     }) : undefined);
     this.cache = options.cache;
     this.broker = options.broker;

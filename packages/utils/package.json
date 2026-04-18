@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/utils",
-  "version": "26.8.3",
+  "version": "26.8.4",
   "description": "Utilities for Chord.js.",
   "license": "MIT",
   "publishConfig": {
@@ -33,8 +33,8 @@
     "typecheck": "bunx tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@chordjs/collection": "^26.8.2",
-    "@chordjs/types": "^26.8.2"
+    "@chordjs/collection": "^26.8.4",
+    "@chordjs/types": "^26.8.4"
   },
   "devDependencies": {
     "typescript": "6.0.3"
