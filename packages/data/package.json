@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/data",
-  "version": "26.8.2",
+  "version": "26.8.3",
   "description": "Database and persistence utilities for Chord.js.",
   "license": "MIT",
   "publishConfig": {

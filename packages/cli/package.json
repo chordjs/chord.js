@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/cli",
-  "version": "26.8.2",
+  "version": "26.8.3",
   "description": "The official CLI for Chord.js framework.",
   "license": "MIT",
   "publishConfig": {

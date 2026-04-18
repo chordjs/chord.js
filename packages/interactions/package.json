@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/interactions",
-  "version": "26.8.2",
+  "version": "26.8.3",
   "description": "Interaction handling and routing for Chord.js",
   "type": "module",
   "main": "dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/broker",
-  "version": "26.8.2",
+  "version": "26.8.3",
   "description": "Inter-shard communication and messaging broker for Chord.js.",
   "license": "MIT",
   "publishConfig": {

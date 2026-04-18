@@ -133,10 +133,10 @@ export class PieceLoader {
 
         try {
           // If metadata exists, we pass it to the constructor if it's not already instance-based
-          return new DecoratedClass({ name }, metadataOptions);
+          return new DecoratedClass({ name, client: this.client }, metadataOptions);
         } catch {
           try {
-            return new DecoratedClass();
+            return new DecoratedClass({ name, client: this.client });
           } catch {
             return null;
           }

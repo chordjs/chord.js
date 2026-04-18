@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/utils",
-  "version": "26.8.2",
+  "version": "26.8.3",
   "description": "Utilities for Chord.js.",
   "license": "MIT",
   "publishConfig": {
