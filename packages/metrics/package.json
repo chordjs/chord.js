@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/metrics",
-  "version": "26.8.5",
+  "version": "26.8.6",
   "description": "Bot health monitoring and metrics collection for Chord.js",
   "type": "module",
   "main": "dist/index.js",

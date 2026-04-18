@@ -76,7 +76,7 @@ class RatelimitBucket {
 }
 
 export class RestClient {
-  public readonly token: string;
+  public token: string;
   public readonly baseUrl: string;
   public readonly userAgent: string;
   public readonly max429Retries: number;

@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/types",
-  "version": "26.8.5",
+  "version": "26.8.6",
   "description": "Discord API & Gateway types for Chord.js.",
   "license": "MIT",
   "publishConfig": {
