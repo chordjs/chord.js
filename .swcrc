@@ -3,8 +3,12 @@
     "target": "es2022",
     "parser": {
       "syntax": "typescript",
-      "decorators": false,
+      "decorators": true,
       "dynamicImport": true
+    },
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
     }
   },
   "module": {

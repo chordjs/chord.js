@@ -189,7 +189,10 @@ export class CommandInteraction extends Interaction {
     const commandData = data.data as any;
     this.commandName = commandData.name;
     this.commandId = commandData.id;
+    this.commandType = commandData.type ?? 1; // Default to CHAT_INPUT
   }
+
+  public readonly commandType: number;
 }
 
 /**

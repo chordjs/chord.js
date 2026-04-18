@@ -13,7 +13,9 @@
     "baseUrl": ".",
     "paths": {
       "@chordjs/*": ["packages/*/src/index.ts"]
-    }
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["packages/*/src/**/*.ts"],
   "exclude": ["node_modules", "dist", "examples"]

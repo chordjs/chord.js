@@ -3,6 +3,8 @@ import { extname, basename, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { Command } from "../pieces/command.js";
 import { Listener } from "../pieces/listener.js";
+import { Service } from "../pieces/service.js";
+import { getPieceOptions } from "../pieces/decorators.js";
 import { InteractionCommand, Component, Modal, Piece } from "@chordjs/interactions";
 import { ChordClient } from "../structures/chord-client.js";
 import type { Store } from "@chordjs/core";
@@ -46,6 +48,19 @@ export class PieceLoader {
   async loadModalsFrom(dirPath: string): Promise<Modal[]> {
     const store = this.ensureStore<Modal>("modals");
     return this.loadStoreFrom(dirPath, store, Modal);
+  }
+
+  async loadServicesFrom(dirPath: string): Promise<Service[]> {
+    const store = this.ensureStore<Service>("services");
+    const loaded = await this.loadStoreFrom(dirPath, store, Service);
+    
+    for (const service of loaded) {
+      const token = (this.client.container.constructor as any).createToken(service.name);
+      this.client.container.register(token, service);
+      await service.start();
+    }
+    
+    return loaded;
   }
 
   async loadStoreFrom<TPiece extends Piece>(
@@ -95,11 +110,33 @@ export class PieceLoader {
     if (typeof candidate === "function") {
       // class constructor
       if (candidate.prototype instanceof Piece) {
+        const DecoratedClass = candidate as new (...args: any[]) => Piece;
+        const metadataOptions = getPieceOptions(DecoratedClass) as any;
+
+        if (metadataOptions && this.client.i18n) {
+          if (metadataOptions.nameKey) {
+             const localizedNames = this.client.i18n.getLocalizations(metadataOptions.nameKey);
+             if (localizedNames) {
+               metadataOptions.nameLocalizations = { ...metadataOptions.nameLocalizations, ...localizedNames };
+               // Also update the default name if possible (using default locale)
+               metadataOptions.name = localizedNames["en-US"] ?? metadataOptions.name;
+             }
+          }
+          if (metadataOptions.descriptionKey) {
+             const localizedDescs = this.client.i18n.getLocalizations(metadataOptions.descriptionKey);
+             if (localizedDescs) {
+               metadataOptions.descriptionLocalizations = { ...metadataOptions.descriptionLocalizations, ...localizedDescs };
+               metadataOptions.description = localizedDescs["en-US"] ?? metadataOptions.description;
+             }
+          }
+        }
+
         try {
-          return new (candidate as new (...args: any[]) => Piece)({ name });
+          // If metadata exists, we pass it to the constructor if it's not already instance-based
+          return new DecoratedClass({ name }, metadataOptions);
         } catch {
           try {
-            return new (candidate as new (...args: any[]) => Piece)();
+            return new DecoratedClass();
           } catch {
             return null;
           }

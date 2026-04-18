@@ -8,6 +8,8 @@ export * from "./commands/args.js";
 
 export * from "./pieces/command.js";
 export * from "./pieces/listener.js";
+export * from "./pieces/service.js";
+export * from "./pieces/decorators.js";
 
 // Re-export ecosystem packages
 export * from "@chordjs/interactions";

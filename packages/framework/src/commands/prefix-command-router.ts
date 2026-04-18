@@ -1,4 +1,5 @@
 import { Command } from "../pieces/command.js";
+import { resolvePrecondition } from "../pieces/decorators.js";
 import type {
   APIAllowedMentions,
   APIEmbed,
@@ -72,6 +73,7 @@ export interface PrefixCommandRouterOptions {
   };
   preconditions?: Array<PreconditionCheck<PrefixCommandContext>>;
   hooks?: RouterHooks<PrefixCommandContext>;
+  preconditionResolver?: (meta: any, client: any) => PreconditionCheck<any> | null;
 }
 
 export class PrefixCommandRouter {
@@ -84,6 +86,7 @@ export class PrefixCommandRouter {
   public readonly errorResponse: Required<NonNullable<PrefixCommandRouterOptions["errorResponse"]>>;
   public readonly preconditions: Array<PreconditionCheck<PrefixCommandContext>>;
   public readonly hooks?: RouterHooks<PrefixCommandContext>;
+  public readonly preconditionResolver?: (meta: any, client: any) => PreconditionCheck<any> | null;
   readonly #dynamicPrefixCacheEnabled: boolean;
   readonly #dynamicPrefixCacheMaxSize: number;
   readonly #dynamicPrefixCacheKey?: (message: PrefixMessageLike) => string | null | undefined;
@@ -102,6 +105,7 @@ export class PrefixCommandRouter {
     };
     this.preconditions = options.preconditions ?? [];
     this.hooks = options.hooks;
+    this.preconditionResolver = options.preconditionResolver;
     this.#dynamicPrefixCacheEnabled = options.dynamicPrefixCache?.enabled ?? true;
     this.#dynamicPrefixCacheMaxSize = options.dynamicPrefixCache?.maxSize ?? 500;
     this.#dynamicPrefixCacheKey = options.dynamicPrefixCache?.key;
@@ -124,7 +128,13 @@ export class PrefixCommandRouter {
 
     try {
       await this.hooks?.beforeRun?.(parsed);
-      await command.run(parsed);
+      if (typeof command.messageRun === "function") {
+        await command.messageRun(parsed);
+      } else if (typeof command.run === "function") {
+        await command.run(parsed);
+      } else {
+        throw new Error(`Command ${command.name} has no messageRun or run method`);
+      }
       await this.hooks?.afterRun?.(parsed);
       return true;
     } catch (error) {
@@ -144,8 +154,16 @@ export class PrefixCommandRouter {
   }
 
   async runPreconditions(context: PrefixCommandContext): Promise<PreconditionResult> {
-    if (this.preconditions.length === 0) return Precondition.pass();
-    return runPreconditions(this.preconditions, context);
+    const commandPreconditions = context.command?.getEffectivePreconditions("messageRun") ?? [];
+    const resolved = this.preconditionResolver
+      ? commandPreconditions
+          .map(p => this.preconditionResolver!(p, this.client))
+          .filter((p): p is PreconditionCheck<any> => p !== null)
+      : [];
+
+    const all = [...this.preconditions, ...resolved];
+    if (all.length === 0) return Precondition.pass();
+    return runPreconditions(all, context);
   }
 
   parse(message: PrefixMessageLike): PrefixCommandContext | null {

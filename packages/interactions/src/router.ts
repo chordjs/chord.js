@@ -30,9 +30,10 @@ export interface InteractionCommandRouterOptions {
   autoSync?: boolean;
   errorResponse?: {
     enabled?: boolean;
-    message?: string | ((error: unknown, context: InteractionExecutionContext) => string);
+    message?: string | ((error: unknown, context: any) => string);
     ephemeral?: boolean;
   };
+  preconditionResolver?: (meta: any, client: any) => PreconditionCheck<any> | null;
   storeName?: string;
   preconditions?: Array<PreconditionCheck<InteractionExecutionContext>>;
   hooks?: RouterHooks<InteractionExecutionContext>;
@@ -54,6 +55,7 @@ export class InteractionCommandRouter {
   public readonly rest?: RestLikeClient;
   public readonly autoSync: boolean;
   public readonly errorResponse: Required<NonNullable<InteractionCommandRouterOptions["errorResponse"]>>;
+  public readonly preconditionResolver?: (meta: any, client: any) => PreconditionCheck<any> | null;
   public readonly storeName: string;
   public readonly preconditions: Array<PreconditionCheck<InteractionExecutionContext>>;
   public readonly hooks?: RouterHooks<InteractionExecutionContext>;
@@ -68,7 +70,8 @@ export class InteractionCommandRouter {
       message: options.errorResponse?.message ?? "An unexpected error occurred while running this command.",
       ephemeral: options.errorResponse?.ephemeral ?? true
     };
-    this.storeName = options.storeName ?? "interactions";
+    this.preconditionResolver = options.preconditionResolver;
+    this.storeName = options.storeName ?? "commands";
     this.preconditions = options.preconditions ?? [];
     this.hooks = options.hooks;
   }
@@ -90,7 +93,7 @@ export class InteractionCommandRouter {
         const rest = this.rest ?? (this.client.rest as any);
         if (!rest) return;
         try {
-          await this.registerGlobalCommands(rest, data.application.id);
+          await this.registerGlobalCommands(rest, data.application.id, true);
           this.client.container.get("logger")?.info(`Successfully auto-synced ${this.store.size} interaction commands.`);
         } catch (error) {
           this.client.container.get("logger")?.error("Failed to auto-sync interaction commands:", error);
@@ -108,10 +111,28 @@ export class InteractionCommandRouter {
     this.#unbind = null;
   }
 
-  async registerGlobalCommands(rest: RestLikeClient, applicationId: string): Promise<ApplicationCommandPayload[]> {
+  async registerGlobalCommands(rest: RestLikeClient, applicationId: string, smart = false): Promise<ApplicationCommandPayload[]> {
     const payload = [...this.store.values()]
       .filter((command) => command.enabled)
       .map((command) => command.toApplicationCommand());
+
+    if (smart) {
+      try {
+        const existing = await rest.request("GET", `/applications/${applicationId}/commands`) as any[];
+        const needsSync = existing.length !== payload.length || 
+          payload.some(cmd => {
+            const ex = existing.find(e => e.name === cmd.name && e.type === (cmd.type ?? 1));
+            if (!ex) return true;
+            if (ex.description !== (cmd.description ?? "")) return true;
+            if (JSON.stringify(ex.options ?? []) !== JSON.stringify(cmd.options ?? [])) return true;
+            return false;
+          });
+
+        if (!needsSync) return payload;
+      } catch (error) {
+        // If GET fails, fallback to PUT
+      }
+    }
 
     await rest.request("PUT", `/applications/${applicationId}/commands`, {
       body: JSON.stringify(payload)
@@ -123,8 +144,31 @@ export class InteractionCommandRouter {
   async handleInteraction(interaction: GatewayDispatchDataMap["INTERACTION_CREATE"]): Promise<boolean> {
     if (
       interaction.type !== InteractionTypes.ApplicationCommand &&
-      interaction.type !== InteractionTypes.ApplicationCommandAutocomplete
+      interaction.type !== InteractionTypes.ApplicationCommandAutocomplete &&
+      interaction.type !== InteractionTypes.MessageComponent
     ) {
+      return false;
+    }
+
+    if (interaction.type === InteractionTypes.MessageComponent) {
+      const customId = (interaction.data as any).custom_id;
+      if (!customId) return false;
+
+      // Try to find a handler in loaded commands
+      for (const command of this.store.values()) {
+        const handlers = (command as any).getComponentHandlers?.() ?? [];
+        for (const handler of handlers) {
+          const matches = typeof handler.customId === "string" 
+            ? handler.customId === customId 
+            : handler.customId.test(customId);
+          
+          if (matches && typeof (command as any)[handler.propertyKey] === "function") {
+             // We found a match! Execute it.
+             // (Implementation details for context creation skipped for brevity here, similar to runPreconditions)
+             return this.#executeComponentHandler(interaction, command, handler.propertyKey);
+          }
+        }
+      }
       return false;
     }
 
@@ -185,8 +229,29 @@ export class InteractionCommandRouter {
       await this.hooks?.beforeRun?.(context);
       
       const cmdInteraction = interactionWrapper as CommandInteraction;
+      
+      let runMethod: any;
+      if (cmdInteraction.commandType === 1) { // CHAT_INPUT
+        // Check for subcommands first
+        if (context.subcommand && typeof (command as any).getPreconditions === "function") {
+          const subcommands = (command as any).getSubcommands?.() ?? [];
+          const found = subcommands.find((s: any) => s.name === context.subcommand);
+          if (found && typeof (command as any)[found.propertyKey] === "function") {
+            runMethod = (command as any)[found.propertyKey];
+          }
+        }
+        if (!runMethod) {
+          runMethod = typeof (command as any).chatInputRun === "function" ? (command as any).chatInputRun : command.run;
+        }
+      } else if (cmdInteraction.commandType === 2) { // USER
+        runMethod = typeof (command as any).userContextRun === "function" ? (command as any).userContextRun : command.run;
+      } else if (cmdInteraction.commandType === 3) { // MESSAGE
+        runMethod = typeof (command as any).messageContextRun === "function" ? (command as any).messageContextRun : command.run;
+      } else {
+        runMethod = command.run;
+      }
 
-      await command.run({
+      const runContext: any = {
         interaction: cmdInteraction,
         commandName: context.commandName,
         options: context.options,
@@ -198,19 +263,21 @@ export class InteractionCommandRouter {
         user: standardized.user as User,
         member: standardized.member as Member,
         resolved: standardized.resolved,
-        reply: async (payload) => {
-          return interactionWrapper.reply(payload as any);
+        reply: async (payload: any) => {
+          return interactionWrapper.reply(payload);
         },
-        deferReply: async (options) => {
-          return interactionWrapper.deferReply(options as any);
+        deferReply: async (options: any) => {
+          return interactionWrapper.deferReply(options);
         },
-        editReply: async (payload) => {
-          return interactionWrapper.editReply(payload as any);
+        editReply: async (payload: any) => {
+          return interactionWrapper.editReply(payload);
         },
-        followUp: async (payload) => {
-          return interactionWrapper.followUp(payload as any);
+        followUp: async (payload: any) => {
+          return interactionWrapper.followUp(payload);
         }
-      });
+      };
+
+      await runMethod.call(command, runContext);
       await this.hooks?.afterRun?.(context);
       return true;
     } catch (error) {
@@ -222,8 +289,17 @@ export class InteractionCommandRouter {
   }
 
   async runPreconditions(context: InteractionExecutionContext): Promise<PreconditionResult> {
-    if (this.preconditions.length === 0) return Precondition.pass();
-    return runPreconditions(this.preconditions, context);
+    const methodMap: Record<number, string> = { 1: "chatInputRun", 2: "userContextRun", 3: "messageContextRun" };
+    const methodName = methodMap[(context.command as any).type ?? 1];
+    
+    const commandPreconditions = context.command?.getPreconditions?.(methodName) ?? [];
+    const resolved = this.preconditionResolver 
+      ? commandPreconditions.map(p => this.preconditionResolver!(p, this.client)).filter(p => p !== null) as Array<PreconditionCheck<any>>
+      : [];
+
+    const all = [...this.preconditions, ...resolved];
+    if (all.length === 0) return Precondition.pass();
+    return runPreconditions(all, context);
   }
 
   resolveCommand(name: string): InteractionCommand | null {
@@ -407,6 +483,41 @@ export class InteractionCommandRouter {
       return;
     } catch {
       await this.#followUp(interaction, payload);
+    }
+  }
+
+  async #executeComponentHandler(interaction: any, command: any, propertyKey: string | symbol): Promise<boolean> {
+    const standardized = this.#standardizeInteractionContext(interaction);
+    const data = interaction.data as any;
+
+    const context: any = {
+      interaction,
+      customId: data.custom_id,
+      componentType: data.component_type,
+      values: data.values,
+      guildId: standardized.guildId,
+      channelId: standardized.channelId,
+      user: standardized.user,
+      member: standardized.member,
+      reply: async (payload: any) => this.#reply(interaction, payload),
+      deferReply: async (options: any) => this.#deferReply(interaction, options),
+      editReply: async (payload: any) => this.#editReply(interaction, payload),
+      followUp: async (payload: any) => this.#followUp(interaction, payload),
+      updateMessage: async (payload: any) => {
+        const rest = this.#mustRest();
+        const { id, token } = this.#interactionMeta(interaction);
+        return rest.request("POST", `/interactions/${id}/${token}/callback`, {
+          body: JSON.stringify({ type: 7, data: this.#normalizeFlags(payload) })
+        });
+      }
+    };
+
+    try {
+      await command[propertyKey](context);
+      return true;
+    } catch (error) {
+      await this.hooks?.onError?.({ interaction, command, commandName: "component" } as any, error);
+      return false;
     }
   }
 }

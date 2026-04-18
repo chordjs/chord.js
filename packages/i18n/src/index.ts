@@ -59,6 +59,20 @@ export class I18nManager {
     return template;
   }
 
+  /**
+   * Returns a map of all available localizations for a given key.
+   * Useful for Discord Application Command localizations.
+   */
+  public getLocalizations(key: string): Record<string, string> {
+    const localizations: Record<string, string> = {};
+    for (const [locale, map] of this.locales.entries()) {
+      if (map[key]) {
+        localizations[locale] = map[key];
+      }
+    }
+    return localizations;
+  }
+
   #resolveTemplate(key: string, locale: string): string | null {
     const map = this.locales.get(locale);
     if (!map) return null;

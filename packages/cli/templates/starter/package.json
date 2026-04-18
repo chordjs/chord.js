@@ -1,0 +1,17 @@
+{
+  "name": "@chordjs/example-chord-bot",
+  "version": "26.8.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "chord build && node dist/main.js",
+    "build": "chord build"
+  },
+  "dependencies": {
+    "@chordjs/framework": "workspace:*",
+    "@chordjs/data": "workspace:*",
+    "@chordjs/i18n": "workspace:*",
+    "@chordjs/logger": "workspace:*",
+    "reflect-metadata": "^0.2.2"
+  }
+}

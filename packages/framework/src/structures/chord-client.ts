@@ -5,6 +5,7 @@ import { PrefixCommandRouter, type PrefixMessageLike } from "../commands/prefix-
 import { MetricsManager } from "@chordjs/metrics";
 import { createLogger, type Logger } from "@chordjs/logger";
 import { I18nManager } from "@chordjs/i18n";
+import { resolvePrecondition } from "../pieces/decorators.js";
 
 /**
  * Extended ChordClient for the framework.
@@ -12,6 +13,7 @@ import { I18nManager } from "@chordjs/i18n";
 export interface ChordClientOptions extends BaseChordClientOptions {
   container?: Container;
   prefix?: string | ((message: PrefixMessageLike) => string | null | undefined);
+  ownerIds?: string[];
 }
 
 export class ChordClient extends BaseChordClient {
@@ -20,9 +22,11 @@ export class ChordClient extends BaseChordClient {
   public readonly metrics: MetricsManager;
   public readonly logger: Logger;
   public readonly i18n: I18nManager;
+  public readonly ownerIds: string[];
 
   constructor(options: ChordClientOptions = {}) {
     super(options);
+    this.ownerIds = options.ownerIds ?? [];
     this.container = options.container ?? new Container();
     this.loader = new PieceLoader({ client: this as any });
     this.metrics = new MetricsManager(this as any);
@@ -46,7 +50,8 @@ export class ChordClient extends BaseChordClient {
         reply: async (messagePayload, payload) => {
           const message = new Message(this as any, messagePayload as any);
           return message.reply(payload as any);
-        }
+        },
+        preconditionResolver: (meta, client) => resolvePrecondition(meta, client)
       });
       this.container.register(Container.createToken<PrefixCommandRouter>("PrefixCommandRouter"), router);
 

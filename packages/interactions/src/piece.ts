@@ -40,6 +40,8 @@ export interface InteractionCommandOptions extends PieceOptions {
   options?: ApplicationCommandOption[];
   nameLocalizations?: Record<string, string>;
   descriptionLocalizations?: Record<string, string>;
+  nameKey?: string;
+  descriptionKey?: string;
 }
 
 export interface InteractionRunContext {
@@ -122,5 +124,30 @@ export abstract class InteractionCommand extends Piece {
 
   abstract run(context: InteractionRunContext): unknown | Promise<unknown>;
 
+  /**
+   * Slash Command (Chat Input) execution.
+   */
+  chatInputRun?(context: InteractionRunContext): unknown | Promise<unknown>;
+
+  /**
+   * User Context Menu execution.
+   */
+  userContextRun?(context: InteractionRunContext): unknown | Promise<unknown>;
+
+  /**
+   * Message Context Menu execution.
+   */
+  messageContextRun?(context: InteractionRunContext): unknown | Promise<unknown>;
+
   autocomplete?(context: InteractionAutocompleteContext): unknown | Promise<unknown>;
+
+  /**
+   * Returns preconditions for this command.
+   */
+  getPreconditions?(methodName?: string): any[];
+
+  /**
+   * Returns subcommands for this command.
+   */
+  getSubcommands?(): Array<{ name: string; propertyKey: string | symbol }>;
 }

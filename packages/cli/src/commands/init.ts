@@ -13,55 +13,47 @@ interface InitOptions {
   moduleSystem: ModuleSystem;
 }
 
-/**
- * Converts TypeScript source code to JavaScript by stripping type annotations.
- */
-function convertTsToJs(code: string): string {
-  let result = code;
-  // Remove `import type { ... } from "..."` statements entirely
-  result = result.replace(/^import\s+type\s+\{[^}]*\}\s+from\s+["'][^"']+["'];?\s*$/gm, '');
-  // Remove `type` keyword from mixed imports: `import { Foo, type Bar }` -> `import { Foo }`
-  result = result.replace(/,\s*type\s+\w+/g, '');
-  result = result.replace(/\{\s*type\s+\w+\s*,\s*/g, '{ ');
-  // Remove type annotations from parameters: `(param: Type)` -> `(param)`
-  result = result.replace(/:\s*\w+(\[\])?\s*(?=[,\)\=\{])/g, '');
-  // Remove return type annotations: `): ReturnType {` -> `) {`
-  result = result.replace(/\):\s*\w+(<[^>]+>)?\s*\{/g, ') {');
-  // Remove generic type parameters: `<T>` 
-  result = result.replace(/<\w+(\s+extends\s+\w+)?>/g, '');
-  // Remove `as Type` assertions
-  result = result.replace(/\s+as\s+\w+/g, '');
-  // Clean up empty lines left behind
-  result = result.replace(/\n{3,}/g, '\n\n');
-  return result;
-}
+import * as swc from "@swc/core";
 
 /**
- * Converts ESM import/export syntax to CommonJS require/module.exports.
+ * Transforms TypeScript/ESM code to JavaScript/CommonJS using SWC for high fidelity.
  */
-function convertEsmToCjs(code: string): string {
-  let result = code;
-  // Convert: import { A, B } from "mod" -> const { A, B } = require("mod")
-  result = result.replace(
-    /import\s+\{([^}]+)\}\s+from\s+["']([^"']+)["'];?/g,
-    'const {$1} = require("$2");'
-  );
-  // Convert: import X from "mod" -> const X = require("mod")
-  result = result.replace(
-    /import\s+(\w+)\s+from\s+["']([^"']+)["'];?/g,
-    'const $1 = require("$2");'
-  );
-  // Convert: export default X -> module.exports = X
-  result = result.replace(/export\s+default\s+/g, 'module.exports = ');
-  // Convert: export { A, B } -> module.exports = { A, B }
-  result = result.replace(/export\s+\{([^}]+)\};?/g, 'module.exports = {$1};');
-  // Convert: export class/function -> class/function ... module.exports
-  result = result.replace(/export\s+(class|function|const|let|var)\s+/g, '$1 ');
-  // Replace import.meta.dirname with __dirname
-  result = result.replace(/import\.meta\.dirname/g, '__dirname');
-  // Replace import.meta.url with __filename
-  result = result.replace(/import\.meta\.url/g, '__filename');
-  return result;
+async function transformWithSwc(
+  code: string,
+  language: Language,
+  moduleSystem: ModuleSystem,
+  filename: string
+): Promise<string> {
+  const isTs = filename.endsWith(".ts");
+
+  // If user wants TypeScript + ESM (and it's already TS), no transform needed
+  if (language === "typescript" && moduleSystem === "esm" && isTs) {
+    return code;
+  }
+
+  const options: swc.Options = {
+    filename,
+    jsc: {
+      parser: {
+        syntax: isTs ? "typescript" : "ecmascript",
+        decorators: true,
+        dynamicImport: true,
+      },
+      transform: {
+        legacyDecorator: true,
+        decoratorMetadata: true,
+      },
+      target: "es2022",
+    },
+    module: {
+      type: moduleSystem === "esm" ? "es6" : "commonjs",
+    },
+    minify: false,
+    sourceMaps: false,
+  };
+
+  const result = await swc.transform(code, options);
+  return result.code;
 }
 
 /**
@@ -82,15 +74,8 @@ async function transformTemplateFiles(
 
     let content = await fs.readFile(filePath, 'utf-8');
 
-    // Convert TS -> JS if needed
-    if (language === 'javascript') {
-      content = convertTsToJs(content);
-    }
-
-    // Convert ESM -> CJS if needed (only for JS; TypeScript compiler handles this)
-    if (moduleSystem === 'commonjs' && language === 'javascript') {
-      content = convertEsmToCjs(content);
-    }
+    // Transform code based on selections
+    content = await transformWithSwc(content, language, moduleSystem, filePath);
 
     // Determine new file extension
     const ext = language === 'typescript' ? '.ts' : (moduleSystem === 'commonjs' ? '.cjs' : '.mjs');
@@ -160,11 +145,14 @@ function buildPackageJson(
   }
 
   pkg.dependencies = {
-    '@chordjs/framework': `^${currentVersion}`,
+    "@chordjs/framework": `^${currentVersion}`,
+    "@chordjs/data": `^${currentVersion}`,
+    "@chordjs/i18n": `^${currentVersion}`,
+    "reflect-metadata": "^0.2.2"
   };
 
   pkg.devDependencies = {
-    '@chordjs/cli': `^${currentVersion}`,
+    "@chordjs/cli": `^${currentVersion}`,
   };
 
   if (language === 'typescript') {
@@ -190,9 +178,11 @@ function buildTsConfig(moduleSystem: ModuleSystem): Record<string, any> {
       strict: true,
       skipLibCheck: true,
       esModuleInterop: true,
+      experimentalDecorators: true,
+      emitDecoratorMetadata: true,
       outDir: './dist',
       rootDir: './src',
-      types: ['node'],
+      types: ['node', 'reflect-metadata'],
     },
     include: ['src'],
   };
@@ -246,7 +236,7 @@ export async function initCommand(projectName?: string) {
   console.log(chalk.dim(`   Language: ${language === 'typescript' ? 'TypeScript' : 'JavaScript'}`));
   console.log(chalk.dim(`   Module:   ${moduleSystem === 'esm' ? 'ESM' : 'CommonJS'}\n`));
 
-  const templatePath = path.resolve(decodeURI(new URL('.', import.meta.url).pathname), '../../templates/basic');
+  const templatePath = path.resolve(decodeURI(new URL('.', import.meta.url).pathname), '../../templates/starter');
 
   try {
     if (!fs.existsSync(templatePath)) {
@@ -263,7 +253,7 @@ export async function initCommand(projectName?: string) {
     await transformTemplateFiles(targetPath, language, moduleSystem);
 
     // 3. Generate package.json
-    const currentVersion = '26.7.1';
+    const currentVersion = '26.8.1';
     const pkgJson = buildPackageJson(targetName!, language, moduleSystem, currentVersion);
     await fs.writeJson(path.join(targetPath, 'package.json'), pkgJson, { spaces: 2 });
 
