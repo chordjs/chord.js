@@ -105,6 +105,14 @@ export class GatewayClient {
     return this.#latencyMs;
   }
 
+  get shardId(): number | null {
+    return this.shard?.[0] ?? null;
+  }
+
+  get shardCount(): number | null {
+    return this.shard?.[1] ?? null;
+  }
+
   readonly #emitter = new Emitter<GatewayEventMap>();
   readonly #dispatchHandlers = new Map<string, Set<(data: unknown) => void>>();
   #ws: WebSocket | null = null;

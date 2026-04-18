@@ -110,6 +110,18 @@ async function tick(ms = 5): Promise<void> {
 beforeEach(() => installMockWebSocket());
 afterEach(() => restoreMockWebSocket());
 
+describe("GatewayClient — properties", () => {
+  test("shardId and shardCount should reflect shard option", () => {
+    const client1 = createClient({ shard: [2, 5] });
+    expect(client1.shardId).toBe(2);
+    expect(client1.shardCount).toBe(5);
+
+    const client2 = createClient({ shard: undefined });
+    expect(client2.shardId).toBe(null);
+    expect(client2.shardCount).toBe(null);
+  });
+});
+
 describe("GatewayClient — connection lifecycle", () => {
   test("emits 'open' when ws connects", async () => {
     const client = createClient();
