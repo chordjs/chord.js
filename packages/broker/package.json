@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/broker",
-  "version": "26.8.6",
+  "version": "26.8.7",
   "description": "Inter-shard communication and messaging broker for Chord.js.",
   "license": "MIT",
   "publishConfig": {
@@ -13,7 +13,7 @@
     "build": "rm -rf dist tsconfig.tsbuildinfo && bunx swc src -d dist --strip-leading-paths --config-file ../../.swcrc && bunx tsc -p tsconfig.json --emitDeclarationOnly --declaration --declarationMap --outDir dist"
   },
   "dependencies": {
-    "@chordjs/utils": "^26.8.6",
+    "@chordjs/utils": "^26.8.7",
     "ioredis": "^5.4.1"
   },
   "devDependencies": {
