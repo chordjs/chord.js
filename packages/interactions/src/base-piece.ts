@@ -11,13 +11,13 @@ export interface PieceOptions {
   enabled?: boolean;
 }
 
-export abstract class Piece {
+export abstract class Piece<TContext extends PieceContext = PieceContext> {
   public readonly name: string;
   public enabled: boolean;
-  public store: Store<any> | null = null;
-  public readonly context: PieceContext;
+  public pieceStore: Store<any> | null = null;
+  public readonly context: TContext;
 
-  protected constructor(context: PieceContext, options: PieceOptions = {}) {
+  protected constructor(context: TContext, options: PieceOptions = {}) {
     this.context = context;
     this.name = options.name ?? context.name;
     this.enabled = options.enabled ?? context.enabled ?? true;

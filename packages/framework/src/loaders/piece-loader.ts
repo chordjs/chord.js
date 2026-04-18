@@ -86,7 +86,7 @@ export class PieceLoader {
       if (expectedBase && !(piece instanceof (expectedBase as any))) {
         continue;
       }
-      piece.store = store as any;
+      piece.pieceStore = store as any;
       store.set(piece.name, piece as TPiece);
       await piece.onLoad?.();
       loaded.push(piece as TPiece);

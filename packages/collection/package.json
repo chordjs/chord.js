@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/collection",
-  "version": "26.8.4",
+  "version": "26.8.5",
   "description": "Utility collection class for Chord.js",
   "license": "MIT",
   "publishConfig": {

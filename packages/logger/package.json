@@ -1,6 +1,6 @@
 {
   "name": "@chordjs/logger",
-  "version": "26.8.4",
+  "version": "26.8.5",
   "description": "Premium structured logging for Chord.js",
   "type": "module",
   "main": "dist/index.js",
